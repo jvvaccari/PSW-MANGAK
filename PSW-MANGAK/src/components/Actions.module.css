@@ -1,0 +1,24 @@
+IconButton{
+  display: flex;
+  align-self: flex-start;
+}
+
+.actionsContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 8px;
+    border-bottom: 1px solid #444;
+    padding-top: 16px;
+    padding-bottom: 16px;
+  }
+  
+.statusDot{
+  color: #90ee90;
+}
+
+.publication {
+  display: flex;
+  gap: 0.3em;
+  margin-top: 8px;
+}  

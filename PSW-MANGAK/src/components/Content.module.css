@@ -1,0 +1,27 @@
+.container {
+    display: flex;
+    padding-bottom: 16px;
+}
+
+.mangaData{
+    display: flex;
+    flex-direction: column;
+    gap: 0.3em;
+    margin: 0.5em;
+}
+
+.ratingContainer {
+    display: flex;
+    gap: 1em;
+    color: #ffa500;
+}
+
+.rating {
+    font-size: 0.9em;
+}
+
+.reviews {
+    margin-left: 4px;
+    color: #ddd;
+    font-size: 0.9em;
+}
