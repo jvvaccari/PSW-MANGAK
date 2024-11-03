@@ -32,7 +32,7 @@ function App() {
         }}
       >
 
-        <Header image="src/assets/img/Chainsaw Man Cover Volume 1.svg"/>
+        <Header/>
 
         <Content
           mangaImage={chainsawCover}
@@ -40,12 +40,11 @@ function App() {
           author="Tatsuki Fujimoto"
           rating="9.30"
           reviews="10k"
-        />
-
-        <Actions 
           statusDot="•"
           publication="PUBLICATION: 2021, ONGOING"
         />
+
+        <Actions />
 
         <Description
           text="Broke young man + chainsaw demon = Chainsaw Man! Denji was a small-time devil hunter just trying to survive in a harsh world. After being killed on a job, he is revived by his pet devil-dog Pochita and becomes something new and dangerous—Chainsaw Man!"

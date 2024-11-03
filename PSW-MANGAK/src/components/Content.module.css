@@ -1,27 +1,38 @@
+/* Content.module.css */
+
 .container {
     display: flex;
-    padding-bottom: 16px;
+    flex-direction: column;
+    gap: 1em;
 }
 
-.mangaData{
+.mangaData {
     display: flex;
     flex-direction: column;
-    gap: 0.3em;
-    margin: 0.5em;
 }
 
-.ratingContainer {
-    display: flex;
-    gap: 1em;
-    color: #ffa500;
+.title {
+    font-size: var(--font-size-title-large);
+    font-weight: bold;
+    color: var(--text-color);
 }
 
-.rating {
-    font-size: 0.9em;
+.author {
+    font-size: var(--font-size-title-small);
+    font-weight: 700;
+    color: #bbb;
+}
+
+.statusDot {
+    font-size: 24px;
+    color: #90ee90;
+}
+
+.publication {
+    color: var(--text-color);
 }
 
 .reviews {
-    margin-left: 4px;
     color: #ddd;
-    font-size: 0.9em;
+    font-size: var(--font-size-body);
 }
