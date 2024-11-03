@@ -9,7 +9,7 @@
     flex-direction: column;
 }
 
-.title {
+.manga_name {
     font-size: var(--font-size-title-large);
     font-weight: bold;
     color: var(--text-color);
@@ -24,13 +24,4 @@
 .statusDot {
     font-size: 24px;
     color: #90ee90;
-}
-
-.publication {
-    color: var(--text-color);
-}
-
-.reviews {
-    color: #ddd;
-    font-size: var(--font-size-body);
 }

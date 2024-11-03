@@ -1,20 +1,5 @@
-IconButton{
-  display: flex;
-  align-self: flex-start;
+.actionButton{
+  background-color: #1E1E1E;
+  padding: 6px;
+  border-radius: 5px;
 }
-
-.actionsContainer {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 8px;
-    border-bottom: 1px solid #444;
-    padding-top: 16px;
-    padding-bottom: 16px;
-  }
-
-.publication {
-  display: flex;
-  gap: 0.3em;
-  margin-top: 8px;
-}  

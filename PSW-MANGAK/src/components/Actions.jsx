@@ -1,18 +1,16 @@
 import { Box, IconButton } from "@mui/material";
-import LinkIcon from "@mui/icons-material/Link";
-import ThumbUpIcon from "@mui/icons-material/ThumbUp";
-import styles from "./Actions.module.css";
+import BookmarkAddIcon from '@mui/icons-material/BookmarkAdd';
+import IosShareIcon from '@mui/icons-material/IosShare';
+import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
+import styles from "./Actions.module.css"
 
 const Actions = () => (
-  <Box className={styles.actionsContainer}>
-    <Box>
-      <IconButton color="inherit">
-        <LinkIcon />
-      </IconButton>
-      <IconButton color="inherit">
-        <ThumbUpIcon />
-      </IconButton>
-    </Box>
+  <Box>
+    <IconButton color="inherit" sx={{padding: "0px",gap: "8px"}}>
+      <BookmarkAddIcon className={styles.actionButton}/>
+      <IosShareIcon className={styles.actionButton}/>
+      <ThumbUpOffAltIcon className={styles.actionButton}/>
+    </IconButton>
   </Box>
 );
 

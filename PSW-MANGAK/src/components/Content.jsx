@@ -1,31 +1,43 @@
 import PropTypes from "prop-types";
-import { Box, Typography } from "@mui/material";
+import { Box, Typography, Rating } from "@mui/material";
+import BookmarkIcon from '@mui/icons-material/Bookmark';
 import styles from "./Content.module.css";
 
-const Content = ({ mangaImage, title, author, rating, reviews, statusDot, publication }) => (
+const Content = ({ mangaImage, title, author, reviews, statusDot, publication }) => (
   <Box className={styles.container}>
     <Box sx={{ display: "flex", flexDirection: "row", gap: "1.2em" }}>
       <img src={mangaImage} alt={title} />
       <Box className={styles.mangaData}>
-        <Typography variant="h6" className={styles.title}>
+        <Typography variant="h6" className={styles.manga_name}>
           {title}
         </Typography>
         <Typography variant="body2" className={styles.author}>
           {author}
         </Typography>
         <Box sx={{ display: "flex", gap: "8px", marginTop: "3.6em" }}>
-          <Typography variant="body2" sx={{ fontSize: "var(--font-size-body)", color: "var(--rating-color)" }}>
-            ⭐ {rating}
-          </Typography>
-          <Typography variant="body2" className={styles.reviews}>
+          <Rating name="size-small" defaultValue={2} size="small" 
+            sx={{
+              "& .MuiRating-iconEmpty": {
+                color: "#777",
+              },
+              "& .MuiRating-iconFilled": {
+                color: "#EC7C01",
+              },
+              "& .MuiRating-iconHover": {
+                color: "#FFA500",
+              },
+            }}
+          />
+          <Typography variant="body2" sx={{ fontSize: "var(--font-size-body)", color: "var(--text-color)",display: "flex"}}>
+            <BookmarkIcon sx={{height: "18px"}}/>
             {reviews}
-          </Typography>
+          </Typography> 
         </Box>
       </Box>
     </Box>
-    <Box sx={{ display: "flex", alignItems: "center", gap: "4px", marginTop: "8px" }}>
+    <Box sx={{ display: "flex", alignItems: "center",  marginTop: "8px" }}>
       <span className={styles.statusDot}>{statusDot}</span>
-      <Typography variant="caption" className={styles.publication}>
+      <Typography variant="caption">
         {publication}
       </Typography>
     </Box>
