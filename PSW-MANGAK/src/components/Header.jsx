@@ -4,7 +4,7 @@ import styles from "./Header.module.css";
 
 const Header = () => (
   <Box className={styles.headerContainer}>
-    <IconButton color="inherit">
+    <IconButton color="inherit" sx={{width: "30px",height: "30px"}}>
       <ArrowBackIcon />
     </IconButton>
     <Avatar 

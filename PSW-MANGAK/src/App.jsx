@@ -15,7 +15,6 @@ function App() {
         justifyContent: "center",
         alignItems: "flex-start",
         minHeight: "100vh",
-        padding: "16px",
         bgcolor: "#000",
       }}
     >
@@ -27,8 +26,6 @@ function App() {
           borderRadius: 2,
           padding: "16px",        
           color: "#fff",
-          border: "1px solid #444",
-          boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.5)",
         }}
       >
 
