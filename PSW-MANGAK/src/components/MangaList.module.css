@@ -1,0 +1,36 @@
+/* MangaList.module.css */
+.mangaListContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: center;
+}
+
+.mangaItem {
+  flex: 0 0 150px;
+  text-align: center;
+}
+
+.mangaImage {
+  width: 100%;
+  height: auto;
+  border-radius: 4px;
+  border: 1px solid #444;
+}
+
+.mangaTitle {
+  font-size: 1em;
+  font-weight: bold;
+  margin-top: 8px;
+  color: var(--text-color);
+}
+
+.mangaAuthor {
+  font-size: 0.9em;
+  color: #bbb;
+}
+
+.noResults {
+  font-size: 1em;
+  color: #bbb;
+}
