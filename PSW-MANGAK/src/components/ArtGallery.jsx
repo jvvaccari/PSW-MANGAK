@@ -1,27 +1,35 @@
-// ArtGallery.jsx
-import { Box, Typography, Avatar, Grid } from "@mui/material";
-import chainsawCover from "/src/assets/img/Chainsaw_Man_Cover_Volume_1.svg";
+import PropTypes from "prop-types";
+import { Box,Typography } from "@mui/material";
+import ImageList from "@mui/material/ImageList";
+import ImageListItem from "@mui/material/ImageListItem";
+import styles from "./ArtGallery.module.css"
 
-const sampleImages = new Array(9).fill(chainsawCover);
+function ArtGallery({ imageList }) {
+  return (
+    <Box sx={{ maxWidth: "50em"}}>
+      <Typography variant="subtitle1" className={styles.galleryTitle}>
+        Art
+        <div className={styles.line}></div>
+      </Typography>
+      
+      <ImageList variant="masonry" cols={3} gap={12}>
+        {imageList.map((img, index) => (
+          <ImageListItem key={index}>
+            <img
+              src={typeof img === 'string' ? img : img.default}
+              alt={`Image ${index + 1}`}
+              loading="lazy"
+              style={{ width: "100%", height: "auto" }}
+            />
+          </ImageListItem>
+        ))}
+      </ImageList>
+    </Box>
+  );
+}
 
-const ArtGallery = () => (
-  <Box sx={{ py: 2, border: "1px solid #444", borderRadius: 1, mt: 2 }}>
-    <Typography variant="subtitle1" sx={{ fontWeight: "bold", mb: 1, fontSize: "1em" }}>
-      Art
-    </Typography>
-    <Grid container spacing={1}>
-      {sampleImages.map((image, index) => (
-        <Grid item xs={4} key={index}>
-          <Avatar
-            src={image}
-            variant="rounded"
-            sx={{ width: "100%", height: "auto", borderRadius: 1, border: "1px solid #444" }}
-            alt={`Art ${index + 1}`}
-          />
-        </Grid>
-      ))}
-    </Grid>
-  </Box>
-);
+ArtGallery.propTypes = {
+  imageList: PropTypes.arrayOf(PropTypes.any).isRequired,
+};
 
 export default ArtGallery;

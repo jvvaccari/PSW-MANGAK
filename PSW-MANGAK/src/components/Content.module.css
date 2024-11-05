@@ -22,6 +22,8 @@
 }
 
 .statusDot {
+    margin-top: -11px;
+    padding-right: 2px;
     font-size: 24px;
     color: #90ee90;
 }

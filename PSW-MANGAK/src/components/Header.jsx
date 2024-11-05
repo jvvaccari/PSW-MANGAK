@@ -9,8 +9,11 @@ const Header = () => (
     </IconButton>
     <Avatar 
       sx={{
-        width: 30,
-        height: 30,
+        width: "30px",
+        height: "30px",
+        color: "#fff",
+        backgroundColor: "#000",
+        border: "2px solid #fff",
       }}
     />
   </Box>

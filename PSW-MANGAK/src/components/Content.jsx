@@ -1,11 +1,11 @@
 import PropTypes from "prop-types";
 import { Box, Typography, Rating } from "@mui/material";
-import BookmarkIcon from '@mui/icons-material/Bookmark';
+import TurnedInNotIcon from '@mui/icons-material/TurnedInNot';
 import styles from "./Content.module.css";
 
 const Content = ({ mangaImage, title, author, reviews, statusDot, publication }) => (
   <Box className={styles.container}>
-    <Box sx={{ display: "flex", flexDirection: "row", gap: "1.2em" }}>
+    <Box sx={{ display: "flex", flexDirection: "row", gap: "1em" }}>
       <img src={mangaImage} alt={title} />
       <Box className={styles.mangaData}>
         <Typography variant="h6" className={styles.manga_name}>
@@ -14,7 +14,7 @@ const Content = ({ mangaImage, title, author, reviews, statusDot, publication })
         <Typography variant="body2" className={styles.author}>
           {author}
         </Typography>
-        <Box sx={{ display: "flex", gap: "8px", marginTop: "3.6em" }}>
+        <Box sx={{ display: "flex", gap: "4px", marginTop: "3.6em" }}>
           <Rating name="size-small" defaultValue={2} size="small" 
             sx={{
               "& .MuiRating-iconEmpty": {
@@ -29,13 +29,13 @@ const Content = ({ mangaImage, title, author, reviews, statusDot, publication })
             }}
           />
           <Typography variant="body2" sx={{ fontSize: "var(--font-size-body)", color: "var(--text-color)",display: "flex"}}>
-            <BookmarkIcon sx={{height: "18px"}}/>
+            <TurnedInNotIcon sx={{height: "18px"}}/>
             {reviews}
           </Typography> 
         </Box>
       </Box>
     </Box>
-    <Box sx={{ display: "flex", alignItems: "center",  marginTop: "8px" }}>
+    <Box sx={{ display: "flex",  margin: "12px 0px 6px 0px" }}>
       <span className={styles.statusDot}>{statusDot}</span>
       <Typography variant="caption">
         {publication}
