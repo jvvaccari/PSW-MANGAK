@@ -6,13 +6,13 @@ import styles from "./ArtGallery.module.css"
 
 function ArtGallery({ imageList }) {
   return (
-    <Box sx={{ maxWidth: "50em"}}>
+    <Box sx={{ maxWidth: "56em"}}>
       <Typography variant="subtitle1" className={styles.galleryTitle}>
         Art
         <div className={styles.line}></div>
       </Typography>
       
-      <ImageList variant="masonry" cols={3} gap={12}>
+      <ImageList variant="masonry" cols={3} gap={12} sx={{marginTop: "32px"}}>
         {imageList.map((img, index) => (
           <ImageListItem key={index}>
             <img
