@@ -1,27 +1,56 @@
-.container {
+/* Content.module.css */
+.contentContainer {
     display: flex;
-    flex-direction: column;
-    gap: 1em;
-}
-
-.mangaData {
-    display: flex;
-    flex-direction: column;
-}
-
-.manga_name {
-    font-size: var(--font-size-title-large);
-    font-weight: bold;
+    gap: 16px;
+    align-items: flex-start;
     color: var(--text-color);
+    flex-wrap: wrap; /* Permite que os elementos se ajustem em telas menores */
+}
+
+.imageContainer {
+    flex: 1;
+    max-width: 100%; /* Deixe a imagem ocupar até 100% da largura disponível */
+    display: flex;
+    justify-content: center;
+}
+
+.image {
+    width: 100%;
+    height: auto;
+    max-width: 300px; /* Define um limite para o tamanho da imagem em telas maiores */
+    border-radius: 8px;
+    border: 1px solid #444;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.detailsContainer {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.title {
+    font-size: 1.5em;
+    font-weight: bold;
+    margin: 0;
 }
 
 .author {
-    font-size: var(--font-size-title-small);
-    font-weight: 700;
+    font-size: 1em;
     color: #bbb;
 }
 
+.rating {
+    font-size: 0.9em;
+    color: #ddd;
+}
+
 .statusDot {
-    font-size: 24px;
-    color: #90ee90;
+    color: #FFD700; /* Amarelo para destaque */
+}
+
+.publication {
+    font-size: 0.8em;
+    color: #aaa;
 }

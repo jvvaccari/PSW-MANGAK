@@ -1,3 +1,4 @@
+/* TagsSection.module.css */
 .container {
     padding-top: 16px;
     padding-bottom: 16px;
@@ -8,6 +9,7 @@
     font-weight: bold;
     margin-bottom: 8px;
     font-size: 1em;
+    color: #FFFFFF !important;
 }
 
 .tagsContainer {
@@ -17,7 +19,14 @@
 }
 
 .tagChip {
-    background-color: #444;
-    color: #fff;
+    background-color: #444; /* Cor de fundo */
+    color: #FFFFFF !important; /* Cor do texto */
     font-size: 0.8em;
+    padding: 4px 12px; /* Espaçamento interno para criar o "chip" */
+    border-radius: 16px ; /* Bordas arredondadas */
+    border: 1px solid #666 !important; /* Borda sutil ao redor da tag */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap; /* Evita que o texto quebre */
 }

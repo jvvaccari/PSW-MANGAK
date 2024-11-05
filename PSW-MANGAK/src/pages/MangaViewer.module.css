@@ -1,0 +1,28 @@
+/* TagsSection.module.css */
+.container {
+  padding-top: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #444;
+}
+
+.sectionTitle {
+  font-weight: bold;
+  margin-bottom: 8px;
+  font-size: 1em;
+  color: #FFFFFF; /* Altere a cor do título para branco */
+}
+
+.tagsContainer {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.tagChip {
+  background-color: #444;
+  color: #FFFFFF; /* Altere a cor do texto nas tags para branco */
+  font-size: 0.8em;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+

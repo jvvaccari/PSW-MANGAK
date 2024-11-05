@@ -1,7 +1,18 @@
+/* Header.module.css */
 .headerContainer {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 36px;
+    padding: 8px;
+    background-color: #000; /* Ajuste a cor de fundo conforme necessário */
 }
-  
+
+.backArrow {
+    color: #FFFFFF;
+    font-size: 1.5em;
+    transition: color 0.3s ease;
+}
+
+.backArrow:hover {
+    color: #FFD700; /* Muda a cor para amarelo ao passar o mouse */
+}

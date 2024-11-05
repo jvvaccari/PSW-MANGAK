@@ -1,58 +1,12 @@
+/* index.css */
 * {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-ul, ol {
-  list-style: none;
-}
-
-a {
-  text-decoration: none;
-  color: inherit;
-}
-
-button {
-  font-family: inherit;
-  cursor: pointer;
-  background: none;
-  border: none;
-}
-
-img {
-  max-width: 100%;
-  height: auto;
-  display: block;
-}
-
-:root {
-  --bg-color: #2c2c2c;
-  --btn-mangak-color: #FF0037;
-  --text-color: #FFFFFF;
-  --rating-color: #EC7C01;
-  --bg-data-color: #1E1E1E;
-  --status-green: #40FF00;
-  --status-red: #FF0000;
-  --status-yellow: #FFE100;
-
-  --font-title: 'DM Serif Display', serif;
-  --font-body: 'DM Sans', sans-serif;
-
-  --font-size-title-large: 24px;
-  --font-size-title-medium: 20px;
-  --font-size-title-small: 18px;
-  --font-size-body: 12px;
-
-  --spacing-small: 8px;
-  --spacing-medium: 16px;
-  --spacing-large: 24px;
+  color: inherit; /* Garanta que elementos herdem a cor definida no componente */
 }
 
 body {
   font-family: var(--font-body);
   background-color: var(--bg-color);
-  color: var(--text-color);
+  color: var(--text-color); /* Defina --text-color como branco, se não estiver definido */
   line-height: 1.6;
   display: flex;
   justify-content: center;
@@ -60,12 +14,7 @@ body {
   min-height: 100vh;
 }
 
-.container {
-  width: 100%;
-  max-width: 320px;
-  padding: var(--spacing-medium);
-  background-color: var(--bg-data-color);
-  color: var(--text-color);
-  border-radius: 8px;
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+:root {
+  --bg-color: #2c2c2c;
+  --text-color: #FFFFFF; /* Garante que o texto padrão seja branco */
 }
