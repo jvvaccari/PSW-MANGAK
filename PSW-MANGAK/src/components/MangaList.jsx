@@ -2,8 +2,7 @@
 import React from 'react';
 import styles from './MangaList.module.css';
 
-const MangaList = ({ mangas, searchTerm }) => {
-  // Filtra os mangás com base no termo de pesquisa
+const MangaList = ({ mangas, searchTerm, onMangaClick }) => {
   const filteredMangas = mangas.filter(manga =>
     manga.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
     manga.author.toLowerCase().includes(searchTerm.toLowerCase())
@@ -13,7 +12,12 @@ const MangaList = ({ mangas, searchTerm }) => {
     <div className={styles.mangaListContainer}>
       {filteredMangas.length > 0 ? (
         filteredMangas.map((manga) => (
-          <div key={manga.id} className={styles.mangaItem}>
+          <div
+            key={manga.id}
+            className={styles.mangaItem}
+            onClick={() => onMangaClick(manga.id)}
+            style={{ cursor: 'pointer' }} // Adiciona o cursor de pointer
+          >
             <img src={manga.image} alt={manga.title} className={styles.mangaImage} />
             <p className={styles.mangaTitle}>{manga.title}</p>
             <p className={styles.mangaAuthor}>{manga.author}</p>
