@@ -1,8 +1,9 @@
 /* TagsSection.module.css */
 .container {
+    display: flex;
+    flex-direction: column;
     padding-top: 16px;
     padding-bottom: 16px;
-    border-bottom: 1px solid #444;
 }
 
 .sectionTitle {
@@ -12,21 +13,16 @@
     color: #FFFFFF !important;
 }
 
-.tagsContainer {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
+.line{
+    border-top: 1px solid #444;
+    width: 244px;
+    margin-bottom: 16px;
 }
 
 .tagChip {
-    background-color: #444; /* Cor de fundo */
-    color: #FFFFFF !important; /* Cor do texto */
+    background-color: #1E1E1E !important;
+    color: #fff !important;
     font-size: 0.8em;
-    padding: 4px 12px; /* Espaçamento interno para criar o "chip" */
-    border-radius: 16px ; /* Bordas arredondadas */
-    border: 1px solid #666 !important; /* Borda sutil ao redor da tag */
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    white-space: nowrap; /* Evita que o texto quebre */
+    border-radius: 3px !important;
+    margin: 0 1.2em 1.2em 0;
 }

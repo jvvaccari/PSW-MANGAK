@@ -47,17 +47,8 @@
 }
 
 .statusDot {
-    color: #FFD700; /* Amarelo para destaque */
-}
-
-.publication {
-    font-size: 0.8em;
-    color: #aaa;
-}
-
-/* Content.module.css */
-.starIcon {
-    color: #FFD700; /* Cor dourada para as estrelas */
-    font-size: 1.2em; /* Ajusta o tamanho das estrelas */
-    margin-right: 2px; /* Espaçamento entre as estrelas */
+    margin-top: -11px;
+    padding-right: 2px;
+    font-size: 24px;
+    color: #90ee90;
 }

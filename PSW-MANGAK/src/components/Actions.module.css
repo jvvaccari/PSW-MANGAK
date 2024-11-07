@@ -1,5 +1,11 @@
 .actionButton{
   background-color: #1E1E1E;
-  padding: 6px;
+  padding: 3px 4px;
   border-radius: 5px;
+  margin: 0px;
+}
+
+.actionIcon{
+  padding: 2px;
+  color: #fff;
 }

@@ -2,25 +2,31 @@ import { Box, IconButton, Avatar } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router-dom";
 import styles from "./Header.module.css";
+import { useNavigate } from "react-router-dom";
 
 const Header = () => {
   const navigate = useNavigate();
 
+  const handleBackClick = () => {
+    navigate(-1);
+  };
+
   return (
     <Box className={styles.headerContainer}>
-      {/* Adiciona o evento de clique para redirecionar para a página inicial */}
-      <IconButton 
-        color="inherit" 
+      <IconButton
+        color="inherit"
+        onClick={handleBackClick}
         sx={{ width: "30px", height: "30px" }}
-        onClick={() => navigate("/")} // Navega para a página inicial
       >
         <ArrowBackIcon />
       </IconButton>
-      
-      <Avatar 
+      <Avatar
         sx={{
-          width: 30,
-          height: 30,
+          width: "30px",
+          height: "30px",
+          color: "#fff",
+          backgroundColor: "#000",
+          border: "2px solid #fff",
         }}
       />
     </Box>

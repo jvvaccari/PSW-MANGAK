@@ -1,15 +1,13 @@
-// App.jsx
-import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import AllMangasPage from './pages/AllMangasPage';
-import MangaViewer from './pages/MangaViewer';
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import MangaLandingPage from "./pages/MangaLandingPage";
+// import AnotherPage from "./pages/AnotherPage";
 
 const App = () => {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<AllMangasPage />} />
-        <Route path="/manga/:id" element={<MangaViewer />} />
+        <Route path="/" element={<MangaLandingPage />} />
+        {/* <Route path="/another" element={<AnotherPage />} /> */}
       </Routes>
     </Router>
   );
