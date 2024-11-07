@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { Box, Typography, Rating } from "@mui/material";
 import TurnedInNotIcon from '@mui/icons-material/TurnedInNot';

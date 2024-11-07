@@ -7,7 +7,7 @@ const Header = () => {
   const navigate = useNavigate();
 
   const handleBackClick = () => {
-    navigate(-1);
+    navigate("/"); // Redireciona para a URL raiz
   };
 
   return (
