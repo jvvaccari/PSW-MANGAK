@@ -1,32 +1,51 @@
-// MangaList.jsx
-import styles from './MangaList.module.css';
 import PropTypes from "prop-types";
+import AspectRatio from "@mui/joy/AspectRatio";
+import Box from "@mui/joy/Box";
 
-const MangaList = ({ mangas, searchTerm, onMangaClick }) => {
-  const filteredMangas = mangas.filter(manga =>
+const MangaList = ({ mangas, searchTerm, onMangaClick, horizontalScroll = false }) => {
+  const filteredMangas = mangas.filter((manga) =>
     manga.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
     manga.author.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
-    <div className={styles.mangaListContainer}>
+    <Box
+      sx={{
+        display: "flex",
+        justifyContent: horizontalScroll ? "flex-start" : "center",
+        gap: 2,
+        maxWidth: "100%", // Limitar a largura da lista para caber no contêiner
+        overflowX: horizontalScroll ? "auto" : "visible",
+        whiteSpace: horizontalScroll ? "nowrap" : "normal",
+        scrollSnapType: horizontalScroll ? "x mandatory" : "none",
+        padding: "0 16px",
+        "::-webkit-scrollbar": { display: "none" },
+      }}
+    >
       {filteredMangas.length > 0 ? (
         filteredMangas.map((manga) => (
-          <div
+          <Box
             key={manga.id}
-            className={styles.mangaItem}
             onClick={() => onMangaClick(manga.id)}
-            style={{ cursor: 'pointer' }}
+            sx={{
+              minWidth: 80,
+              maxWidth: 110,
+              cursor: "pointer",
+              borderRadius: "8px",
+              boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
+              scrollSnapAlign: horizontalScroll ? "center" : "unset",
+              flexShrink: 0, // Impedir que o item de mangá encolha
+            }}
           >
-            <img src={manga.image} alt={manga.title} className={styles.mangaImage} />
-            <p className={styles.mangaTitle}>{manga.title}</p>
-            <p className={styles.mangaAuthor}>{manga.author}</p>
-          </div>
+            <AspectRatio ratio="2/3" sx={{ width: "100%" }}>
+              <img src={manga.image} alt={manga.title} />
+            </AspectRatio>
+          </Box>
         ))
       ) : (
-        <p className={styles.noResults}>Nenhum mangá encontrado</p>
+        <p>Nenhum mangá encontrado</p>
       )}
-    </div>
+    </Box>
   );
 };
 
@@ -42,6 +61,7 @@ MangaList.propTypes = {
   ).isRequired,
   searchTerm: PropTypes.string.isRequired,
   onMangaClick: PropTypes.func.isRequired,
-}
+  horizontalScroll: PropTypes.bool,
+};
 
 export default MangaList;

@@ -1,19 +1,58 @@
+/* Header.module.css */
 .headerContainer {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    padding: 8px;
-    background-color: #000; /* Ajuste a cor de fundo conforme necessário */
+    margin-bottom: 16px;
+    background-color: hsl(0, 0%, 0%);
+    color: #FFFFFF;
 }
 
 .backArrow {
     color: #FFFFFF;
     font-size: 1.5em;
-    transition: color 0.3s ease;
+    transition: color 0.3s ease, transform 0.3s ease;
+    display: flex;
+    align-items: center;
 }
 
 .backArrow:hover {
     color: #FFD700;
-    margin-top: 16px;
-    margin-bottom: 36px;
+    transform: scale(1.1);
+}
+
+.searchIcon {
+    color: #FFFFFF;
+    font-size: 1.5em;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.searchIcon:hover {
+    color: #FFD700;
+}
+
+.searchInput {
+    flex-grow: 1;
+    background-color: #333;
+    color: #FFFFFF !important;
+    padding: 2px 16px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1em;
+    max-width: 100%;
+    transition: max-width 0.3s ease;
+}
+
+.searchInput:focus {
+    outline: none;
+    max-width: 90%; /* Aumenta a largura ao focar */
+}
+
+.avatarIcon {
+    width: 1.4em !important;
+    height: 1.4em !important;
+    color: #fff !important;
+    background-color: #000 !important;
+    border: 2px solid #fff !important;
+    padding: 0 !important;
 }

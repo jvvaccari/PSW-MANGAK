@@ -10,7 +10,8 @@ const TagsSection = ({ data }) => {
         {section}
       </Typography>
       <Box className={styles.tagsContainer}>
-        <div className={styles.line}></div>
+        <Box sx={{borderTop: "1px solid #444",width: "244px",marginBottom: "16px"}}></Box>
+
         {tags.map((tag, index) => (
           <Chip key={index} label={tag} className={styles.tagChip} />
         ))}

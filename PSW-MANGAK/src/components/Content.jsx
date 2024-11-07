@@ -4,10 +4,10 @@ import TurnedInNotIcon from '@mui/icons-material/TurnedInNot';
 import styles from "./Content.module.css";
 
 const Content = ({ mangaImage, title, author, reviews, statusDot, publication }) => (
-  <Box className={styles.container}>
+  <Box className={styles.contentContainer}>
     <Box sx={{ display: "flex", flexDirection: "row", gap: "1em" }}>
-      <img src={mangaImage} alt={title} />
-      <Box className={styles.mangaData}>
+      <img src={mangaImage} alt={title} className={styles.image}/>
+      <Box className={styles.detailsContainer}>
         <Typography variant="h6" className={styles.manga_name}>
           {title}
         </Typography>
@@ -35,7 +35,7 @@ const Content = ({ mangaImage, title, author, reviews, statusDot, publication })
         </Box>
       </Box>
     </Box>
-    <Box sx={{ display: "flex",  margin: "12px 0px 6px 0px" }}>
+    <Box sx={{ display: "flex",  margin: "8px 0px 8px 0px" }}>
       <span className={styles.statusDot}>{statusDot}</span>
       <Typography variant="caption">
         {publication}
