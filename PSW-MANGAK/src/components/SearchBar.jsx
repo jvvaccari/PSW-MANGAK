@@ -1,6 +1,6 @@
 // SearchBar.jsx
-import React from 'react';
 import styles from './SearchBar.module.css';
+import PropTypes from 'prop-types';
 
 const SearchBar = ({ searchTerm, setSearchTerm }) => {
   const handleChange = (event) => {
@@ -18,6 +18,11 @@ const SearchBar = ({ searchTerm, setSearchTerm }) => {
       />
     </div>
   );
+};
+
+SearchBar.propTypes = {
+  searchTerm: PropTypes.string.isRequired,
+  setSearchTerm: PropTypes.string.isRequired,
 };
 
 export default SearchBar;

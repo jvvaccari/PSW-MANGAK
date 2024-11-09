@@ -18,8 +18,9 @@ const MangaList = ({ mangas, searchTerm, onMangaClick, horizontalScroll = false 
         overflowX: horizontalScroll ? "auto" : "visible",
         whiteSpace: horizontalScroll ? "nowrap" : "normal",
         scrollSnapType: horizontalScroll ? "x mandatory" : "none",
-        padding: "0 16px",
+        padding: "0 12px",
         "::-webkit-scrollbar": { display: "none" },
+        margin: "32px 0px",
       }}
     >
       {filteredMangas.length > 0 ? (
