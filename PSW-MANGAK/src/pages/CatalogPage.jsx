@@ -1,5 +1,5 @@
-// CatalogPage.js
 import { useState } from "react";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 import Header from "../components/Header";
 import MangaList from "../components/MangaList";
 import mangasData from "../BD/mangasData";
@@ -7,6 +7,11 @@ import { Box } from "@mui/material";
 
 function CatalogPage() {
   const [searchTerm, setSearchTerm] = useState("");
+  const navigate = useNavigate(); // Hook para navegação
+
+  const handleMangaClick = (id) => {
+    navigate(`/manga/${id}`); // Redireciona para a página de detalhes do mangá
+  };
 
   return (
     <Box
@@ -33,7 +38,7 @@ function CatalogPage() {
         <MangaList
           mangas={mangasData}
           searchTerm={searchTerm}
-          onMangaClick={(id) => console.log("Manga clicado:", id)}
+          onMangaClick={handleMangaClick} // Use a função de clique para redirecionamento
           horizontalScroll
         />
       </Box>
