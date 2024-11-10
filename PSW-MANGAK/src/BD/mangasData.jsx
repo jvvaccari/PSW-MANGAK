@@ -7,9 +7,22 @@ const mangas = [
         subCategory: "Ação",
         author: "Gege Akutami",
         description: "Yuji Itadori, um adolescente, entra no mundo da feitiçaria.",
-        status: "Em andamento",
+        yearPubli: "2021",
+        status: "EM ANDAMENTO",
         demographic: "Shonen",
-        tags: ["Ação", "Sobrenatural", "Terror"]
+        tags: ["Ação", "Sobrenatural", "Terror"],
+        saved: 0, // Contador de vezes salvo
+        imagesList: [
+            "https://criticalhits.com.br/wp-content/uploads/2021/04/jujutsu-kaisen-wallpaper-smartphone-09.jpg",
+            "https://wallpapers.com/images/hd/itadori-hand-jujutsu-kaisen-iphone-483xqcsa46culk5s.jpg",
+            "https://i.pinimg.com/736x/fa/8b/5a/fa8b5ae4ac6f2398b4e0cccdfcf80983.jpg",
+            "https://wallpapers.com/images/hd/sleeping-itadori-and-sukuna-reflection-jujutsu-kaisen-phone-iq0fzvcstqnjguj6.jpg",
+            "https://wallpaper4k.top/wp-content/uploads/2024/02/Fundo-de-Tela-Jujutsu-Kaisen-4k-para-Celular-Samsung-473x1024.jpg",
+            "https://wallpapers.com/images/hd/sukuna-markings-yuji-itadori-jujutsu-kaisen-phone-jcnto771g11t36s8.jpg",
+            "https://pbs.twimg.com/media/E12nRHkXIAMjmRO?format=jpg&name=large",
+            "https://wallpapers.com/images/hd/minimalist-yuji-itadori-fanart-jujutsu-kaisen-phone-04anu0a01q2hjzoh.jpg",
+            "https://wallpaper4k.top/wp-content/uploads/2024/02/Papel-de-Parede-4k-Jujutsu-Kaisen-Smartphone-473x1024.jpg",
+        ],
     },
     {
         id: 2,
@@ -19,9 +32,11 @@ const mangas = [
         subCategory: "Aventura",
         author: "Eiichiro Oda",
         description: "As aventuras de Monkey D. Luffy para encontrar o tesouro One Piece.",
+        yearPubli: "2021",
         status: "Em andamento",
         demographic: "Shonen",
-        tags: ["Aventura", "Comédia", "Fantasia"]
+        tags: ["Aventura", "Comédia", "Fantasia"],
+        saved: 0, // Contador de vezes salvo
     },
     {
         id: 3,
@@ -31,9 +46,11 @@ const mangas = [
         subCategory: "Comédia Romântica",
         author: "Aka Akasaka",
         description: "Dois gênios apaixonados competem para fazer o outro confessar primeiro.",
-        status: "Completo",
+        yearPubli: "2021",
+        status: "FINALIZADO",
         demographic: "Seinen",
-        tags: ["Romance", "Comédia", "Psicológico"]
+        tags: ["Romance", "Comédia", "Psicológico"],
+        saved: 0, // Contador de vezes salvo
     },
     {
         id: 4,
@@ -43,9 +60,11 @@ const mangas = [
         subCategory: "Ação",
         author: "Hajime Isayama",
         description: "Humanos enfrentam gigantes devoradores em um mundo pós-apocalíptico.",
+        yearPubli: "2021",
         status: "Completo",
         demographic: "Shonen",
-        tags: ["Ação", "Drama", "Sobrenatural"]
+        tags: ["Ação", "Drama", "Sobrenatural"],
+        saved: 0, // Contador de vezes salvo
     },
     {
         id: 5,
@@ -55,9 +74,11 @@ const mangas = [
         subCategory: "Ação",
         author: "Kohei Horikoshi",
         description: "Izuku Midoriya tenta se tornar o maior herói do mundo.",
+        yearPubli: "2021",
         status: "Em andamento",
         demographic: "Shonen",
-        tags: ["Ação", "Aventura", "Fantasia"]
+        tags: ["Ação", "Aventura", "Fantasia"],
+        saved: 0, // Contador de vezes salvo
     },
     {
         id: 6,
@@ -67,9 +88,11 @@ const mangas = [
         subCategory: "Mistério",
         author: "Tsugumi Ohba",
         description: "Um estudante encontra um caderno que permite matar qualquer pessoa.",
+        yearPubli: "2021",
         status: "Completo",
         demographic: "Shonen",
-        tags: ["Mistério", "Suspense", "Psicológico"]
+        tags: ["Mistério", "Suspense", "Psicológico"],
+        saved: 0, // Contador de vezes salvo
     },
     {
         id: 7,
@@ -79,9 +102,11 @@ const mangas = [
         subCategory: "Horror",
         author: "Sui Ishida",
         description: "Ken Kaneki vira meio-ghoul após um encontro mortal.",
+        yearPubli: "2021",
         status: "Completo",
         demographic: "Seinen",
-        tags: ["Horror", "Sobrenatural", "Drama"]
+        tags: ["Horror", "Sobrenatural", "Drama"],
+        saved: 0, // Contador de vezes salvo
     },
     {
         id: 8,
@@ -91,9 +116,11 @@ const mangas = [
         subCategory: "Ação",
         author: "Masashi Kishimoto",
         description: "Naruto Uzumaki, um jovem ninja, busca reconhecimento e se tornar Hokage.",
+        yearPubli: "2021",
         status: "Completo",
         demographic: "Shonen",
-        tags: ["Ação", "Aventura", "Fantasia"]
+        tags: ["Ação", "Aventura", "Fantasia"],
+        saved: 0, // Contador de vezes salvo
     },
     {
         id: 9,
@@ -103,9 +130,11 @@ const mangas = [
         subCategory: "Ação",
         author: "Tite Kubo",
         description: "Ichigo Kurosaki ganha poderes de shinigami e protege os vivos dos Hollows.",
+        yearPubli: "2021",
         status: "Completo",
         demographic: "Shonen",
-        tags: ["Ação", "Sobrenatural", "Aventura"]
+        tags: ["Ação", "Sobrenatural", "Aventura"],
+        saved: 0, // Contador de vezes salvo
     },
     {
         id: 10,
@@ -115,10 +144,12 @@ const mangas = [
         subCategory: "Aventura",
         author: "Yoshihiro Togashi",
         description: "Gon Freecss embarca em uma jornada para se tornar um Hunter e encontrar seu pai.",
+        yearPubli: "2021",
         status: "Hiato",
         demographic: "Shonen",
-        tags: ["Aventura", "Ação", "Fantasia"]
+        tags: ["Aventura", "Ação", "Fantasia"],
+        saved: 0, // Contador de vezes salvo
     }
-  ];
-  
-  export default mangas;
+];
+
+export default mangas;

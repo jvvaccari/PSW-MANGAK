@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import styles from "./Header.module.css";
 import PropTypes from "prop-types";
 
-const Header = ({ searchTerm, setSearchTerm }) => {
+const Header = ({ searchTerm = "", setSearchTerm = () => {} }) => {
   const navigate = useNavigate();
   const [showSearch, setShowSearch] = useState(false);
 
@@ -25,14 +25,14 @@ const Header = ({ searchTerm, setSearchTerm }) => {
         <IconButton
           color="inherit"
           onClick={handleBackClick}
-          sx={{ width: "30px", height: "30px" }}
+          sx={{ width: "30px", height: "30px",padding: "0px" }}
         >
           <ArrowBackIcon />
         </IconButton>
       </Box>
 
       {/* Campo de pesquisa estilizado */}
-      <Box sx={{ display: "flex", alignItems: "center", flex: 6, justifyContent: "flex-end", gap: "6px"}}>
+      <Box sx={{ display: "flex", alignItems: "center", flex: 6, justifyContent: "flex-end", gap: "6px" }}>
         {showSearch ? (
           <InputBase
             value={searchTerm}
@@ -52,17 +52,15 @@ const Header = ({ searchTerm, setSearchTerm }) => {
           </IconButton>
         )}
 
-        {!showSearch && (
-            <Avatar className={styles.avatarIcon} />
-        )}
+        {!showSearch && <Avatar className={styles.avatarIcon} />}
       </Box>
     </Box>
   );
 };
 
 Header.propTypes = {
-  searchTerm: PropTypes.string.isRequired,
-  setSearchTerm: PropTypes.func.isRequired,
+  searchTerm: PropTypes.string,
+  setSearchTerm: PropTypes.func,
 };
 
 export default Header;

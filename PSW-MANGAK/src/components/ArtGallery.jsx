@@ -4,7 +4,7 @@ import ImageList from "@mui/material/ImageList";
 import ImageListItem from "@mui/material/ImageListItem";
 import styles from "./ArtGallery.module.css"
 
-function ArtGallery({ imageList }) {
+function ArtGallery({ imagesList }) {
   return (
     <Box sx={{ maxWidth: "56em"}}>
       <Typography variant="subtitle1" className={styles.galleryTitle}>
@@ -13,7 +13,7 @@ function ArtGallery({ imageList }) {
       </Typography>
       
       <ImageList variant="masonry" cols={3} gap={12} sx={{marginTop: "32px"}}>
-        {imageList.map((img, index) => (
+        {imagesList.map((img, index) => (
           <ImageListItem key={index}>
             <img
               src={typeof img === 'string' ? img : img.default}
@@ -29,7 +29,7 @@ function ArtGallery({ imageList }) {
 }
 
 ArtGallery.propTypes = {
-  imageList: PropTypes.arrayOf(PropTypes.any).isRequired,
+  imagesList: PropTypes.arrayOf(PropTypes.any).isRequired,
 };
 
 export default ArtGallery;

@@ -38,7 +38,7 @@ function CatalogPage() {
         <MangaList
           mangas={mangasData}
           searchTerm={searchTerm}
-          onMangaClick={handleMangaClick} // Use a função de clique para redirecionamento
+          onMangaClick={handleMangaClick} 
           horizontalScroll
         />
       </Box>

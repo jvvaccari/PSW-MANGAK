@@ -1,3 +1,4 @@
+// MangaLandingPage.jsx
 import Actions from "../components/Actions";
 import ArtGallery from "../components/ArtGallery";
 import Content from "../components/Content";
@@ -5,18 +6,9 @@ import Description from "../components/Description";
 import Header from "../components/Header";
 import TagsSection from "../components/TagsSection";
 import { Box } from "@mui/material";
-import chainsawCover from "../assets/img/Chainsaw_Man_Cover_Volume_1.svg";
-import img1 from "../assets/img/chainsaw1.jpg";
-import img2 from '../assets/img/chainsaw2.jpg';
-import img3 from '../assets/img/chainsaw3.jpeg';
-import img4 from '../assets/img/chainsaw4.webp';
-import img5 from '../assets/img/chainsaw5.jpg';
-import img6 from '../assets/img/chainsaw6.jpeg';
-import img7 from '../assets/img/chainsaw7.jpg';
-import img8 from '../assets/img/chainsaw8.webp';
-import img9 from '../assets/img/chainsaw9.webp';
+import PropTypes from "prop-types";
 
-function MangaLandingPage() {
+function MangaLandingPage({ searchTerm, setSearchTerm, manga }) {
   return (
     <Box
       sx={{
@@ -29,57 +21,67 @@ function MangaLandingPage() {
     >
       <Box
         sx={{
-          width: "100%",          
+          width: "100%",
           bgcolor: "#000",
-          padding: "16px",        
+          padding: "16px",
           color: "#fff",
         }}
       >
+        <Header searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
 
-        <Header/>
-
-        <Content
-          mangaImage={chainsawCover}
-          title="Chainsaw Man"
-          author="Tatsuki Fujimoto"
-          rating="9.30"
-          reviews="10k"
-          statusDot="•"
-          publication="PUBLICATION: 2021, ONGOING"
-        />
+        {manga && (
+          <Content
+            manga={{
+              image: manga.image || "", // Valor padrão vazio caso a imagem esteja ausente
+              title: manga.title || "Título Desconhecido",
+              author: manga.author || "Autor Desconhecido",
+              rating: manga.rating || 0,
+              reviews: manga.reviews || 0,
+              status: manga.status || "Status Desconhecido",
+              yearPubli: manga.yearPubli || "????",
+            }}
+          />
+        )}
 
         <Actions />
 
-        <Description
-          text="Broke young man + chainsaw demon = Chainsaw Man! Denji was a small-time devil hunter just trying to survive in a harsh world. After being killed on a job, he is revived by his pet devil-dog Pochita and becomes something new and dangerous—Chainsaw Man!"
-        />
+        {manga && <Description text={manga.description} />}
 
-        {
+        {manga &&
           [
-            {section: "Genres", tags: ["Action", "Adventure", "Fantasy"]},
-            {section: "Demographic", tags: ["Shounen", "Seinen", "Josei"]},
-            {section: "Buy", tags: ["Amazon", "Barnes & Noble", "Book Depository"]},
-            {section: "Track", tags: ["MyAnimeList", "AniList", "Kitsu"]}
-          ].map((data) => (
-            <TagsSection key={data.section} data={data} />
-          ))
-        }
-  
-        <ArtGallery imageList={[
-          img1,
-          img2,
-          img3,
-          img4,
-          img5,
-          img6,
-          img7,
-          img8,
-          img9,
-        ]}/>
-      
+            { section: "Genres", tags: manga.tags || [] },
+            { section: "Demographic", tags: [manga.demographic || ""] },
+            { section: "Buy", tags: manga.buy || [] },
+            { section: "Track", tags: manga.track || [] },
+          ].map((data, index) => (
+            <TagsSection key={index} data={data} />
+          ))}
+
+        <ArtGallery imagesList={manga?.imagesList || []} />
       </Box>
     </Box>
   );
 }
+
+MangaLandingPage.propTypes = {
+  manga: PropTypes.shape({
+    id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+    title: PropTypes.string.isRequired,
+    image: PropTypes.string.isRequired,
+    author: PropTypes.string.isRequired,
+    rating: PropTypes.number,
+    reviews: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    status: PropTypes.string.isRequired,
+    yearPubli: PropTypes.string,
+    demographic: PropTypes.string,
+    tags: PropTypes.arrayOf(PropTypes.string),
+    imagesList: PropTypes.arrayOf(PropTypes.string),
+    description: PropTypes.string,
+    buy: PropTypes.arrayOf(PropTypes.string),
+    track: PropTypes.arrayOf(PropTypes.string),
+  }).isRequired,
+  searchTerm: PropTypes.string,
+  setSearchTerm: PropTypes.func,
+};
 
 export default MangaLandingPage;

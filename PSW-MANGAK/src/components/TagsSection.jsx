@@ -9,7 +9,7 @@ const TagsSection = ({ data }) => {
       <Typography variant="subtitle1" className={styles.sectionTitle}>
         {section}
       </Typography>
-      <Box className={styles.tagsContainer}>
+      <Box className={styles.tagsContainer} sx={{margin: "16px 0"}}>
         <Box sx={{borderTop: "1px solid #444",width: "244px",marginBottom: "16px"}}></Box>
 
         {tags.map((tag, index) => (

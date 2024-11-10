@@ -1,6 +1,7 @@
 import PropTypes from "prop-types";
 import AspectRatio from "@mui/joy/AspectRatio";
 import Box from "@mui/joy/Box";
+import Typography from "@mui/material/Typography";
 
 const MangaList = ({ mangas, searchTerm, onMangaClick, horizontalScroll = false }) => {
   const filteredMangas = mangas.filter((manga) =>
@@ -14,7 +15,7 @@ const MangaList = ({ mangas, searchTerm, onMangaClick, horizontalScroll = false 
         display: "flex",
         justifyContent: horizontalScroll ? "flex-start" : "center",
         gap: 2,
-        maxWidth: "100%", // Limitar a largura da lista para caber no contêiner
+        maxWidth: "100%",
         overflowX: horizontalScroll ? "auto" : "visible",
         whiteSpace: horizontalScroll ? "nowrap" : "normal",
         scrollSnapType: horizontalScroll ? "x mandatory" : "none",
@@ -28,23 +29,26 @@ const MangaList = ({ mangas, searchTerm, onMangaClick, horizontalScroll = false 
           <Box
             key={manga.id}
             onClick={() => onMangaClick(manga.id)}
+            aria-label={`View details for ${manga.title}`}
             sx={{
-              minWidth: 80,
-              maxWidth: 110,
+              minWidth: { xs: 70, sm: 80 },
+              maxWidth: { xs: 100, sm: 110 },
               cursor: "pointer",
               borderRadius: "8px",
               boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
               scrollSnapAlign: horizontalScroll ? "center" : "unset",
-              flexShrink: 0, // Impedir que o item de mangá encolha
+              flexShrink: 0,
             }}
           >
             <AspectRatio ratio="2/3" sx={{ width: "100%" }}>
-              <img src={manga.image} alt={manga.title} />
+              <img src={manga.image} alt={manga.title} style={{ borderRadius: "8px" }} />
             </AspectRatio>
           </Box>
         ))
       ) : (
-        <p>Nenhum mangá encontrado</p>
+        <Typography variant="body2" color="textSecondary" align="center" sx={{ marginTop: "16px" }}>
+          Nenhum mangá encontrado
+        </Typography>
       )}
     </Box>
   );

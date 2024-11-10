@@ -10,7 +10,7 @@
 }
 
 .image {
-    width: 100%;
+    width: 40%;
     height: auto;
     max-width: 300px; /* Define um limite para o tamanho da imagem em telas maiores */
     border: 1px solid #000;
@@ -40,8 +40,7 @@
 }
 
 .statusDot {
-    margin-top: -11px;
+    margin-top: -3px;
     padding-right: 2px;
     font-size: 24px;
-    color: #90ee90;
 }
