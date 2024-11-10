@@ -3,6 +3,7 @@
     display: flex;
     gap: 16px;
     align-items: flex-start;
+    flex-direction: column;
     color: var(--text-color);
     flex-wrap: wrap; /* Permite que os elementos se ajustem em telas menores */
     margin-top: 24px;
@@ -12,7 +13,7 @@
 .image {
     width: 40%;
     height: auto;
-    max-width: 300px; /* Define um limite para o tamanho da imagem em telas maiores */
+    max-width: 300px;
     border: 1px solid #000;
 }
 

@@ -31,7 +31,7 @@ const Content = ({ manga }) => {
           <Typography variant="body2" className={styles.author}>
             {manga.author}
           </Typography>
-          <Box sx={{ display: "flex", gap: "4px", marginTop: "3.6em" }}>
+          <Box sx={{ display: "flex", gap: "4px", justifyContent: "space-space-around",marginTop: "0.5em"}}>
             <Rating
               name="size-small"
               defaultValue={manga.rating || 2}

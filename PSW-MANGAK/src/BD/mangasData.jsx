@@ -61,7 +61,7 @@ const mangas = [
         author: "Hajime Isayama",
         description: "Humanos enfrentam gigantes devoradores em um mundo pós-apocalíptico.",
         yearPubli: "2021",
-        status: "Completo",
+        status: "FINALIZADO",
         demographic: "Shonen",
         tags: ["Ação", "Drama", "Sobrenatural"],
         saved: 0, // Contador de vezes salvo
@@ -89,7 +89,7 @@ const mangas = [
         author: "Tsugumi Ohba",
         description: "Um estudante encontra um caderno que permite matar qualquer pessoa.",
         yearPubli: "2021",
-        status: "Completo",
+        status: "FINALIZADO",
         demographic: "Shonen",
         tags: ["Mistério", "Suspense", "Psicológico"],
         saved: 0, // Contador de vezes salvo
@@ -103,7 +103,7 @@ const mangas = [
         author: "Sui Ishida",
         description: "Ken Kaneki vira meio-ghoul após um encontro mortal.",
         yearPubli: "2021",
-        status: "Completo",
+        status: "FINALIZADO",
         demographic: "Seinen",
         tags: ["Horror", "Sobrenatural", "Drama"],
         saved: 0, // Contador de vezes salvo
@@ -117,7 +117,7 @@ const mangas = [
         author: "Masashi Kishimoto",
         description: "Naruto Uzumaki, um jovem ninja, busca reconhecimento e se tornar Hokage.",
         yearPubli: "2021",
-        status: "Completo",
+        status: "FINALIZADO",
         demographic: "Shonen",
         tags: ["Ação", "Aventura", "Fantasia"],
         saved: 0, // Contador de vezes salvo
@@ -131,7 +131,7 @@ const mangas = [
         author: "Tite Kubo",
         description: "Ichigo Kurosaki ganha poderes de shinigami e protege os vivos dos Hollows.",
         yearPubli: "2021",
-        status: "Completo",
+        status: "FINALIZADO",
         demographic: "Shonen",
         tags: ["Ação", "Sobrenatural", "Aventura"],
         saved: 0, // Contador de vezes salvo
@@ -145,7 +145,7 @@ const mangas = [
         author: "Yoshihiro Togashi",
         description: "Gon Freecss embarca em uma jornada para se tornar um Hunter e encontrar seu pai.",
         yearPubli: "2021",
-        status: "Hiato",
+        status: "Em Hiato",
         demographic: "Shonen",
         tags: ["Aventura", "Ação", "Fantasia"],
         saved: 0, // Contador de vezes salvo
