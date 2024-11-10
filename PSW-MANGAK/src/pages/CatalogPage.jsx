@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import MangaList from "../components/MangaList";
 import mangasData from "../BD/mangasData";
@@ -7,10 +7,10 @@ import { Box } from "@mui/material";
 
 function CatalogPage() {
   const [searchTerm, setSearchTerm] = useState("");
-  const navigate = useNavigate(); // Hook para navegação
+  const navigate = useNavigate();
 
   const handleMangaClick = (id) => {
-    navigate(`/manga/${id}`); // Redireciona para a página de detalhes do mangá
+    navigate(`/manga/${id}`); // Corrige o uso da template string
   };
 
   return (
@@ -38,7 +38,7 @@ function CatalogPage() {
         <MangaList
           mangas={mangasData}
           searchTerm={searchTerm}
-          onMangaClick={handleMangaClick} 
+          onMangaClick={handleMangaClick}
           horizontalScroll
         />
       </Box>

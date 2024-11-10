@@ -1,4 +1,3 @@
-// SearchBar.jsx
 import styles from './SearchBar.module.css';
 import PropTypes from 'prop-types';
 
@@ -22,7 +21,7 @@ const SearchBar = ({ searchTerm, setSearchTerm }) => {
 
 SearchBar.propTypes = {
   searchTerm: PropTypes.string.isRequired,
-  setSearchTerm: PropTypes.string.isRequired,
+  setSearchTerm: PropTypes.func.isRequired, // Alterado para func
 };
 
 export default SearchBar;

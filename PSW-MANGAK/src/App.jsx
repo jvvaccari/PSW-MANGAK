@@ -1,5 +1,5 @@
 // App.js
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes, useParams } from "react-router-dom";
 import CatalogPage from "./pages/CatalogPage";
 import MangaLandingPage from "./pages/MangaLandingPage";
@@ -9,6 +9,12 @@ import mangas from "./BD/mangasData";
 const MangaPageWrapper = ({ searchTerm, setSearchTerm }) => {
   const { id } = useParams();
   const manga = mangas.find((m) => m.id.toString() === id);
+
+  useEffect(() => {
+    if (searchTerm) {
+      setSearchTerm("");
+    }
+  }, [searchTerm, setSearchTerm]);
 
   return (
     <MangaLandingPage
