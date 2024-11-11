@@ -19,7 +19,6 @@ const groupByGenres = (mangas) => {
 const MangaList = ({ mangas, searchTerm, onMangaClick }) => {
   const lowerCaseSearchTerm = searchTerm.toLowerCase();
 
-  // Filtrar mangás com base nos critérios de pesquisa: title, author, genres e demographic
   const filteredMangas = mangas.filter((manga) =>
     manga.title.toLowerCase().includes(lowerCaseSearchTerm) ||
     manga.author.toLowerCase().includes(lowerCaseSearchTerm) ||
@@ -27,7 +26,6 @@ const MangaList = ({ mangas, searchTerm, onMangaClick }) => {
     (manga.genres && manga.genres.some((genre) => genre.toLowerCase().includes(lowerCaseSearchTerm)))
   );
 
-  // Agrupar os mangás filtrados por gênero
   const groupedMangas = groupByGenres(filteredMangas);
 
   return (
