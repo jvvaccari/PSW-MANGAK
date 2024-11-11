@@ -19,6 +19,15 @@ const groupByGenres = (mangas) => {
 const MangaList = ({ mangas, searchTerm, onMangaClick }) => {
   const lowerCaseSearchTerm = searchTerm.toLowerCase();
 
+  // Agrupar os mangás por gênero
+  const groupedMangas = groupByGenres(mangas);
+
+  // Verificar se o termo de pesquisa corresponde exatamente a um gênero
+  const exactGenreMatch = Object.keys(groupedMangas).find(
+    (genre) => genre.toLowerCase() === lowerCaseSearchTerm
+  );
+
+  // Filtrar os mangás com base na pesquisa
   const filteredMangas = mangas.filter((manga) =>
     manga.title.toLowerCase().includes(lowerCaseSearchTerm) ||
     manga.author.toLowerCase().includes(lowerCaseSearchTerm) ||
@@ -26,12 +35,13 @@ const MangaList = ({ mangas, searchTerm, onMangaClick }) => {
     (manga.genres && manga.genres.some((genre) => genre.toLowerCase().includes(lowerCaseSearchTerm)))
   );
 
-  const groupedMangas = groupByGenres(filteredMangas);
+  // Determinar os gêneros a serem exibidos com base na correspondência exata do termo
+  const genresToDisplay = exactGenreMatch ? { [exactGenreMatch]: groupedMangas[exactGenreMatch] } : groupByGenres(filteredMangas);
 
   return (
     <Box>
-      {Object.keys(groupedMangas).length > 0 ? (
-        Object.keys(groupedMangas).map((genre) => (
+      {Object.keys(genresToDisplay).length > 0 ? (
+        Object.keys(genresToDisplay).map((genre) => (
           <Box key={genre} sx={{ marginBottom: "32px" }}>
             <Box sx={{ borderTop: "1px solid #444", width: "288px", marginBottom: "16px", alignSelf: "center" }}></Box>
             <Typography
@@ -57,7 +67,7 @@ const MangaList = ({ mangas, searchTerm, onMangaClick }) => {
                 "::-webkit-scrollbar": { display: "none" },
               }}
             >
-              {groupedMangas[genre].map((manga) => (
+              {genresToDisplay[genre].map((manga) => (
                 <Box
                   key={manga.id}
                   onClick={() => onMangaClick(manga.id)}
