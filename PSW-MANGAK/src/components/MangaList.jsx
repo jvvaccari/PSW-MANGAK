@@ -3,53 +3,84 @@ import AspectRatio from "@mui/joy/AspectRatio";
 import Box from "@mui/joy/Box";
 import Typography from "@mui/material/Typography";
 
-const MangaList = ({ mangas, searchTerm, onMangaClick, horizontalScroll = false }) => {
+const groupByGenres = (mangas) => {
+  return mangas.reduce((groups, manga) => {
+    const genres = manga.genres || [];
+    genres.forEach((genre) => {
+      if (!groups[genre]) {
+        groups[genre] = [];
+      }
+      groups[genre].push(manga);
+    });
+    return groups;
+  }, {});
+};
+
+const MangaList = ({ mangas, searchTerm, onMangaClick }) => {
+  // Filtra os mangás pelo termo de pesquisa (nome, autor, demografia ou gênero)
   const filteredMangas = mangas.filter((manga) =>
     manga.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    manga.author.toLowerCase().includes(searchTerm.toLowerCase())
+    manga.author.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    manga.demographic.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (manga.genres && manga.genres.some((genre) =>
+      genre.toLowerCase().includes(searchTerm.toLowerCase())
+    ))
   );
 
+  // Agrupa os mangás filtrados por gênero
+  const groupedMangas = groupByGenres(filteredMangas);
+
   return (
-    <Box
-      sx={{
-        display: "flex",
-        justifyContent: horizontalScroll ? "flex-start" : "center",
-        gap: 2,
-        maxWidth: "100%",
-        overflowX: horizontalScroll ? "auto" : "visible",
-        whiteSpace: horizontalScroll ? "nowrap" : "normal",
-        scrollSnapType: horizontalScroll ? "x mandatory" : "none",
-        padding: "0 12px",
-        "::-webkit-scrollbar": { display: "none" },
-        margin: "32px 0px",
-      }}
-    >
-      {filteredMangas.length > 0 ? (
-        filteredMangas.map((manga) => (
-          <Box
-            key={manga.id}
-            onClick={() => onMangaClick(manga.id)}
-            aria-label={`View details for ${manga.title}`}
+    <Box>
+      {Object.keys(groupedMangas).map((genre) => (
+        <Box key={genre} sx={{ marginBottom: "32px" }}>
+          <Box sx={{ borderTop: "1px solid #444", width: "288px", marginBottom: "12px", alignSelf: "center" }}></Box>
+          <Typography
+            variant="subtitle1"
             sx={{
-              minWidth: { xs: 70, sm: 80 },
-              maxWidth: { xs: 100, sm: 110 },
-              cursor: "pointer",
-              borderRadius: "8px",
-              boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
-              scrollSnapAlign: horizontalScroll ? "center" : "unset",
-              flexShrink: 0,
+              fontWeight: "bold",
+              marginBottom: "12px",
+              fontSize: "1em",
+              color: "#FFFFFF !important",
             }}
           >
-            <AspectRatio ratio="2/3" sx={{ width: "100%" }}>
-              <img src={manga.image} alt={manga.title} style={{ borderRadius: "8px" }} />
-            </AspectRatio>
+            {genre}
+          </Typography>
+          <Box
+            sx={{
+              display: "flex",
+              gap: 2,
+              maxWidth: "100%",
+              overflowX: "auto",
+              whiteSpace: "nowrap",
+              scrollSnapType: "x mandatory",
+              paddingLeft: "6px",
+              "::-webkit-scrollbar": { display: "none" },
+            }}
+          >
+            {groupedMangas[genre].map((manga) => (
+              <Box
+                key={manga.id}
+                onClick={() => onMangaClick(manga.id)}
+                aria-label={`View details for ${manga.title}`}
+                sx={{
+                  minWidth: { xs: 70, sm: 80 },
+                  maxWidth: { xs: 100, sm: 110 },
+                  cursor: "pointer",
+                  borderRadius: "8px",
+                  boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
+                  scrollSnapAlign: "center",
+                  flexShrink: 0,
+                }}
+              >
+                <AspectRatio ratio="2/3" sx={{ width: "100%" }}>
+                  <img src={manga.image} alt={manga.title} style={{ borderRadius: "8px" }} />
+                </AspectRatio>
+              </Box>
+            ))}
           </Box>
-        ))
-      ) : (
-        <Typography variant="body2" color="textSecondary" align="center" sx={{ marginTop: "16px" }}>
-          Nenhum mangá encontrado
-        </Typography>
-      )}
+        </Box>
+      ))}
     </Box>
   );
 };
@@ -61,12 +92,12 @@ MangaList.propTypes = {
       title: PropTypes.string.isRequired,
       author: PropTypes.string.isRequired,
       image: PropTypes.string.isRequired,
-      tags: PropTypes.arrayOf(PropTypes.string),
+      genres: PropTypes.arrayOf(PropTypes.string),
+      demographic: PropTypes.string.isRequired,
     })
   ).isRequired,
   searchTerm: PropTypes.string.isRequired,
   onMangaClick: PropTypes.func.isRequired,
-  horizontalScroll: PropTypes.bool,
 };
 
 export default MangaList;

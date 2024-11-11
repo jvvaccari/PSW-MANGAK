@@ -32,11 +32,10 @@ function MangaLandingPage({ searchTerm, setSearchTerm, manga }) {
         {manga && (
           <Content
             manga={{
-              image: manga.image || "", // Valor padrão vazio caso a imagem esteja ausente
+              image: manga.image || "",
               title: manga.title || "Título Desconhecido",
               author: manga.author || "Autor Desconhecido",
               rating: manga.rating || 0,
-              reviews: manga.reviews || 0,
               status: manga.status || "Status Desconhecido",
               yearPubli: manga.yearPubli || "????",
             }}
@@ -49,15 +48,14 @@ function MangaLandingPage({ searchTerm, setSearchTerm, manga }) {
 
         {manga &&
           [
-            { section: "Genres", tags: manga.tags || [] },
+            { section: "Genres", tags: manga.genres || [] },
             { section: "Demographic", tags: [manga.demographic || ""] },
-            { section: "Buy", tags: manga.buy || [] },
-            { section: "Track", tags: manga.track || [] },
+            { section: "Buy", tags: manga.retail || [] }, // Alterado para passar manga.retail
           ].map((data, index) => (
             <TagsSection key={index} data={data} />
           ))}
 
-        <ArtGallery imagesList={manga?.imagesList || []} />
+        <ArtGallery artsList={manga?.artsList || []} />
       </Box>
     </Box>
   );
@@ -70,15 +68,18 @@ MangaLandingPage.propTypes = {
     image: PropTypes.string.isRequired,
     author: PropTypes.string.isRequired,
     rating: PropTypes.number,
-    reviews: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     status: PropTypes.string.isRequired,
     yearPubli: PropTypes.string,
     demographic: PropTypes.string,
-    tags: PropTypes.arrayOf(PropTypes.string),
-    imagesList: PropTypes.arrayOf(PropTypes.string),
+    genres: PropTypes.arrayOf(PropTypes.string),
+    artsList: PropTypes.arrayOf(PropTypes.string),
     description: PropTypes.string,
-    buy: PropTypes.arrayOf(PropTypes.string),
-    track: PropTypes.arrayOf(PropTypes.string),
+    retail: PropTypes.arrayOf(
+      PropTypes.shape({
+        name: PropTypes.string.isRequired,
+        url: PropTypes.string.isRequired,
+      })
+    ),
   }).isRequired,
   searchTerm: PropTypes.string,
   setSearchTerm: PropTypes.func,

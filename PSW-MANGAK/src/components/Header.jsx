@@ -21,18 +21,17 @@ const Header = ({ searchTerm = "", setSearchTerm = () => {} }) => {
   return (
     <Box className={styles.headerContainer}>
       {/* Ícone de voltar */}
-      <Box sx={{ display: "flex", alignItems: "center", flex: 1 }}>
+      <Box sx={{ display: "flex", alignItems: "center", flex: 0 }}>
         <IconButton
           color="inherit"
           onClick={handleBackClick}
-          sx={{ width: "30px", height: "30px",padding: "0px" }}
+          sx={{ width: "30px", height: "30px",padding: "0px",marginLeft: "-5px"}}
         >
           <ArrowBackIcon />
         </IconButton>
       </Box>
 
-      {/* Campo de pesquisa estilizado */}
-      <Box sx={{ display: "flex", alignItems: "center", flex: 6, justifyContent: "flex-end", gap: "6px" }}>
+      <Box sx={{ display: "flex", alignItems: "center", flex: 12, justifyContent: "flex-end", gap: "6px" }}>
         {showSearch ? (
           <InputBase
             value={searchTerm}

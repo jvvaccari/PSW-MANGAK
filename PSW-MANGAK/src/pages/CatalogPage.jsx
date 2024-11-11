@@ -3,14 +3,14 @@ import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import MangaList from "../components/MangaList";
 import mangasData from "../BD/mangasData";
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 
 function CatalogPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
 
   const handleMangaClick = (id) => {
-    navigate(`/manga/${id}`); // Corrige o uso da template string
+    navigate(`/manga/${id}`);
   };
 
   return (
@@ -34,6 +34,10 @@ function CatalogPage() {
         }}
       >
         <Header searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+
+        <Typography variant="subtitle1" sx={{marginBottom: "6px",fontWeight: 700}}>
+          Procura por Categoria
+        </Typography>
 
         <MangaList
           mangas={mangasData}
