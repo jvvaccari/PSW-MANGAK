@@ -25,7 +25,7 @@ const TagsSection = ({ data }) => {
                 sx={{
                   margin: "0 1.2em 1.2em 0",
                   padding: "6px 12px",
-                  backgroundColor: "#FF0037",
+                  backgroundColor: "#1E1E1E",
                   color: "#fff",
                   textTransform: "none",
                 }}

@@ -1,14 +1,18 @@
+// Header.jsx
 import { useState } from "react";
-import { Box, IconButton, Avatar, InputBase } from "@mui/material";
+import { Box, IconButton, Avatar, InputBase, Typography } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import SearchIcon from "@mui/icons-material/Search";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import styles from "./Header.module.css";
 import PropTypes from "prop-types";
 
 const Header = ({ searchTerm = "", setSearchTerm = () => {} }) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [showSearch, setShowSearch] = useState(false);
+
+  const isCatalogPage = location.pathname === "/";
 
   const handleBackClick = () => {
     navigate("/");
@@ -20,19 +24,20 @@ const Header = ({ searchTerm = "", setSearchTerm = () => {} }) => {
 
   return (
     <Box className={styles.headerContainer}>
-      {/* Ícone de voltar */}
       <Box sx={{ display: "flex", alignItems: "center", flex: 0 }}>
-        <IconButton
-          color="inherit"
-          onClick={handleBackClick}
-          sx={{ width: "30px", height: "30px",padding: "0px",marginLeft: "-5px"}}
-        >
-          <ArrowBackIcon />
-        </IconButton>
+        {!isCatalogPage && (
+          <IconButton
+            color="inherit"
+            onClick={handleBackClick}
+            sx={{ width: "30px", height: "30px", padding: "0px", marginLeft: "-5px" }}
+          >
+            <ArrowBackIcon />
+          </IconButton>
+        )}
       </Box>
 
-      <Box sx={{ display: "flex", alignItems: "center", flex: 12, justifyContent: "flex-end", gap: "6px" }}>
-        {showSearch ? (
+      <Box sx={{ display: "flex", alignItems: "center", flex: 1 }}>
+        {isCatalogPage && showSearch ? (
           <InputBase
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -40,8 +45,25 @@ const Header = ({ searchTerm = "", setSearchTerm = () => {} }) => {
             className={styles.searchInput}
             onBlur={() => setShowSearch(false)}
             autoFocus
+            sx={{
+              width: "100%",
+              backgroundColor: "#1E1E1E",
+              padding: "0 10px",
+              borderRadius: "5px",
+            }}
           />
-        ) : (
+        ) : isCatalogPage && !showSearch ? (
+          <Typography
+            variant="subtitle1"
+            sx={{ fontWeight: "bold", color: "#FF0000" }}
+          >
+            MANGAK
+          </Typography>
+        ) : null}
+      </Box>
+
+      <Box sx={{ display: "flex", alignItems: "center", flex: 0, justifyContent: "flex-end", gap: "6px" }}>
+        {isCatalogPage && !showSearch && (
           <IconButton
             color="inherit"
             onClick={handleSearchClick}
@@ -50,7 +72,6 @@ const Header = ({ searchTerm = "", setSearchTerm = () => {} }) => {
             <SearchIcon className={styles.searchIcon} />
           </IconButton>
         )}
-
         {!showSearch && <Avatar className={styles.avatarIcon} />}
       </Box>
     </Box>
