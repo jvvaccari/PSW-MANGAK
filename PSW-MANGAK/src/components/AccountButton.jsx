@@ -4,12 +4,12 @@ import { Button } from '@mui/material';
 import { ArrowForwardIos } from '@mui/icons-material';
 import styles from './styles';
 
-function AccountButton({ label, className }) {
+function AccountButton({ label, onClick }) {
   return (
     <Button
       fullWidth
       variant="contained"
-      className={className}
+      onClick={onClick}
       style={{
         backgroundColor: styles.bgDataColor,
         color: styles.textColor,
@@ -26,11 +26,11 @@ function AccountButton({ label, className }) {
 
 AccountButton.propTypes = {
   label: PropTypes.string.isRequired,
-  className: PropTypes.string,
+  onClick: PropTypes.func,
 };
 
 AccountButton.defaultProps = {
-  className: '',
+  onClick: null,
 };
 
 export default AccountButton;
