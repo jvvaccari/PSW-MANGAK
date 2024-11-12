@@ -1,0 +1,84 @@
+.dialogPaper {
+  background-color: #000000;
+  color: #ffffff;
+  font-family: 'DM Sans', sans-serif;
+  width: 100%;
+  max-width: 320px; /* Mobile width */
+  height: 568px; /* Mobile height */
+  margin: 0;
+}
+
+.header {
+  padding: 4px; /* Matches p={1} in the Box component */
+  text-align: center;
+  position: relative;
+}
+
+.closeIcon {
+  position: absolute;
+  right: 8px;
+  top: 8px;
+  color: #ffffff;
+}
+
+.title {
+  font-weight: bold;
+  font-family: 'DM Serif Display', serif;
+  font-size: 18px;
+}
+
+.userInfo {
+  display: flex;
+  align-items: center;
+  padding: 4px 16px; /* py={1} px={2} */
+  background-color: #1e1e1e;
+  border-radius: 4px;
+  margin: 0 16px;
+}
+
+.userAvatar {
+  background-color: #000000;
+  width: 36px;
+  height: 36px;
+  margin-right: 8px;
+}
+
+.userIcon {
+  color: #ffffff;
+}
+
+.username {
+  font-family: 'DM Serif Display', serif;
+  font-size: 14px;
+}
+
+.userEmail {
+  font-size: 12px;
+  color: #ffffff;
+}
+
+.divider {
+  background-color: #1e1e1e;
+  margin: 12px 0;
+}
+
+.actionButton {
+  background-color: #1e1e1e;
+  color: #ffffff;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  justify-content: space-between;
+}
+
+.arrowIcon {
+  font-size: 14px;
+  color: #ffffff;
+}
+
+.logoutButton {
+  background-color: #1e1e1e;
+  color: #ffffff;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  margin-top: 64px; /* mt={8} */
+}
