@@ -62,7 +62,7 @@ function ArtGallery({ artsList }) {
             src={selectedImage}
             alt="Selected artwork"
             style={{
-              width: "80vw",
+              width: "auto",
               height: "100%",
               maxWidth: "90vw",
               maxHeight: "90vh",
