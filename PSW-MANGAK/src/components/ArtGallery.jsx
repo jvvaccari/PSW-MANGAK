@@ -22,12 +22,12 @@ function ArtGallery({ artsList }) {
 
   return (
     <Box sx={{ maxWidth: "56em" }}>
-      <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
+      <Typography variant="subtitle1" sx={{ fontWeight: "bold", fontSize: {xs:"0.8em",md: "1em",lg: "1.2em"}}}>
         Arts
         <div className={styles.line}></div>
       </Typography>
 
-      <ImageList variant="masonry" cols={3} gap={12} sx={{ marginTop: "32px" }}>
+      <ImageList variant="masonry" cols={3} gap={12} sx={{ marginTop: "32px",border: "1px solid #bbb"}}>
         {artsList.map((img, index) => (
           <ImageListItem key={index} onClick={() => handleOpen(img)}>
             <img

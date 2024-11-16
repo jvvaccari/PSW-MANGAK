@@ -7,11 +7,11 @@ const TagsSection = ({ data }) => {
 
   return (
     <Box className={styles.container}>
-      <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
+      <Typography variant="subtitle1" sx={{ fontWeight: "bold",fontSize: {xs:"0.8em",md: "1em",lg: "1.2em"}}}>
         {section}
       </Typography>
       <Box className={styles.tagsContainer} sx={{ margin: "6px 0" }}>
-        <Box sx={{ borderTop: "1px solid #444", width: "244px", marginBottom: "24px" }}></Box>
+        <Box sx={{ borderTop: "1px solid #444", width: "40%", marginBottom: "24px" }}></Box>
 
         {section === "Buy"
           ? tags.map((tag, index) => (

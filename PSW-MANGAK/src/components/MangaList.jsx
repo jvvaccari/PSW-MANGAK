@@ -19,15 +19,12 @@ const groupByGenres = (mangas) => {
 const MangaList = ({ mangas, searchTerm, onMangaClick }) => {
   const lowerCaseSearchTerm = searchTerm.toLowerCase();
 
-  // Agrupar os mangás por gênero
   const groupedMangas = groupByGenres(mangas);
 
-  // Verificar se o termo de pesquisa corresponde exatamente a um gênero
   const exactGenreMatch = Object.keys(groupedMangas).find(
     (genre) => genre.toLowerCase() === lowerCaseSearchTerm
   );
 
-  // Filtrar os mangás com base na pesquisa
   const filteredMangas = mangas.filter((manga) =>
     manga.title.toLowerCase().includes(lowerCaseSearchTerm) ||
     manga.author.toLowerCase().includes(lowerCaseSearchTerm) ||
@@ -35,21 +32,21 @@ const MangaList = ({ mangas, searchTerm, onMangaClick }) => {
     (manga.genres && manga.genres.some((genre) => genre.toLowerCase().includes(lowerCaseSearchTerm)))
   );
 
-  // Determinar os gêneros a serem exibidos com base na correspondência exata do termo
   const genresToDisplay = exactGenreMatch ? { [exactGenreMatch]: groupedMangas[exactGenreMatch] } : groupByGenres(filteredMangas);
 
   return (
     <Box>
       {Object.keys(genresToDisplay).length > 0 ? (
         Object.keys(genresToDisplay).map((genre) => (
-          <Box key={genre} sx={{ marginBottom: "32px" }}>
-            <Box sx={{ borderTop: "1px solid #444", width: "288px", marginBottom: "16px", alignSelf: "center" }}></Box>
+          <Box key={genre} sx={{ marginBottom: {sx: "20px",md: "24px",lg: "28px"} }}>
+            <Box sx={{ borderTop: "0.1px solid #444", width: "99.5%", marginBottom: {xs:"12px",md:"16px",lg:"20px"}, alignSelf: "center"}}></Box>
             <Typography
               variant="subtitle1"
               sx={{
                 fontWeight: "bold",
-                marginBottom: "12px",
-                fontSize: "1em",
+                marginTop: {xs:"14px",md:"18px",lg:"28px"},
+                marginBottom: {xs:"8px",md:"12px",lg:"16px"},
+                fontSize: {xs:"1em",md: "1.2em",lg: "1.4em"},
                 color: "#FFFFFF !important",
               }}
             >
@@ -58,7 +55,7 @@ const MangaList = ({ mangas, searchTerm, onMangaClick }) => {
             <Box
               sx={{
                 display: "flex",
-                gap: 2,
+                gap: 3,
                 maxWidth: "100%",
                 overflowX: "auto",
                 whiteSpace: "nowrap",
@@ -73,19 +70,33 @@ const MangaList = ({ mangas, searchTerm, onMangaClick }) => {
                   onClick={() => onMangaClick(manga.id)}
                   aria-label={`View details for ${manga.title}`}
                   sx={{
-                    minWidth: { xs: 70, sm: 80 },
-                    maxWidth: { xs: 100, sm: 110 },
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
                     cursor: "pointer",
                     borderRadius: "8px",
-                    boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
                     scrollSnapAlign: "center",
                     flexShrink: 0,
+                    width: { xs: "28%", sm: "22%", md: "18%" },
+                    maxWidth: "150px",
+                    margin: "8px 0",
                   }}
                 >
-                  <AspectRatio ratio="2/3" sx={{ width: "100%" }}>
-                    <img src={manga.image} alt={manga.title} style={{ borderRadius: "8px" }} />
+                  <AspectRatio ratio="2/3" sx={{ width: "100%" , marginBottom: "24px"}}>
+                    <Box  
+                      component="img"
+                      src={manga.image}
+                      alt={manga.title}
+                      sx={{
+                        borderRadius: "8px",
+                        width: "100%",
+                        height: "auto",
+                        objectFit: "cover",
+                      }}
+                    />
                   </AspectRatio>
-                </Box>
+                </Box>                       
               ))}
             </Box>
           </Box>

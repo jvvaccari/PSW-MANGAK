@@ -13,6 +13,7 @@ const Header = ({ searchTerm = "", setSearchTerm = () => {} }) => {
   const [showSearch, setShowSearch] = useState(false);
 
   const isCatalogPage = location.pathname === "/";
+  const isDataAccountPage = location.pathname === "/DataAccount";
 
   const handleBackClick = () => {
     navigate("/");
@@ -29,7 +30,7 @@ const Header = ({ searchTerm = "", setSearchTerm = () => {} }) => {
           <IconButton
             color="inherit"
             onClick={handleBackClick}
-            sx={{ width: "30px", height: "30px", padding: "0px", marginLeft: "-5px" }}
+            sx={{ width: "30px", height: "30px", padding: "0px", marginLeft: "-5px", }}
           >
             <ArrowBackIcon />
           </IconButton>
@@ -47,33 +48,40 @@ const Header = ({ searchTerm = "", setSearchTerm = () => {} }) => {
             autoFocus
             sx={{
               width: "100%",
-              backgroundColor: "#1E1E1E",
-              padding: "0 10px",
+              backgroundColor: "#2c2c2c",
+              padding: "0 12px",
               borderRadius: "5px",
             }}
           />
         ) : isCatalogPage && !showSearch ? (
           <Typography
             variant="subtitle1"
-            sx={{ fontWeight: "bold", color: "#FF0000" }}
+            sx={{ fontWeight: "bold", color: "#FF0000",fontSize: {xs: "1em", sm: "1.25em", md: "1,5em", lg: "2em",}}}
           >
             MANGAK
           </Typography>
         ) : null}
       </Box>
 
-      <Box sx={{ display: "flex", alignItems: "center", flex: 0, justifyContent: "flex-end", gap: "6px" }}>
-        {isCatalogPage && !showSearch && (
+      <Box sx={{ display: "flex", alignItems: "center", flex: 0, justifyContent: "flex-end", gap: {xs: "0.5em", md:"0.8em",lg: "1.1em"} }}>
+        {isDataAccountPage && !showSearch && (
           <IconButton
             color="inherit"
             onClick={handleSearchClick}
-            sx={{ width: "30px", height: "30px" }}
+            sx={{ width: "30px", height: "30px",}}
           >
-            <SearchIcon className={styles.searchIcon} />
+            <SearchIcon className={styles.searchIcon} sx={{fontSize: {xs: "1em", md:"1.2em",lg: "1.4em"}}}/>
           </IconButton>
         )}
-        {!showSearch && <Avatar className={styles.avatarIcon} />}
+        {!showSearch && <Avatar className={styles.avatarIcon} sx={{fontSize: {xs: "0.9em", md:"1.1em",lg: "1.3em"}}}/>}
       </Box>
+
+      <Box sx={{ display: "flex", alignItems: "center", flex: 0, justifyContent: "flex-end", gap: {xs: "0.5em", md:"0.8em",lg: "1.1em"} }}>
+        {isCatalogPage && (
+          <Avatar className={styles.avatarIcon} sx={{fontSize: {xs: "0.9em", md:"1.1em",lg: "1.3em"}}}/>
+        )}
+      </Box>
+      
     </Box>
   );
 };

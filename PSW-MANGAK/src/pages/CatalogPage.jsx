@@ -35,7 +35,7 @@ function CatalogPage() {
       >
         <Header searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
 
-        <Typography variant="subtitle1" sx={{marginBottom: "6px",fontWeight: 700}}>
+        <Typography variant="subtitle1" sx={{marginTop: {xs: "0.5em",sm: "0.8em", lg: "2em"},fontWeight: 700,fontSize: {xs: "0.8em", sm: "1em", md: "1,2em", lg: "1.4em"}}}>
           Procura por Categoria
         </Typography>
 
