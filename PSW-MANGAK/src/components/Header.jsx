@@ -64,19 +64,6 @@ const Header = ({ searchTerm = "", setSearchTerm = () => {} }) => {
       </Box>
 
       <Box sx={{ display: "flex", alignItems: "center", flex: 0, justifyContent: "flex-end", gap: {xs: "0.5em", md:"0.8em",lg: "1.1em"} }}>
-        {isDataAccountPage && !showSearch && (
-          <IconButton
-            color="inherit"
-            onClick={handleSearchClick}
-            sx={{ width: "30px", height: "30px",}}
-          >
-            <SearchIcon className={styles.searchIcon} sx={{fontSize: {xs: "1em", md:"1.2em",lg: "1.4em"}}}/>
-          </IconButton>
-        )}
-        {!showSearch && <Avatar className={styles.avatarIcon} sx={{fontSize: {xs: "0.9em", md:"1.1em",lg: "1.3em"}}}/>}
-      </Box>
-
-      <Box sx={{ display: "flex", alignItems: "center", flex: 0, justifyContent: "flex-end", gap: {xs: "0.5em", md:"0.8em",lg: "1.1em"} }}>
         {isCatalogPage && (
           <Avatar className={styles.avatarIcon} sx={{fontSize: {xs: "0.9em", md:"1.1em",lg: "1.3em"}}}/>
         )}

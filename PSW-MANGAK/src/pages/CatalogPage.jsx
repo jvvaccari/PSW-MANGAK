@@ -1,17 +1,59 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import MangaList from "../components/MangaList";
-import mangasData from "../BD/mangasData";
-import { Box, Typography } from "@mui/material";
+import { Box, Typography, CircularProgress } from "@mui/material";
+import { fetchMangas } from "../../services/api";
 
 function CatalogPage() {
   const [searchTerm, setSearchTerm] = useState("");
+  const [mangas, setMangas] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const loadMangas = async () => {
+      try {
+        const data = await fetchMangas();
+        setMangas(data || []); // Garante que 'data' seja um array
+      } catch (err) {
+        console.error("Erro ao carregar mangás:", err);
+        setError("Falha ao carregar os mangás. Tente novamente mais tarde.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadMangas();
+  }, []);
 
   const handleMangaClick = (id) => {
     navigate(`/manga/${id}`);
   };
+
+  if (loading) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
+      >
+        <CircularProgress sx={{ color: "#fff" }} />
+      </Box>
+    );
+  }
+
+  if (error) {
+    return <div>{error}</div>;
+  }
+
+  const filteredMangas = mangas?.filter((manga) =>
+    manga.title.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <Box
@@ -30,21 +72,41 @@ function CatalogPage() {
           bgcolor: "#000",
           padding: "16px",
           color: "#fff",
-          overflow: "hidden",
         }}
       >
         <Header searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
 
-        <Typography variant="subtitle1" sx={{marginTop: {xs: "0.5em",sm: "0.8em", lg: "2em"},fontWeight: 700,fontSize: {xs: "0.8em", sm: "1em", md: "1,2em", lg: "1.4em"}}}>
-          Procura por Categoria
-        </Typography>
-
-        <MangaList
-          mangas={mangasData}
-          searchTerm={searchTerm}
-          onMangaClick={handleMangaClick}
-          horizontalScroll
-        />
+        {filteredMangas?.length > 0 ? (
+          <>
+            <Typography
+              variant="subtitle1"
+              sx={{
+                marginTop: { xs: "0.5em", sm: "0.8em", lg: "2em" },
+                fontWeight: 700,
+                fontSize: { xs: "0.8em", sm: "1em", md: "1.2em", lg: "1.4em" },
+              }}
+            >
+              Procura por Categoria
+            </Typography>
+            <MangaList
+              mangas={filteredMangas}
+              searchTerm={searchTerm}
+              onMangaClick={handleMangaClick}
+              horizontalScroll
+            />
+          </>
+        ) : (
+          <Typography
+            variant="subtitle1"
+            sx={{
+              marginTop: { xs: "0.5em", sm: "0.8em", lg: "2em" },
+              fontWeight: 700,
+              fontSize: { xs: "0.8em", sm: "1em", md: "1.2em", lg: "1.4em" },
+            }}
+          >
+            Nenhum mangá encontrado!
+          </Typography>
+        )}
       </Box>
     </Box>
   );
