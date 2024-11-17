@@ -22,6 +22,10 @@ const Header = ({ searchTerm = "", setSearchTerm = () => {} }) => {
     setShowSearch(!showSearch);
   };
 
+  const handleProfileClick = () => {
+    navigate("/profile/1")
+  }
+
   return (
     <Box className={styles.headerContainer}>
       <Box sx={{ display: "flex", alignItems: "center", flex: 0 }}>
@@ -72,7 +76,7 @@ const Header = ({ searchTerm = "", setSearchTerm = () => {} }) => {
             <SearchIcon className={styles.searchIcon} />
           </IconButton>
         )}
-        {!showSearch && <Avatar className={styles.avatarIcon} />}
+        {!showSearch && <Avatar onClick={handleProfileClick} className={styles.avatarIcon} />}
       </Box>
     </Box>
   );
