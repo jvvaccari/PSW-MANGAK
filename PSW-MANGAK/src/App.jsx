@@ -1,20 +1,32 @@
-// App.js
 import { useState,useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes, useParams } from "react-router-dom";
 import CatalogPage from "./pages/CatalogPage";
 import MangaLandingPage from "./pages/MangaLandingPage";
+import ProfilePage from "./pages/ProfilePage";
 import PropTypes from "prop-types";
-import mangas from "./BD/mangasData";
+import { fetchMangas } from "../services/api";
 
 const MangaPageWrapper = ({ searchTerm, setSearchTerm }) => {
   const { id } = useParams();
-  const manga = mangas.find((m) => m.id.toString() === id);
+  const [manga, setManga] = useState(null);
 
   useEffect(() => {
+    const loadMangas = async () => {
+      try {
+        const mangas = await fetchMangas();
+        const foundManga = mangas.find((m) => m.id.toString() === id);
+        setManga(foundManga || null);
+      } catch (err) {
+        console.error("Erro ao carregar mangá:", err);
+      }
+    };
+
+    loadMangas();
+
     if (searchTerm) {
       setSearchTerm("");
     }
-  }, [searchTerm, setSearchTerm]);
+  }, [id, searchTerm, setSearchTerm]);
 
   return (
     <MangaLandingPage
@@ -28,6 +40,11 @@ const MangaPageWrapper = ({ searchTerm, setSearchTerm }) => {
 MangaPageWrapper.propTypes = {
   searchTerm: PropTypes.string.isRequired,
   setSearchTerm: PropTypes.func.isRequired,
+};
+
+const ProfilePageWrapper = () => {
+  const { userId } = useParams();
+  return <ProfilePage userId={userId} />;
 };
 
 const App = () => {
@@ -44,6 +61,7 @@ const App = () => {
           path="/manga/:id"
           element={<MangaPageWrapper searchTerm={searchTerm} setSearchTerm={setSearchTerm} />}
         />
+        <Route path="/profile/:userId" element={<ProfilePageWrapper />} />
       </Routes>
     </Router>
   );

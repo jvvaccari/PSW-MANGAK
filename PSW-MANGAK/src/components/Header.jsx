@@ -13,7 +13,6 @@ const Header = ({ searchTerm = "", setSearchTerm = () => {} }) => {
   const [showSearch, setShowSearch] = useState(false);
 
   const isCatalogPage = location.pathname === "/";
-  const isDataAccountPage = location.pathname === "/DataAccount";
 
   const handleBackClick = () => {
     navigate("/");
@@ -30,7 +29,7 @@ const Header = ({ searchTerm = "", setSearchTerm = () => {} }) => {
           <IconButton
             color="inherit"
             onClick={handleBackClick}
-            sx={{ width: "30px", height: "30px", padding: "0px", marginLeft: "-5px", }}
+            sx={{ width: "30px", height: "30px", padding: "0px", marginLeft: "-5px" }}
           >
             <ArrowBackIcon />
           </IconButton>
@@ -48,27 +47,33 @@ const Header = ({ searchTerm = "", setSearchTerm = () => {} }) => {
             autoFocus
             sx={{
               width: "100%",
-              backgroundColor: "#2c2c2c",
-              padding: "0 12px",
+              backgroundColor: "#1E1E1E",
+              padding: "0 10px",
               borderRadius: "5px",
             }}
           />
         ) : isCatalogPage && !showSearch ? (
           <Typography
             variant="subtitle1"
-            sx={{ fontWeight: "bold", color: "#FF0000",fontSize: {xs: "1em", sm: "1.25em", md: "1,5em", lg: "2em",}}}
+            sx={{ fontWeight: "bold", color: "#FF0000", fontSize: {xs:"1.2em",md: "1.6em",lg: "1.8em"} }}
           >
             MANGAK
           </Typography>
         ) : null}
       </Box>
 
-      <Box sx={{ display: "flex", alignItems: "center", flex: 0, justifyContent: "flex-end", gap: {xs: "0.5em", md:"0.8em",lg: "1.1em"} }}>
-        {isCatalogPage && (
-          <Avatar className={styles.avatarIcon} sx={{fontSize: {xs: "0.9em", md:"1.1em",lg: "1.3em"}}}/>
+      <Box sx={{ display: "flex", alignItems: "center", flex: 0, justifyContent: "flex-end", gap: "6px" }}>
+        {isCatalogPage && !showSearch && (
+          <IconButton
+            color="inherit"
+            onClick={handleSearchClick}
+            sx={{ width: "30px", height: "30px" }}
+          >
+            <SearchIcon className={styles.searchIcon} />
+          </IconButton>
         )}
+        {!showSearch && <Avatar className={styles.avatarIcon} />}
       </Box>
-      
     </Box>
   );
 };

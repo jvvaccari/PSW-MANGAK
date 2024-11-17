@@ -46,7 +46,7 @@ const MangaList = ({ mangas, searchTerm, onMangaClick }) => {
                 fontWeight: "bold",
                 marginTop: {xs:"14px",md:"18px",lg:"28px"},
                 marginBottom: {xs:"8px",md:"12px",lg:"16px"},
-                fontSize: {xs:"1em",md: "1.2em",lg: "1.4em"},
+                fontSize: {xs:"0.9em",md: "1.1em",lg: "1.3em"},
                 color: "#FFFFFF !important",
               }}
             >

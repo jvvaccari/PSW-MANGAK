@@ -79,10 +79,10 @@ function MangaLandingPage({ searchTerm, setSearchTerm, manga }) {
           artsList={manga?.artsList || []}
           sx={{
             display: "flex",
-            flexWrap: "wrap", // Permite quebra de linha para imagens grandes
+            flexWrap: "wrap",
             justifyContent: "center",
-            gap: "var(--spacing-small)", // Espaçamento entre imagens
-            marginTop: "var(--spacing-medium)", // Margem superior padrão
+            gap: "var(--spacing-small)",
+            marginTop: "var(--spacing-medium)",
           }}
         />
       </Box>
@@ -109,7 +109,7 @@ MangaLandingPage.propTypes = {
         url: PropTypes.string.isRequired,
       })
     ),
-  }).isRequired,
+  }),
   searchTerm: PropTypes.string,
   setSearchTerm: PropTypes.func,
 };

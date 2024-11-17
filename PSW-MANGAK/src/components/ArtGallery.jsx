@@ -27,7 +27,7 @@ function ArtGallery({ artsList }) {
         <div className={styles.line}></div>
       </Typography>
 
-      <ImageList variant="masonry" cols={3} gap={12} sx={{ marginTop: "32px",border: "1px solid #bbb"}}>
+      <ImageList variant="masonry" cols={3} gap={12} sx={{ marginTop: "32px"}}>
         {artsList.map((img, index) => (
           <ImageListItem key={index} onClick={() => handleOpen(img)}>
             <img

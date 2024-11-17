@@ -22,13 +22,13 @@ const Content = ({ manga }) => {
 
   return (
     <Box className={styles.contentContainer}>
-      <Box sx={{ display: "flex", flexDirection: "row", gap: "1em",marginTop: {xs: "1em",md: "1.2em",lg: "1.4em"} }}>
+      <Box sx={{ display: "flex", flexDirection: "row", gap: {xs: "1em",md: "1.4",lg: "1.8"},marginTop: {xs: "1.2em",md: "1.4em",lg: "1.8em"} }}>
         <Box component="img" src={manga.image} alt={manga.title} sx={{width: "50%"}} />
         <Box className={styles.detailsContainer}>
           <Typography variant="h6" sx={{fontSize: {xs:"1em",md: "1.2em",lg: "2em"}}}>
             {manga.title}
           </Typography>
-          <Typography variant="body2" className={styles.author} sx={{fontSize: {xs:"0.5em",md: "0.7em",lg: "1.4em"}}}>
+          <Typography variant="body2" className={styles.author} sx={{fontSize: {xs:"0.8em",md: "1em",lg: "1.4em"}}}>
             {manga.author}
           </Typography>
           <Box sx={{ display: "flex", gap: "6px", justifyContent: "space-space-around",marginTop: {xs: "1em",md: "1.2em",lg: "1.4em"}}}>
@@ -50,7 +50,7 @@ const Content = ({ manga }) => {
           </Box>
         </Box>
       </Box>
-      <Box sx={{ display: "flex", alignItems: "center", margin: "8px 0px 8px 0px",marginTop: {xs: "1em",md: "1.2em",lg: "1.4em"}}}>
+      <Box sx={{ display: "flex", alignItems: "center",marginTop: "0.5em"}}>
         <span
           className={styles.statusDot}
           style={{ color: getStatusColor() }}

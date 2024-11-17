@@ -385,5 +385,15 @@
         }
       ]
     }
+  ],
+
+  "accounts": [
+    {
+      "id": 1,
+      "username": "predroK",
+      "email": "pedro157@live.com",
+      "password": "pedro123"
+    }
   ]
+
 }

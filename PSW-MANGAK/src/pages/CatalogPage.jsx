@@ -16,7 +16,7 @@ function CatalogPage() {
     const loadMangas = async () => {
       try {
         const data = await fetchMangas();
-        setMangas(data || []); // Garante que 'data' seja um array
+        setMangas(data || []);
       } catch (err) {
         console.error("Erro ao carregar mangás:", err);
         setError("Falha ao carregar os mangás. Tente novamente mais tarde.");
@@ -51,9 +51,18 @@ function CatalogPage() {
     return <div>{error}</div>;
   }
 
-  const filteredMangas = mangas?.filter((manga) =>
-    manga.title.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredMangas = mangas.filter((manga) => {
+    const search = searchTerm.toLowerCase();
+  
+    return (
+      manga.id.toString().includes(search) ||
+      manga.title.toLowerCase().includes(search) ||
+      manga.author.toLowerCase().includes(search) ||
+      manga.genres.some((genre) => genre.toLowerCase().includes(search)) ||
+      manga.demographic.toLowerCase().includes(search) 
+    );
+  });
+  
 
   return (
     <Box
@@ -81,9 +90,9 @@ function CatalogPage() {
             <Typography
               variant="subtitle1"
               sx={{
-                marginTop: { xs: "0.5em", sm: "0.8em", lg: "2em" },
+                marginTop: { xs: "1em", sm: "0.8em", lg: "2em" },
                 fontWeight: 700,
-                fontSize: { xs: "0.8em", sm: "1em", md: "1.2em", lg: "1.4em" },
+                fontSize: { xs: "1em", md: "1.2em", lg: "1.4em" },
               }}
             >
               Procura por Categoria
