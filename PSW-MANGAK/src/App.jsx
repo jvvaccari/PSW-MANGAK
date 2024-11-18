@@ -5,6 +5,8 @@ import MangaLandingPage from "./pages/MangaLandingPage";
 import ProfilePage from "./pages/ProfilePage";
 import PropTypes from "prop-types";
 import { fetchMangas } from "../services/api";
+import { UserProvider } from "./contexts/UserContext";
+import { useUser } from "./contexts/useUser";
 
 const MangaPageWrapper = ({ searchTerm, setSearchTerm }) => {
   const { id } = useParams();
@@ -37,33 +39,49 @@ const MangaPageWrapper = ({ searchTerm, setSearchTerm }) => {
   );
 };
 
+const ProfilePageWrapper = () => {
+  const { userId } = useUser();
+  return <ProfilePage userId={userId} />;
+};
+
 MangaPageWrapper.propTypes = {
   searchTerm: PropTypes.string.isRequired,
   setSearchTerm: PropTypes.func.isRequired,
 };
 
-const ProfilePageWrapper = () => {
-  const { userId } = useParams();
-  return <ProfilePage userId={userId} />;
+UserProvider.propTypes = {
+  children: PropTypes.node,
 };
 
 const App = () => {
   const [searchTerm, setSearchTerm] = useState("");
 
   return (
-    <Router>
-      <Routes>
-        <Route
-          path="/"
-          element={<CatalogPage searchTerm={searchTerm} setSearchTerm={setSearchTerm} />}
-        />
-        <Route
-          path="/manga/:id"
-          element={<MangaPageWrapper searchTerm={searchTerm} setSearchTerm={setSearchTerm} />}
-        />
-        <Route path="/profile/:userId" element={<ProfilePageWrapper />} />
-      </Routes>
-    </Router>
+    <UserProvider>
+      <Router>
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <CatalogPage
+                searchTerm={searchTerm}
+                setSearchTerm={setSearchTerm}
+              />
+            }
+          />
+          <Route
+            path="/manga/:id"
+            element={
+              <MangaPageWrapper
+                searchTerm={searchTerm}
+                setSearchTerm={setSearchTerm}
+              />
+            }
+          />
+          <Route path="/profile/:id" element={<ProfilePageWrapper />} />
+        </Routes>
+      </Router>
+    </UserProvider>
   );
 };
 

@@ -1,3 +1,4 @@
+import Header from "../components/Header";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Box, Typography, Button, TextField, Avatar } from "@mui/material";
@@ -67,11 +68,12 @@ function ProfilePage({ userId }) {
   if (!user) return <Typography>Carregando...</Typography>;
 
   return (
+
     <Box
       sx={{
         display: "flex",
         justifyContent: "center",
-        alignItems: "center", // Centraliza verticalmente
+        alignItems: "center",
         minHeight: "100vh",
         bgcolor: "var(--bg-color)",
       }}
@@ -91,15 +93,19 @@ function ProfilePage({ userId }) {
           alignItems: "center",
         }}
       >
-        <Typography
-          variant="h5"
-          sx={{
-            marginBottom: "32px",
-            textAlign: "center",
-          }}
-        >
-          Conta
-        </Typography>
+        <Box sx={{display: "flex",
+          flexDirection: "row",}}>
+          <Typography
+            variant="h5"
+            sx={{
+              marginBottom: "32px",
+              textAlign: "center",
+            }}
+          >
+            Conta
+          </Typography>
+          <Header />
+        </Box>
         {isEditing ? (
           <Box>
             <TextField
@@ -180,7 +186,7 @@ function ProfilePage({ userId }) {
                 flexDirection: "column",
                 gap: "2em",
                 marginTop: "64px",
-                alignItems: "center", // Centraliza os botões
+                alignItems: "center",
               }}
             >
               <Button
