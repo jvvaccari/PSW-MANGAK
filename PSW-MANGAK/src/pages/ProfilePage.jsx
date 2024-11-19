@@ -54,21 +54,39 @@ function ProfilePage({ userId }) {
   const handleDelete = async () => {
     try {
       await deleteAccount(userId);
-      navigate("/login"); // Redirecionar após excluir a conta
+      navigate("/login");
     } catch (err) {
       console.error("Erro ao excluir conta:", err);
     }
   };
 
   const handleLogout = () => {
-    // Lógica para deslogar o usuário
     navigate("/login");
   };
 
   if (!user) return <Typography>Carregando...</Typography>;
 
-  return (
+  const inputStyles = {
+    bgcolor: "var(--bg-data-color)",
+    borderRadius: "5px",
+    marginBottom: "32px",
+    "& .MuiFilledInput-root": {
+      color: "#fff", // Altera a cor do texto digitado para branco
+      "&:before": { borderBottom: "none" },
+      "&:after": { borderBottom: "2px solid #fff" },
+      "&:hover:not(.Mui-disabled):before": {
+        borderBottom: "1px solid #fff",
+      },
+    },
+    "& .MuiInputLabel-root": {
+      color: "#fff",
+    },
+    "& .MuiInputLabel-root.Mui-focused": {
+      color: "#fff",
+    },
+  };
 
+  return (
     <Box
       sx={{
         display: "flex",
@@ -93,8 +111,7 @@ function ProfilePage({ userId }) {
           alignItems: "center",
         }}
       >
-        <Box sx={{display: "flex",
-          flexDirection: "row",}}>
+        <Box sx={{ display: "flex", flexDirection: "row" }}>
           <Typography
             variant="h5"
             sx={{
@@ -107,43 +124,64 @@ function ProfilePage({ userId }) {
           <Header />
         </Box>
         {isEditing ? (
-          <Box>
+          <Box sx={{ width: "388px" }}>
             <TextField
-              label="Nome de Usuário"
+              label="Nome"
+              variant="filled"
               name="username"
               value={formData.username}
               onChange={handleInputChange}
               fullWidth
-              sx={{ marginBottom: "16px" }}
+              sx={inputStyles}
             />
             <TextField
               label="Email"
+              variant="filled"
               name="email"
               value={formData.email}
               onChange={handleInputChange}
               fullWidth
-              sx={{ marginBottom: "16px" }}
+              sx={inputStyles}
             />
             <TextField
               label="Senha"
+              variant="filled"
               name="password"
-              type="password"
               value={formData.password}
               onChange={handleInputChange}
               fullWidth
-              sx={{ marginBottom: "16px" }}
+              sx={inputStyles}
             />
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleSave}
-              sx={{ marginRight: "8px" }}
-            >
-              Salvar
-            </Button>
-            <Button variant="outlined" onClick={handleCancel}>
-              Cancelar
-            </Button>
+            <Box sx={{ display: "flex", justifyContent: "center",marginTop: "32px" }}>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleSave}
+                sx={{
+                  marginRight: "8px",
+                  bgcolor: "var(--btn-mangak-color)",
+                  "&:hover": {
+                    bgcolor: "darkred",
+                  },
+                }}
+              >
+                Salvar
+              </Button>
+              <Button
+                variant="outlined"
+                onClick={handleCancel}
+                sx={{
+                  color: "var(--btn-mangak-color)",
+                  borderColor: "var(--btn-mangak-color)",
+                  "&:hover": {
+                    borderColor: "darkred",
+                    bgcolor: "rgba(255, 0, 0, 0.1)",
+                  },
+                }}
+              >
+                Cancelar
+              </Button>
+            </Box>
           </Box>
         ) : (
           <Box sx={{ width: "100%" }}>

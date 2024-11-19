@@ -90,9 +90,9 @@ function CatalogPage() {
             <Typography
               variant="subtitle1"
               sx={{
-                marginTop: { xs: "1em", sm: "0.8em", lg: "2em" },
+                marginTop: { xs: "1.2em", sm: "1.4em", lg: "2em" },
                 fontWeight: 700,
-                fontSize: { xs: "1em", md: "1.2em", lg: "1.4em" },
+                fontSize: { xs: "1.2em", md: "1.4em", lg: "1.6em" },
               }}
             >
               Procura por Categoria
@@ -110,7 +110,7 @@ function CatalogPage() {
             sx={{
               marginTop: { xs: "0.5em", sm: "0.8em", lg: "2em" },
               fontWeight: 700,
-              fontSize: { xs: "0.8em", sm: "1em", md: "1.2em", lg: "1.4em" },
+              fontSize: { xs: "1.2em", md: "1.4em", lg: "1.6em" },
             }}
           >
             Nenhum mangá encontrado!

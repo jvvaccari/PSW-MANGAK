@@ -43,10 +43,11 @@ const MangaList = ({ mangas, searchTerm, onMangaClick }) => {
             <Typography
               variant="subtitle1"
               sx={{
-                fontWeight: "bold",
-                marginTop: {xs:"14px",md:"18px",lg:"28px"},
-                marginBottom: {xs:"8px",md:"12px",lg:"16px"},
-                fontSize: {xs:"0.9em",md: "1.1em",lg: "1.3em"},
+                fontWeight: "600",
+                marginLeft: "2px",
+                marginTop: {xs:"1.6em",md:"1.8em",lg:"2em"},
+                marginBottom: {xs:"0.8em",md:"1em",lg:"1.2em"},
+                fontSize: {xs:"1em",md: "1.2em",lg: "1.4em"},
                 color: "#FFFFFF !important",
               }}
             >
@@ -79,7 +80,7 @@ const MangaList = ({ mangas, searchTerm, onMangaClick }) => {
                     scrollSnapAlign: "center",
                     flexShrink: 0,
                     width: { xs: "28%", sm: "22%", md: "18%" },
-                    maxWidth: "150px",
+                    maxWidth: "176px",
                     margin: "8px 0",
                   }}
                 >

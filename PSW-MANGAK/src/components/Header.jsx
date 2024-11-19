@@ -34,7 +34,7 @@ const Header = ({ searchTerm = "", setSearchTerm = () => {} }) => {
             onClick={handleBackClick}
             sx={{ position: "absolute",top: "12px",left: "92%",transform: "translateX(-50%)", width: "36px", height: "36px", padding: "0px" }}
           >
-            <CancelIcon sx={{cursor: "pointer",borderRadius: "120px",border: "2px solid #fff"}}/>
+            <CancelIcon sx={{cursor: "pointer",borderRadius: "120px"}}/>
           </IconButton>
         ) : (
           !isCatalogPage && (
@@ -53,7 +53,7 @@ const Header = ({ searchTerm = "", setSearchTerm = () => {} }) => {
           <InputBase
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Busque por mangás (nome, gênero, tema)..."
+            placeholder="Busque por mangás (nome, autor, gênero, tema)..."
             className={styles.searchInput}
             onBlur={() => setShowSearch(false)}
             autoFocus
@@ -87,7 +87,7 @@ const Header = ({ searchTerm = "", setSearchTerm = () => {} }) => {
             <SearchIcon className={styles.searchIcon} />
           </IconButton>
         )}
-        {!isProfilePage && (
+        {!isProfilePage && !showSearch &&(
           <Avatar
           sx={{cursor: "pointer"}}
           onClick={() => navigate(`/profile/${userId}`)}
