@@ -23,8 +23,16 @@ export const fetchMangaById = async (id) => {
 };
 
 export const fetchAccountById = async (id) => {
-  const response = await axios.get(`http://localhost:5000/accounts/${id}`);
-  return response.data;
+  try {
+    const response = await fetch(`http://localhost:5000/accounts/${id}`);
+    if (!response.ok) {
+      throw new Error("Erro ao buscar os dados do usuário");
+    }
+    return await response.json(); // Certifique-se de que o ID correto é usado na URL
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
 };
 
 export const updateAccount = async (id, data) => {

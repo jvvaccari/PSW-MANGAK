@@ -79,7 +79,7 @@ const App = () => {
               />
             }
           />
-          <Route path="/profile" element={<ProfilePageWrapper />} />
+          <Route path="/profile/:id" element={<ProfilePageWrapper />} />
           <Route path="/login" element={<NotificationsSignInPageError />} />
         </Routes>
       </Router>

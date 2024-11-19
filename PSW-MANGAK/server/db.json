@@ -392,6 +392,12 @@
       "username": "pedrinhoXJ",
       "email": "pedroX@gmail.com",
       "password": "flasco123"
+    },
+    {
+      "id": "2",
+      "username": "fernando321",
+      "email": "fernandinho@gmail.com",
+      "password": "assasd123"
     }
   ]
 }

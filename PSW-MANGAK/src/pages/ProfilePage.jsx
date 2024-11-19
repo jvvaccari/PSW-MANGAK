@@ -1,6 +1,5 @@
-import Header from "../components/Header";
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom"; // Para capturar o ID da URL
 import { Box, Typography, Button, TextField, Avatar } from "@mui/material";
 import {
   fetchAccountById,
@@ -9,7 +8,28 @@ import {
 } from "../../services/api";
 import PropTypes from "prop-types";
 
-function ProfilePage({ userId }) {
+const inputStyles = {
+  bgcolor: "var(--bg-data-color)",
+  borderRadius: "5px",
+  marginBottom: "16px",
+  "& .MuiFilledInput-root": {
+    color: "#fff",
+    "&:before": { borderBottom: "none" },
+    "&:after": { borderBottom: "2px solid #fff" },
+    "&:hover:not(.Mui-disabled):before": {
+      borderBottom: "2px solid #fff",
+    },
+  },
+  "& .MuiInputLabel-root": {
+    color: "#fff",
+  },
+  "& .MuiInputLabel-root.Mui-focused": {
+    color: "#fff",
+  },
+};
+
+function ProfilePage() {
+  const { id } = useParams(); // Captura o ID do usuário diretamente da URL
   const [user, setUser] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
@@ -17,24 +37,33 @@ function ProfilePage({ userId }) {
     email: "",
     password: "",
   });
-  const navigate = useNavigate();
 
   useEffect(() => {
     const loadUser = async () => {
       try {
-        const data = await fetchAccountById(userId);
-        setUser(data);
-        setFormData(data);
+        console.log("Carregando usuário com ID:", id); // Log para verificar o ID capturado
+        const data = await fetchAccountById(id); // Busca o usuário pelo ID
+
+        if (data) {
+          setUser(data); // Define os dados do usuário no estado
+          setFormData(data); // Preenche o formulário com os dados do usuário
+        } else {
+          console.error("Usuário não encontrado para o ID:", id);
+        }
       } catch (err) {
         console.error("Erro ao carregar os dados do usuário:", err);
       }
     };
 
     loadUser();
-  }, [userId]);
+  }, [id]);
 
   const handleEdit = () => setIsEditing(true);
-  const handleCancel = () => setIsEditing(false);
+
+  const handleCancel = () => {
+    setFormData(user);
+    setIsEditing(false);
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -43,9 +72,10 @@ function ProfilePage({ userId }) {
 
   const handleSave = async () => {
     try {
-      await updateAccount(userId, formData);
+      await updateAccount(id, formData);
       setUser(formData);
       setIsEditing(false);
+      console.log("Conta atualizada com sucesso:", formData);
     } catch (err) {
       console.error("Erro ao atualizar conta:", err);
     }
@@ -53,38 +83,20 @@ function ProfilePage({ userId }) {
 
   const handleDelete = async () => {
     try {
-      await deleteAccount(userId);
-      navigate("/login");
+      await deleteAccount(id);
+      console.log("Conta excluída com sucesso para o ID:", id);
     } catch (err) {
       console.error("Erro ao excluir conta:", err);
     }
   };
 
-  const handleLogout = () => {
-    navigate("/login");
-  };
-
-  if (!user) return <Typography>Carregando...</Typography>;
-
-  const inputStyles = {
-    bgcolor: "var(--bg-data-color)",
-    borderRadius: "5px",
-    marginBottom: "32px",
-    "& .MuiFilledInput-root": {
-      color: "#fff", // Altera a cor do texto digitado para branco
-      "&:before": { borderBottom: "none" },
-      "&:after": { borderBottom: "2px solid #fff" },
-      "&:hover:not(.Mui-disabled):before": {
-        borderBottom: "1px solid #fff",
-      },
-    },
-    "& .MuiInputLabel-root": {
-      color: "#fff",
-    },
-    "& .MuiInputLabel-root.Mui-focused": {
-      color: "#fff",
-    },
-  };
+  if (!user) {
+    return (
+      <Typography sx={{ color: "#fff", textAlign: "center" }}>
+        Carregando informações do usuário...
+      </Typography>
+    );
+  }
 
   return (
     <Box
@@ -111,20 +123,18 @@ function ProfilePage({ userId }) {
           alignItems: "center",
         }}
       >
-        <Box sx={{ display: "flex", flexDirection: "row" }}>
-          <Typography
-            variant="h5"
-            sx={{
-              marginBottom: "32px",
-              textAlign: "center",
-            }}
-          >
-            Conta
-          </Typography>
-          <Header />
-        </Box>
+        <Typography
+          variant="h5"
+          sx={{
+            marginBottom: "2em",
+            textAlign: "center",
+          }}
+        >
+          Conta
+        </Typography>
+
         {isEditing ? (
-          <Box sx={{ width: "388px" }}>
+          <Box sx={{ maxWidth: "388px" }}>
             <TextField
               label="Nome"
               variant="filled"
@@ -152,17 +162,19 @@ function ProfilePage({ userId }) {
               fullWidth
               sx={inputStyles}
             />
-            <Box sx={{ display: "flex", justifyContent: "center",marginTop: "32px" }}>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                marginTop: "32px",
+              }}
+            >
               <Button
                 variant="contained"
-                color="primary"
                 onClick={handleSave}
                 sx={{
                   marginRight: "8px",
                   bgcolor: "var(--btn-mangak-color)",
-                  "&:hover": {
-                    bgcolor: "darkred",
-                  },
                 }}
               >
                 Salvar
@@ -173,10 +185,6 @@ function ProfilePage({ userId }) {
                 sx={{
                   color: "var(--btn-mangak-color)",
                   borderColor: "var(--btn-mangak-color)",
-                  "&:hover": {
-                    borderColor: "darkred",
-                    bgcolor: "rgba(255, 0, 0, 0.1)",
-                  },
                 }}
               >
                 Cancelar
@@ -256,24 +264,6 @@ function ProfilePage({ userId }) {
                 Excluir conta
               </Button>
             </Box>
-            <Button
-              variant="contained"
-              onClick={handleLogout}
-              sx={{
-                position: "absolute",
-                bottom: "16px",
-                left: "50%",
-                transform: "translateX(-50%)",
-                borderRadius: "5px",
-                bgcolor: "var(--bg-data-color)",
-                width: "60%",
-                minWidth: "288px",
-                maxWidth: "388px",
-                padding: "6px",
-              }}
-            >
-              Sair da conta
-            </Button>
           </Box>
         )}
       </Box>
@@ -282,7 +272,7 @@ function ProfilePage({ userId }) {
 }
 
 ProfilePage.propTypes = {
-  userId: PropTypes.string.isRequired,
+  userId: PropTypes.string,
 };
 
 export default ProfilePage;
