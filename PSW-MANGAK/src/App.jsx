@@ -7,6 +7,7 @@ import PropTypes from "prop-types";
 import { fetchMangas } from "../services/api";
 import { UserProvider } from "./contexts/UserContext";
 import { useUser } from "./contexts/useUser";
+import NotificationsSignInPageError from "./pages/Login";
 
 const MangaPageWrapper = ({ searchTerm, setSearchTerm }) => {
   const { id } = useParams();
@@ -78,7 +79,8 @@ const App = () => {
               />
             }
           />
-          <Route path="/profile/:id" element={<ProfilePageWrapper />} />
+          <Route path="/profile" element={<ProfilePageWrapper />} />
+          <Route path="/login" element={<NotificationsSignInPageError />} />
         </Routes>
       </Router>
     </UserProvider>
