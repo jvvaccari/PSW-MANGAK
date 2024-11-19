@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom"; // Para capturar o ID da URL
-import { Box, Typography, Button, TextField, Avatar } from "@mui/material";
+import { useParams, useNavigate } from "react-router-dom";
+import { Box, Typography, Button, TextField, Avatar, IconButton } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close"; // Ícone do botão X
 import {
   fetchAccountById,
   updateAccount,
@@ -29,7 +30,8 @@ const inputStyles = {
 };
 
 function ProfilePage() {
-  const { id } = useParams(); // Captura o ID do usuário diretamente da URL
+  const { id } = useParams();
+  const navigate = useNavigate(); // Para navegar entre páginas
   const [user, setUser] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
@@ -41,12 +43,12 @@ function ProfilePage() {
   useEffect(() => {
     const loadUser = async () => {
       try {
-        console.log("Carregando usuário com ID:", id); // Log para verificar o ID capturado
-        const data = await fetchAccountById(id); // Busca o usuário pelo ID
+        console.log("Carregando usuário com ID:", id);
+        const data = await fetchAccountById(id);
 
         if (data) {
-          setUser(data); // Define os dados do usuário no estado
-          setFormData(data); // Preenche o formulário com os dados do usuário
+          setUser(data);
+          setFormData(data);
         } else {
           console.error("Usuário não encontrado para o ID:", id);
         }
@@ -85,9 +87,15 @@ function ProfilePage() {
     try {
       await deleteAccount(id);
       console.log("Conta excluída com sucesso para o ID:", id);
+      navigate("/"); // Redireciona para a página inicial após excluir
     } catch (err) {
       console.error("Erro ao excluir conta:", err);
     }
+  };
+
+  const handleLogout = () => {
+    navigate("/login"); // Redireciona para a tela de login
+    console.log("Usuário desconectado.");
   };
 
   if (!user) {
@@ -123,6 +131,23 @@ function ProfilePage() {
           alignItems: "center",
         }}
       >
+        <Box
+          sx={{
+            position: "absolute",
+            top: "8px",
+            right: "8px",
+          }}
+        >
+          <IconButton
+            onClick={() => navigate(-1)} // Volta para a página anterior
+            aria-label="Fechar"
+            sx={{
+              color: "#fff",
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
+        </Box>
         <Typography
           variant="h5"
           sx={{
@@ -266,6 +291,24 @@ function ProfilePage() {
             </Box>
           </Box>
         )}
+        <Button
+          variant="contained"
+          onClick={handleLogout}
+          sx={{
+            position: "absolute",
+            bottom: "16px",
+            left: "50%",
+            transform: "translateX(-50%)",
+            borderRadius: "5px",
+            bgcolor: "var(--bg-data-color)",
+            width: "60%",
+            minWidth: "288px",
+            maxWidth: "388px",
+            padding: "6px",
+          }}
+        >
+          Sair da conta
+        </Button>
       </Box>
     </Box>
   );
