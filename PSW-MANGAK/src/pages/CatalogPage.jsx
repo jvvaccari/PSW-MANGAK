@@ -31,7 +31,6 @@ function CatalogPage() {
   const handleMangaClick = (id) => {
     navigate(`/manga/${id}`);
   };
-
   if (loading) {
     return (
       <Box

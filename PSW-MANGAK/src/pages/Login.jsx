@@ -16,7 +16,6 @@ const theme = createTheme({
     },
   },
   typography: {
-    fontFamily: `'DM Sans', sans-serif`, // Fonte personalizada
     h5: {
       fontWeight: 700,
       fontSize: '1.8rem',
