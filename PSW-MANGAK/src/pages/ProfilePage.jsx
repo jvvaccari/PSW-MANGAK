@@ -289,9 +289,7 @@ function ProfilePage() {
                 Excluir conta
               </Button>
             </Box>
-          </Box>
-        )}
-        <Button
+            <Button
           variant="contained"
           onClick={handleLogout}
           sx={{
@@ -309,6 +307,8 @@ function ProfilePage() {
         >
           Sair da conta
         </Button>
+          </Box>
+        )}
       </Box>
     </Box>
   );
