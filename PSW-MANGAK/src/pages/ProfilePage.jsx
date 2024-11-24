@@ -31,7 +31,7 @@ const inputStyles = {
 
 function ProfilePage() {
   const { id } = useParams();
-  const navigate = useNavigate(); // Para navegar entre páginas
+  const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
