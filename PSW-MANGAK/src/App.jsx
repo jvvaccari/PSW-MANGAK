@@ -8,6 +8,7 @@ import { fetchMangas } from "../services/api";
 import { UserProvider } from "./contexts/UserContext";
 import { useUser } from "./contexts/useUser";
 import NotificationsSignInPageError from "./pages/Login";
+import FavoritesPage from "./pages/FavoritesPage";
 
 const MangaPageWrapper = ({ searchTerm, setSearchTerm }) => {
   const { id } = useParams();
@@ -81,6 +82,7 @@ const App = () => {
           />
           <Route path="/profile/:id" element={<ProfilePageWrapper />} />
           <Route path="/login" element={<NotificationsSignInPageError />} />
+          <Route path="/favorites" element={<FavoritesPage />} />
         </Routes>
       </Router>
     </UserProvider>

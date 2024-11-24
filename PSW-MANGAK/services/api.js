@@ -35,6 +35,28 @@ export const fetchAccountById = async (id) => {
   }
 };
 
+export const fetchFavorites = async (userId) => {
+  try {
+    // Obtém o usuário e suas informações de favoritos
+    const response = await fetch(`http://localhost:5000/accounts/${userId}`);
+    const account = await response.json();
+
+    // Buscando detalhes de cada mangá favorito
+    const favoriteMangas = await Promise.all(
+      account.favorites.map(async (mangaId) => {
+        const mangaResponse = await fetch(`http://localhost:5000/mangas/${mangaId}`);
+        return mangaResponse.json();
+      })
+    );
+
+    return favoriteMangas;
+  } catch (err) {
+    console.error("Erro ao buscar favoritos:", err);
+    throw err;
+  }
+};
+
+
 export const updateAccount = async (id, data) => {
   const response = await axios.put(`${BASE_URL}/${id}`, data);
   return response.data;

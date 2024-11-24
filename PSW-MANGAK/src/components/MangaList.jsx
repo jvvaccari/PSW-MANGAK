@@ -16,6 +16,7 @@ const groupByGenres = (mangas) => {
   }, {});
 };
 
+
 const MangaList = ({ mangas, searchTerm, onMangaClick }) => {
   const lowerCaseSearchTerm = searchTerm.toLowerCase();
 
