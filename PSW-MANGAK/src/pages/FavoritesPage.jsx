@@ -25,33 +25,14 @@ function FavoritesPage() {
         setLoading(false);
       }
     };
-  
+
     loadFavorites();
   }, []);
-
-  const filteredMangas = mangas.filter((manga) => {
-    const search = searchTerm.toLowerCase();
-    return (
-      manga.id.toString().includes(search) ||
-      manga.title.toLowerCase().includes(search) ||
-      manga.author.toLowerCase().includes(search) ||
-      manga.genres.some((genre) => genre.toLowerCase().includes(search)) ||
-      manga.demographic.toLowerCase().includes(search)
-    );
-  });
 
   const handleMangaClick = (id) => {
     navigate(`/manga/${id}`);
   };
 
-  <MangaList
-  mangas={filteredMangas}
-  searchTerm={searchTerm}
-  onMangaClick={handleMangaClick}
-/>
-
-  
-  
   if (loading) {
     return (
       <Box
@@ -71,7 +52,17 @@ function FavoritesPage() {
     return <div>{error}</div>;
   }
 
-  
+  const filteredMangas = mangas.filter((manga) => {
+    const search = searchTerm.toLowerCase();
+    return (
+      manga.id.toString().includes(search) ||
+      manga.title.toLowerCase().includes(search) ||
+      manga.author.toLowerCase().includes(search) ||
+      manga.genres.some((genre) => genre.toLowerCase().includes(search)) ||
+      manga.demographic.toLowerCase().includes(search)
+    );
+  });
+
   return (
     <Box
       sx={{
@@ -91,41 +82,40 @@ function FavoritesPage() {
           color: "#fff",
         }}
       >
+        {/* Usa o mesmo Header, mas ajustado para Favorites */}
         <Header searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
 
-{filteredMangas?.length > 0 ? (
-  <>
-    <Typography
-      variant="subtitle1"
-      sx={{
-        marginTop: { xs: "1.2em", sm: "1.4em", lg: "2em" },
-        fontWeight: 700,
-        fontSize: { xs: "1.2em", md: "1.4em", lg: "1.6em" },
-      }}
-    >
-      Seus Mangás Favoritos
-    </Typography>
-    <MangaList
-      mangas={filteredMangas}
-      searchTerm={searchTerm}
-      onMangaClick={handleMangaClick}
-      horizontalScroll
-    />
-  </>
-) : (
-  <Typography
-    variant="subtitle1"
-    sx={{
-      marginTop: { xs: "0.5em", sm: "0.8em", lg: "2em" },
-      fontWeight: 700,
-      fontSize: { xs: "1.2em", md: "1.4em", lg: "1.6em" },
-    }}
-  >
-    Você ainda não tem mangás favoritos!
-  </Typography>
-)}
-
-
+        {filteredMangas?.length > 0 ? (
+          <>
+            <Typography
+              variant="subtitle1"
+              sx={{
+                marginTop: { xs: "1.2em", sm: "1.4em", lg: "2em" },
+                fontWeight: 700,
+                fontSize: { xs: "1.2em", md: "1.4em", lg: "1.6em" },
+              }}
+            >
+              Seus Mangás Favoritos
+            </Typography>
+            <MangaList
+              mangas={filteredMangas}
+              searchTerm={searchTerm}
+              onMangaClick={handleMangaClick}
+              horizontalScroll
+            />
+          </>
+        ) : (
+          <Typography
+            variant="subtitle1"
+            sx={{
+              marginTop: { xs: "0.5em", sm: "0.8em", lg: "2em" },
+              fontWeight: 700,
+              fontSize: { xs: "1.2em", md: "1.4em", lg: "1.6em" },
+            }}
+          >
+            Você ainda não tem mangás favoritos!
+          </Typography>
+        )}
       </Box>
     </Box>
   );

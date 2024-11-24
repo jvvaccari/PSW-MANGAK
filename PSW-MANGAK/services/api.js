@@ -28,7 +28,7 @@ export const fetchAccountById = async (id) => {
     if (!response.ok) {
       throw new Error("Erro ao buscar os dados do usuário");
     }
-    return await response.json(); // Certifique-se de que o ID correto é usado na URL
+    return await response.json();
   } catch (error) {
     console.error(error);
     return null;
@@ -37,11 +37,9 @@ export const fetchAccountById = async (id) => {
 
 export const fetchFavorites = async (userId) => {
   try {
-    // Obtém o usuário e suas informações de favoritos
     const response = await fetch(`http://localhost:5000/accounts/${userId}`);
     const account = await response.json();
 
-    // Buscando detalhes de cada mangá favorito
     const favoriteMangas = await Promise.all(
       account.favorites.map(async (mangaId) => {
         const mangaResponse = await fetch(`http://localhost:5000/mangas/${mangaId}`);
