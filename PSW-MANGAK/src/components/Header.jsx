@@ -1,10 +1,10 @@
-import { Box, IconButton, Avatar, InputBase, Typography, Button } from "@mui/material";
+import { Box, IconButton, Avatar, InputBase, Typography } from "@mui/material";
 import { useUser } from "../contexts/useUser";
 import CancelIcon from "@mui/icons-material/Cancel";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import SearchIcon from "@mui/icons-material/Search";
 import FavoriteIcon from "@mui/icons-material/Favorite";
-import { useNavigate, useLocation, Link } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useState } from "react";
 import styles from "./Header.module.css";
 import PropTypes from "prop-types";

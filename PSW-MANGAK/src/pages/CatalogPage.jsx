@@ -89,7 +89,7 @@ function CatalogPage() {
             <Typography
               variant="subtitle1"
               sx={{
-                marginTop: { xs: "1.2em", sm: "1.4em", lg: "2em" },
+                marginTop: { xs: "3em", sm: "4em", lg: "5em" },
                 fontWeight: 700,
                 fontSize: { xs: "1.2em", md: "1.4em", lg: "1.6em" },
               }}
