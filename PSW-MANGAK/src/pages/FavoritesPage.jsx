@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate,useParams } from "react-router-dom";
 import Header from "../components/Header";
 import MangaList from "../components/MangaList";
 import { Box, Typography, CircularProgress } from "@mui/material";
@@ -11,12 +11,18 @@ function FavoritesPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const { id } = useParams();
 
   useEffect(() => {
+    if (!id) {
+      setError("ID do usuário não encontrado.");
+      setLoading(false);
+      return;
+    }
+  
     const loadFavorites = async () => {
       try {
-        const userId = 1; // Substituir pelo ID do usuário autenticado, se disponível
-        const favoriteMangas = await fetchFavorites(userId);
+        const favoriteMangas = await fetchFavorites(id);
         setMangas(favoriteMangas || []);
       } catch (err) {
         console.error("Erro ao carregar favoritos:", err);
@@ -25,9 +31,9 @@ function FavoritesPage() {
         setLoading(false);
       }
     };
-
+  
     loadFavorites();
-  }, []);
+  }, [id]);  
 
   const handleMangaClick = (id) => {
     navigate(`/manga/${id}`);

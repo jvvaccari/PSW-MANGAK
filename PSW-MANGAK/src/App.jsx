@@ -1,4 +1,4 @@
-import { useState,useEffect } from "react";
+import { useState, useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes, useParams } from "react-router-dom";
 import CatalogPage from "./pages/CatalogPage";
 import MangaLandingPage from "./pages/MangaLandingPage";
@@ -10,7 +10,7 @@ import { useUser } from "./contexts/useUser";
 import NotificationsSignInPageError from "./pages/Login";
 import FavoritesPage from "./pages/FavoritesPage";
 
-const MangaPageWrapper = ({ searchTerm, setSearchTerm }) => {
+const MangaPageWrapper = () => {
   const { id } = useParams();
   const [manga, setManga] = useState(null);
 
@@ -26,16 +26,10 @@ const MangaPageWrapper = ({ searchTerm, setSearchTerm }) => {
     };
 
     loadMangas();
-
-    if (searchTerm) {
-      setSearchTerm("");
-    }
-  }, [id, searchTerm, setSearchTerm]);
+  }, [id]);
 
   return (
     <MangaLandingPage
-      searchTerm={searchTerm}
-      setSearchTerm={setSearchTerm}
       manga={manga}
     />
   );
@@ -82,7 +76,7 @@ const App = () => {
           />
           <Route path="/profile/:id" element={<ProfilePageWrapper />} />
           <Route path="/login" element={<NotificationsSignInPageError />} />
-          <Route path="/favorites" element={<FavoritesPage />} />
+          <Route path="/favorites/:id" element={<FavoritesPage />} />
         </Routes>
       </Router>
     </UserProvider>

@@ -121,7 +121,7 @@ const Header = ({ searchTerm = "", setSearchTerm = () => {} }) => {
   {(isCatalogPage || location.pathname.startsWith("/manga")) && !showSearch && (
     <IconButton
       color="inherit"
-      onClick={() => navigate("/favorites")}
+      onClick={() => navigate(`/favorites/${userId}`)}
       sx={{ width: "36px", height: "36px" }}
     >
       <FavoriteIcon sx={{ color: "var(--btn-mangak-color)" }} />

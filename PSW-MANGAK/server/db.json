@@ -392,30 +392,22 @@
       "username": "pedrinhoXJ",
       "email": "pedroX@gmail.com",
       "password": "flasco123",
-      "favorites": ["1", "3", "5"]
+      "favorites": [
+        "3",
+        "5"
+      ]
     },
     {
       "id": "2",
       "username": "fernando321",
       "email": "fernandinho@gmail.com",
       "password": "assasd123",
-      "favorites": ["2", "4", "6"]
+      "favorites": [
+        "2",
+        "6",
+        "4",
+        "1"
+      ]
     }
-  ],
-
-  "favorites": [
-  {
-    "userId": "1",
-    "mangaId": "1"
-  },
-  {
-    "userId": "1",
-    "mangaId": "3"
-  },
-  {
-    "userId": "2",
-    "mangaId": "2"
-  }
-]
-
+  ]
 }

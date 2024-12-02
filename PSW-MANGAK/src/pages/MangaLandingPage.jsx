@@ -7,7 +7,10 @@ import TagsSection from "../components/TagsSection";
 import { Box } from "@mui/material";
 import PropTypes from "prop-types";
 
-function MangaLandingPage({ searchTerm, setSearchTerm, manga }) {
+function MangaLandingPage({ manga }) {
+  // Garantir que manga tenha valores válidos e utilizar valores padrão se necessário
+  const safeManga = manga || {};  // Se manga for null ou undefined, utiliza um objeto vazio.
+
   return (
     <Box
       sx={{
@@ -21,22 +24,22 @@ function MangaLandingPage({ searchTerm, setSearchTerm, manga }) {
       <Box
         sx={{
           width: "var(--page-size)",
-          padding: {xs: "16px",sm: "18px",md: "22px",lg: "32px"},
+          padding: { xs: "16px", sm: "18px", md: "22px", lg: "32px" },
           color: "var(--text-color)",
           bgcolor: "var(--bg-page-color)",
         }}
       >
-        <Header searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+        <Header />
 
-        {manga && (
+        {safeManga.id && (
           <Content
             manga={{
-              image: manga.image || "",
-              title: manga.title || "Título Desconhecido",
-              author: manga.author || "Autor Desconhecido",
-              rating: manga.rating || 0,
-              status: manga.status || "Status Desconhecido",
-              yearPubli: manga.yearPubli || "????",
+              image: safeManga.image || "",
+              title: safeManga.title || "Título Desconhecido",
+              author: safeManga.author || "Autor Desconhecido",
+              rating: safeManga.rating || 0,
+              status: safeManga.status || "Status Desconhecido",
+              yearPubli: safeManga.yearPubli || "????",
             }}
             sx={{
               marginBottom: "var(--spacing-large)",
@@ -44,15 +47,18 @@ function MangaLandingPage({ searchTerm, setSearchTerm, manga }) {
           />
         )}
 
-        <Actions
-          sx={{
-            marginBottom: "var(--spacing-large)", // Margem padrão
-          }}
-        />
+        {safeManga.id && (
+          <Actions
+            sx={{
+              marginBottom: "var(--spacing-large)",
+            }}
+            mangaId={safeManga.id}
+          />
+        )}
 
-        {manga && (
+        {safeManga.description && (
           <Description
-            text={manga.description}
+            text={safeManga.description}
             sx={{
               fontSize: "var(--font-size-body)",
               marginBottom: "var(--spacing-large)",
@@ -60,11 +66,11 @@ function MangaLandingPage({ searchTerm, setSearchTerm, manga }) {
           />
         )}
 
-        {manga &&
+        {safeManga.id &&
           [
-            { section: "Genres", tags: manga.genres || [] },
-            { section: "Demographic", tags: [manga.demographic || ""] },
-            { section: "Buy", tags: manga.retail || [] },
+            { section: "Genres", tags: safeManga.genres || [] },
+            { section: "Demographic", tags: [safeManga.demographic || ""] },
+            { section: "Buy", tags: safeManga.retail || [] },
           ].map((data, index) => (
             <TagsSection
               key={index}
@@ -75,16 +81,18 @@ function MangaLandingPage({ searchTerm, setSearchTerm, manga }) {
             />
           ))}
 
-        <ArtGallery
-          artsList={manga?.artsList || []}
-          sx={{
-            display: "flex",
-            flexWrap: "wrap",
-            justifyContent: "center",
-            gap: "var(--spacing-small)",
-            marginTop: "var(--spacing-medium)",
-          }}
-        />
+        {safeManga.artsList && (
+          <ArtGallery
+            artsList={safeManga.artsList || []}
+            sx={{
+              display: "flex",
+              flexWrap: "wrap",
+              justifyContent: "center",
+              gap: "var(--spacing-small)",
+              marginTop: "var(--spacing-medium)",
+            }}
+          />
+        )}
       </Box>
     </Box>
   );
