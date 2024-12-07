@@ -94,7 +94,7 @@ function CatalogPage() {
               fontSize: { xs: "1.2em", md: "1.4em", lg: "1.6em" },
             }}
           >
-            Nenhum mangá encontrado!
+            Nenhum mangá encontrado
           </Typography>
         )}
       </Box>

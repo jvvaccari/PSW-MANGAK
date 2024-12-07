@@ -1,12 +1,19 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Box, Typography, Button, TextField, Avatar, IconButton } from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close"; // Ícone do botão X
 import {
-  fetchAccountById,
-  updateAccount,
-  deleteAccount,
-} from "../../services/api";
+  Box,
+  Typography,
+  Button,
+  TextField,
+  Avatar,
+  IconButton,
+  CircularProgress,
+  InputAdornment,
+} from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import { fetchAccountById, updateAccount, deleteAccount } from "../../services/api";
 import PropTypes from "prop-types";
 
 const inputStyles = {
@@ -17,9 +24,7 @@ const inputStyles = {
     color: "#fff",
     "&:before": { borderBottom: "none" },
     "&:after": { borderBottom: "2px solid #fff" },
-    "&:hover:not(.Mui-disabled):before": {
-      borderBottom: "2px solid #fff",
-    },
+    "&:hover:not(.Mui-disabled):before": { borderBottom: "2px solid #fff" },
   },
   "& .MuiInputLabel-root": {
     color: "#fff",
@@ -34,38 +39,25 @@ function ProfilePage() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
-  const [formData, setFormData] = useState({
-    username: "",
-    email: "",
-    password: "",
-  });
+  const [showPassword, setShowPassword] = useState(false); // Controle de exibição de senha
+  const [formData, setFormData] = useState({ username: "", email: "", password: "" });
 
   useEffect(() => {
     const loadUser = async () => {
       try {
-        console.log("Carregando usuário com ID:", id);
         const data = await fetchAccountById(id);
-
         if (data) {
           setUser(data);
           setFormData(data);
         } else {
-          console.error("Usuário não encontrado para o ID:", id);
+          console.error("Usuário não encontrado");
         }
       } catch (err) {
         console.error("Erro ao carregar os dados do usuário:", err);
       }
     };
-
     loadUser();
   }, [id]);
-
-  const handleEdit = () => setIsEditing(true);
-
-  const handleCancel = () => {
-    setFormData(user);
-    setIsEditing(false);
-  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -77,7 +69,7 @@ function ProfilePage() {
       await updateAccount(id, formData);
       setUser(formData);
       setIsEditing(false);
-      console.log("Conta atualizada com sucesso:", formData);
+      console.log("Conta atualizada com sucesso");
     } catch (err) {
       console.error("Erro ao atualizar conta:", err);
     }
@@ -86,23 +78,18 @@ function ProfilePage() {
   const handleDelete = async () => {
     try {
       await deleteAccount(id);
-      console.log("Conta excluída com sucesso para o ID:", id);
-      navigate("/"); // Redireciona para a página inicial após excluir
+      console.log("Conta excluída com sucesso");
+      navigate("/");
     } catch (err) {
       console.error("Erro ao excluir conta:", err);
     }
   };
 
-  const handleLogout = () => {
-    navigate("/login"); // Redireciona para a tela de login
-    console.log("Usuário desconectado.");
-  };
-
   if (!user) {
     return (
-      <Typography sx={{ color: "#fff", textAlign: "center" }}>
-        Carregando informações do usuário...
-      </Typography>
+      <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
+        <CircularProgress sx={{ color: "#fff" }} />
+      </Box>
     );
   }
 
@@ -125,36 +112,20 @@ function ProfilePage() {
           width: "100%",
           minHeight: "100vh",
           boxSizing: "border-box",
-          position: "relative",
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
+          position: "relative",
         }}
       >
-        <Box
-          sx={{
-            position: "absolute",
-            top: "8px",
-            right: "8px",
-          }}
+        <IconButton
+          onClick={() => navigate(-1)}
+          aria-label="Fechar"
+          sx={{ position: "absolute", top: "8px", right: "8px", color: "#fff" }}
         >
-          <IconButton
-            onClick={() => navigate(-1)} // Volta para a página anterior
-            aria-label="Fechar"
-            sx={{
-              color: "#fff",
-            }}
-          >
-            <CloseIcon />
-          </IconButton>
-        </Box>
-        <Typography
-          variant="h5"
-          sx={{
-            marginBottom: "2em",
-            textAlign: "center",
-          }}
-        >
+          <CloseIcon />
+        </IconButton>
+        <Typography variant="h5" sx={{ marginBottom: "2em", textAlign: "center" }}>
           Conta
         </Typography>
 
@@ -184,131 +155,91 @@ function ProfilePage() {
               name="password"
               value={formData.password}
               onChange={handleInputChange}
+              type={showPassword ? "text" : "password"}
               fullWidth
               sx={inputStyles}
-            />
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "center",
-                marginTop: "32px",
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      onClick={() => setShowPassword((prev) => !prev)}
+                      edge="end"
+                      sx={{ color: "#fff" }}
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
               }}
-            >
-              <Button
-                variant="contained"
-                onClick={handleSave}
-                sx={{
-                  marginRight: "8px",
-                  bgcolor: "var(--btn-mangak-color)",
-                }}
-              >
+            />
+            <Box sx={{ display: "flex", justifyContent: "center", gap: "24px", marginTop: "32px" }}>
+              <Button variant="contained" onClick={handleSave} sx={{ bgcolor: "var(--btn-mangak-color)" }}>
                 Salvar
               </Button>
               <Button
                 variant="outlined"
-                onClick={handleCancel}
-                sx={{
-                  color: "var(--btn-mangak-color)",
-                  borderColor: "var(--btn-mangak-color)",
-                }}
+                onClick={() => setIsEditing(false)}
+                sx={{ color: "var(--btn-mangak-color)", borderColor: "var(--btn-mangak-color)" }}
               >
                 Cancelar
               </Button>
             </Box>
           </Box>
         ) : (
-          <Box sx={{ width: "100%" }}>
-            <Box
+          <Box sx={{ textAlign: "center" }}>
+            <Avatar
               sx={{
-                display: "flex",
-                flexDirection: "row",
-                gap: "0.8em",
-                alignItems: "center",
-                borderRadius: "5px",
-                bgcolor: "var(--bg-data-color)",
-                width: "60%",
-                minWidth: "288px",
-                maxWidth: "388px",
+                width: "60px",
                 height: "60px",
-                padding: "36px 12px",
-                margin: "0 auto",
+                margin: "0 auto 16px",
+                border: "2px solid #fff",
+                bgcolor: "#000",
               }}
-            >
-              <Avatar
-                sx={{
-                  width: "40px",
-                  height: "40px",
-                  border: "2px solid #fff",
-                  bgcolor: "#000",
-                }}
-              />
-              <Box>
-                <Typography sx={{ fontSize: "14px", fontWeight: "bold" }}>
-                  {user.username}
-                </Typography>
-                <Typography sx={{ fontSize: "12px", color: "#A5A5A5" }}>
-                  {user.email}
-                </Typography>
-              </Box>
-            </Box>
-            <Box
+            />
+            <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
+              {user.username}
+            </Typography>
+            <Typography variant="body2" sx={{ color: "#A5A5A5", marginBottom: "32px" }}>
+              {user.email}
+            </Typography>
+            <Button
+              variant="contained"
+              onClick={() => setIsEditing(true)}
               sx={{
-                display: "flex",
-                flexDirection: "column",
-                gap: "2em",
-                marginTop: "64px",
-                alignItems: "center",
+                width: "100%",
+                maxWidth: "388px",
+                bgcolor: "var(--btn-mangak-color)",
+                marginBottom: "16px",
               }}
             >
+              Editar dados
+            </Button>
+            <Button
+              variant="contained"
+              onClick={handleDelete}
+              sx={{ width: "100%", maxWidth: "388px", bgcolor: "var(--btn-mangak-color)" }}
+            >
+              Excluir conta
+            </Button>
+            <Box>
               <Button
                 variant="contained"
-                onClick={handleEdit}
+                onClick={() => navigate("/login")}
                 sx={{
-                  borderRadius: "5px",
-                  bgcolor: "var(--bg-data-color)",
-                  width: "60%",
-                  minWidth: "288px",
-                  maxWidth: "388px",
-                  padding: "6px",
+                  position: "absolute",
+                  bottom: "16px",
+                  left: "50%",
+                  transform: "translateX(-50%)",
+                  width: "100%",
+                  maxWidth: "290.52px",
+                  bgcolor: "var(--btn-mangak-color)",
                 }}
               >
-                Editar dados de cadastro
+                Sair
               </Button>
-              <Button
-                variant="contained"
-                onClick={handleDelete}
-                sx={{
-                  borderRadius: "5px",
-                  bgcolor: "var(--bg-data-color)",
-                  width: "60%",
-                  minWidth: "288px",
-                  maxWidth: "388px",
-                  padding: "6px",
-                }}
-              >
-                Excluir conta
-              </Button>
-            </Box>
+            </Box> 
           </Box>
         )}
-        <Button
-          variant="contained"
-          onClick={handleLogout}
-          sx={{
-            position: "absolute",
-            bottom: "16px",
-            left: "50%",
-            transform: "translateX(-50%)",
-            borderRadius: "5px",
-            bgcolor: "var(--bg-data-color)",
-            width: "60%",
-            minWidth: "288px",
-            maxWidth: "388px",
-            padding: "6px",
-          }}
-        >
-          Sair da conta
-        </Button>
       </Box>
     </Box>
   );

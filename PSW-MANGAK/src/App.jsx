@@ -11,7 +11,6 @@ import FavoritesPage from "./pages/FavoritesPage";
 import { MangaProvider } from "./contexts/MangaContext";
 import { Box, CircularProgress } from "@mui/material";
 
-
 const MangaPageWrapper = () => {
   const { id } = useParams();
   const [manga, setManga] = useState(null);
@@ -54,7 +53,18 @@ const ProfilePageWrapper = () => {
   const { userId } = useUser();
 
   if (!userId) {
-    return <div>Usuário não encontrado.</div>;
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
+      >
+        <CircularProgress sx={{ color: "#fff" }} />
+      </Box>
+    );
   }
 
   return <ProfilePage userId={userId} />;
