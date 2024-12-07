@@ -1,36 +1,19 @@
-import { useState, useEffect } from "react";
+import { useContext,useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import MangaList from "../components/MangaList";
 import { Box, Typography, CircularProgress } from "@mui/material";
-import { fetchMangas } from "../../services/api";
+import MangaContext from "../contexts/MangaContext";
 
 function CatalogPage() {
+  const { mangas, loading, error } = useContext(MangaContext);
   const [searchTerm, setSearchTerm] = useState("");
-  const [mangas, setMangas] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const loadMangas = async () => {
-      try {
-        const data = await fetchMangas();
-        setMangas(data || []);
-      } catch (err) {
-        console.error("Erro ao carregar mangás:", err);
-        setError("Falha ao carregar os mangás. Tente novamente mais tarde.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadMangas();
-  }, []);
 
   const handleMangaClick = (id) => {
     navigate(`/manga/${id}`);
   };
+
   if (loading) {
     return (
       <Box
@@ -47,21 +30,20 @@ function CatalogPage() {
   }
 
   if (error) {
-    return <div>{error}</div>;
+    return <Typography>{error}</Typography>;
   }
 
   const filteredMangas = mangas.filter((manga) => {
     const search = searchTerm.toLowerCase();
-  
+
     return (
       manga.id.toString().includes(search) ||
       manga.title.toLowerCase().includes(search) ||
       manga.author.toLowerCase().includes(search) ||
       manga.genres.some((genre) => genre.toLowerCase().includes(search)) ||
-      manga.demographic.toLowerCase().includes(search) 
+      manga.demographic.toLowerCase().includes(search)
     );
   });
-  
 
   return (
     <Box

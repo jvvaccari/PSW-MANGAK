@@ -126,8 +126,6 @@ export default function SignUpPage() {
             }}
           >
 
-
-            {/* Email Input */}
             <TextField
               fullWidth
               label="Email"
