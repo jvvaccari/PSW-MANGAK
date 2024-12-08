@@ -68,16 +68,6 @@ function CatalogPage() {
 
         {filteredMangas?.length > 0 ? (
           <>
-            <Typography
-              variant="subtitle1"
-              sx={{
-                marginTop: { xs: "3em", sm: "4em", lg: "5em" },
-                fontWeight: 700,
-                fontSize: { xs: "1.2em", md: "1.4em", lg: "1.6em" },
-              }}
-            >
-              Procura por Categoria
-            </Typography>
             <MangaList
               mangas={filteredMangas}
               searchTerm={searchTerm}

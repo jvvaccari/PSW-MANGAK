@@ -75,7 +75,6 @@ function MangaLandingPage() {
     >
       <Box
         sx={{
-          width: "var(--page-size)",
           padding: { xs: "16px", sm: "18px", md: "22px", lg: "32px" },
           color: "var(--text-color)",
           bgcolor: "var(--bg-page-color)",

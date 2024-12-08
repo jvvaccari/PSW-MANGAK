@@ -110,9 +110,12 @@ const FavoritesPage = () => {
             <Typography
               variant="subtitle1"
               sx={{
-                marginTop: { xs: "3em", sm: "4em", lg: "5em" },
+                marginTop: { xs: "1em", sm: "2em", lg: "3em" },
+                marginBottom: "3em",
                 fontWeight: 700,
-                fontSize: { xs: "1.2em", md: "1.4em", lg: "1.6em" },
+                fontSize: { xs: "1.6em", md: "1.8em", lg: "2em" },
+                borderBottom: "1px solid #fff",
+                paddingBottom: "6px",
               }}
             >
               Seus Mangás Favoritos

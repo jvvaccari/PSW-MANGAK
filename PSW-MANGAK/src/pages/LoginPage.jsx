@@ -145,7 +145,7 @@ export default function LoginPage() {
             sx={{
               padding: "5%",
               borderRadius: "8px",
-              bgcolor: "background.paper",
+              bgcolor: "var(--bg-color)",
               width: "90%",
               maxWidth: "400px",
               textAlign: "center",
@@ -161,32 +161,37 @@ export default function LoginPage() {
             }}
           >
             <form onSubmit={handleSubmit}>
-              <TextField
-                fullWidth
-                label="Email"
-                variant="outlined"
-                value={email}
-                onChange={(e) => {
-                  setEmail(e.target.value);
-                  setError(null); // Reseta erro ao digitar
-                }}
-                sx={{
-                  marginBottom: "16px",
-                  "& .MuiInputBase-root": {
-                    bgcolor: "#1E1E1E",
-                    color: "#FFFFFF",
+            <TextField
+              fullWidth
+              label="Email"
+              variant="outlined"
+              value={email}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                setError(null); // Reseta erro ao digitar
+              }}
+              sx={{
+                marginBottom: "16px",
+                "& .MuiInputBase-root": {
+                  bgcolor: "#1E1E1E", // Fundo consistente
+                  color: "#FFFFFF", // Cor do texto
+                },
+                "& .MuiOutlinedInput-root": {
+                  "&:hover .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "#FF0037", // Borda no hover
                   },
-                  "& .MuiInputLabel-root": {
-                    color: "#CCCCCC",
+                  "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "#FF0037", // Borda no foco
                   },
-                  "& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "#FF0037",
-                  },
-                  "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "#FF0037",
-                  },
-                }}
-              />
+                },
+                "& .MuiInputLabel-root": {
+                  color: "#FF0037", // Cor do label
+                },
+                "& .MuiInputLabel-root.Mui-focused": {
+                  color: "#FF0037", // Cor do label no foco
+                },
+              }}
+            />  
 
               <TextField
                 fullWidth

@@ -378,15 +378,19 @@
   ],
   "accounts": [
     {
+      "id": "adm",
+      "username": "adm",
+      "email": "adm@gmail.com",
+      "password": "flasco1501",
+      "role": "admin"
+    },
+    {
       "id": "1",
       "username": "pedrinhoXJ",
       "email": "pedroX@gmail.com",
       "password": "flasco123",
-      "favorites": [
-        "3",
-        "5",
-        "10"
-      ]
+      "role": "user",
+      "favorites": ["3", "5", "10"]
     }
   ]
 }

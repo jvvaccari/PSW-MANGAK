@@ -17,7 +17,7 @@ const Header = ({ searchTerm = "", setSearchTerm = () => {} }) => {
 
   const isCatalogPage = location.pathname === "/";
   const isProfilePage = location.pathname.startsWith("/profile");
-  const isFavoritesPage = location.pathname === "/favorites";
+  const isFavoritesPage = location.pathname.startsWith("/favorites");
 
   const handleBackClick = () => {
     navigate(-1);
@@ -52,18 +52,9 @@ const Header = ({ searchTerm = "", setSearchTerm = () => {} }) => {
       {!showSearch && (
         <Box sx={{ display: "flex", alignItems: "center" }}>
           {isFavoritesPage ? (
-            <Typography
-              variant="h6"
-              component="a"
-              href="/"
-              sx={{
-                fontWeight: "bold",
-                color: "#FF0037",
-                textDecoration: "none",
-              }}
-            >
-              MANGAK
-            </Typography>
+            <IconButton onClick={handleBackClick} sx={{ color: "#fff",padding: "0px" }}>
+              <ArrowBackIcon />
+            </IconButton>
           ) : isProfilePage ? (
             <IconButton onClick={handleBackClick} sx={{ color: "#fff" }}>
               <CancelIcon />
@@ -81,6 +72,7 @@ const Header = ({ searchTerm = "", setSearchTerm = () => {} }) => {
                 fontWeight: "bold",
                 color: "#FF0037",
                 textDecoration: "none",
+                fontSize: {xs: "1.4em", md: "1.8em", lg: "2.2em"},
               }}
             >
               MANGAK

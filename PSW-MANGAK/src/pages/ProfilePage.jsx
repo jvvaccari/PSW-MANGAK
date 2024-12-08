@@ -19,7 +19,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { fetchAccountById, updateAccount, deleteAccount } from "../../services/api";
-import useAuth from "../contexts/useAuth"; // Usar o AuthContext diretamente
+import useAuth from "../contexts/useAuth";
 
 const inputStyles = {
   bgcolor: "var(--bg-data-color)",
@@ -53,7 +53,7 @@ function ProfilePage() {
     const loadUser = async () => {
       try {
         if (!user?.id) {
-          navigate("/login"); // Redireciona para login se o usuário não estiver autenticado
+          navigate("/login");
           return;
         }
 
@@ -93,9 +93,8 @@ function ProfilePage() {
   const handleDelete = async () => {
     try {
       await deleteAccount(user.id);
-      logout(); // Remove a autenticação do contexto
-      setOpenDialog(false);
-      navigate("/"); // Redireciona para a página inicial após a exclusão
+      logout();
+      navigate("/");
     } catch (err) {
       console.error("Erro ao excluir conta:", err.message);
       setError("Erro ao excluir a conta.");
@@ -108,6 +107,11 @@ function ProfilePage() {
 
   const handleCloseDialog = () => {
     setOpenDialog(false);
+  };
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
   };
 
   if (loading) {
@@ -140,7 +144,7 @@ function ProfilePage() {
         justifyContent: "center",
         alignItems: "center",
         minHeight: "100vh",
-        bgcolor: "var(--bg-color)",
+        bgcolor: "var(--bg-page-color)",
       }}
     >
       <Box
@@ -226,22 +230,37 @@ function ProfilePage() {
             </Box>
           </Box>
         ) : (
-          <Box sx={{ textAlign: "center" }}>
-            <Avatar
+          <Box sx={{ textAlign: "left" }}>
+            <Box
               sx={{
-                width: "60px",
-                height: "60px",
-                margin: "0 auto 16px",
-                border: "2px solid #fff",
-                bgcolor: "#000",
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "left",
+                gap: "1em",
+                backgroundColor: "var(--bg-color)",
+                borderRadius: "5px",
+                padding: "24px 12px",
+                marginBottom: "64px",
               }}
-            />
-            <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
-              {formData.username}
-            </Typography>
-            <Typography variant="body2" sx={{ color: "#A5A5A5", marginBottom: "32px" }}>
-              {formData.email}
-            </Typography>
+            >
+              <Avatar
+                sx={{
+                  width: "2.8em",
+                  height: "2.8em",
+                  border: "2px solid #fff",
+                  bgcolor: "#000",
+                }}
+              />
+              <Box sx={{ padding: "0px" }}>
+                <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
+                  {formData.username}
+                </Typography>
+                <Typography variant="body2" sx={{ color: "#A5A5A5" }}>
+                  {formData.email}
+                </Typography>
+              </Box>
+            </Box>
             <Button
               variant="contained"
               onClick={() => setIsEditing(true)}
@@ -249,7 +268,7 @@ function ProfilePage() {
                 width: "100%",
                 maxWidth: "388px",
                 bgcolor: "var(--btn-mangak-color)",
-                marginBottom: "16px",
+                marginBottom: "3em",
               }}
             >
               Editar dados
@@ -257,12 +276,31 @@ function ProfilePage() {
             <Button
               variant="contained"
               onClick={handleOpenDialog}
-              sx={{ width: "100%", maxWidth: "388px", bgcolor: "var(--btn-mangak-color)" }}
+              sx={{
+                width: "100%",
+                maxWidth: "388px",
+                bgcolor: "var(--btn-mangak-color)",
+                marginBottom: "2em",
+              }}
             >
               Excluir conta
             </Button>
           </Box>
         )}
+
+        <Button
+          variant="contained"
+          onClick={handleLogout}
+          sx={{
+            position: "absolute",
+            bottom: "16px",
+            width: "100%",
+            maxWidth: "290.52px",
+            bgcolor: "var(--btn-mangak-color)",
+          }}
+        >
+          Sair da Conta
+        </Button>
       </Box>
 
       <Dialog

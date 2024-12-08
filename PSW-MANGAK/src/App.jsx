@@ -22,7 +22,7 @@ const App = () => (
 
             {/* Rotas Protegidas */}
             <Route
-              path="/profile"
+              path="/profile/:id"
               element={
                 <ProtectedRoute>
                   <ProfilePage />
@@ -30,7 +30,7 @@ const App = () => (
               }
             />
             <Route
-              path="/favorites"
+              path="/favorites/:id"
               element={
                 <ProtectedRoute>
                   <FavoritesPage />
