@@ -4,10 +4,10 @@ import PropTypes from "prop-types";
 const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
-  const [userId, setUserId] = useState("");
+  const [user, setUser] = useState(null); // Armazena o objeto do usuário
 
   return (
-    <UserContext.Provider value={{ userId, setUserId }}>
+    <UserContext.Provider value={{ user, setUser }}>
       {children}
     </UserContext.Provider>
   );

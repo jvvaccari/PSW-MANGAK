@@ -3,6 +3,7 @@ import CancelIcon from "@mui/icons-material/Cancel";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import SearchIcon from "@mui/icons-material/Search";
 import FavoriteIcon from "@mui/icons-material/Favorite";
+import EditIcon from "@mui/icons-material/Edit"; // Importa o ícone de edição
 import { useNavigate, useLocation } from "react-router-dom";
 import { useState } from "react";
 import PropTypes from "prop-types";
@@ -52,7 +53,7 @@ const Header = ({ searchTerm = "", setSearchTerm = () => {} }) => {
       {!showSearch && (
         <Box sx={{ display: "flex", alignItems: "center" }}>
           {isFavoritesPage ? (
-            <IconButton onClick={handleBackClick} sx={{ color: "#fff",padding: "0px" }}>
+            <IconButton onClick={handleBackClick} sx={{ color: "#fff", padding: "0px" }}>
               <ArrowBackIcon />
             </IconButton>
           ) : isProfilePage ? (
@@ -72,7 +73,7 @@ const Header = ({ searchTerm = "", setSearchTerm = () => {} }) => {
                 fontWeight: "bold",
                 color: "#FF0037",
                 textDecoration: "none",
-                fontSize: {xs: "1.4em", md: "1.8em", lg: "2.2em"},
+                fontSize: { xs: "1.4em", md: "1.8em", lg: "2.2em" },
               }}
             >
               MANGAK
@@ -109,13 +110,17 @@ const Header = ({ searchTerm = "", setSearchTerm = () => {} }) => {
             </IconButton>
           )}
 
-          {/* Ícone de favoritos */}
+          {/* Ícone condicional: Favoritos ou Editar */}
           {!isFavoritesPage && (
             <IconButton
-              onClick={() => handleProtectedRoute("/favorites")}
+              onClick={() => handleProtectedRoute(user?.role === "admin" ? "/admin-panel" : "/favorites")}
               sx={{ color: "#FF0037" }}
             >
-              <FavoriteIcon sx={{ width: "30px", height: "30px" }} />
+              {user?.role === "admin" ? (
+                <EditIcon sx={{ width: "30px", height: "30px" }} />
+              ) : (
+                <FavoriteIcon sx={{ width: "30px", height: "30px" }} />
+              )}
             </IconButton>
           )}
 

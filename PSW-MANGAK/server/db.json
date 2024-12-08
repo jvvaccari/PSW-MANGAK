@@ -381,7 +381,7 @@
       "id": "adm",
       "username": "adm",
       "email": "adm@gmail.com",
-      "password": "flasco1501",
+      "password": "flasco123",
       "role": "admin"
     },
     {
@@ -391,6 +391,14 @@
       "password": "flasco123",
       "role": "user",
       "favorites": ["3", "5", "10"]
+    },
+    {
+      "id": "2",
+      "username": "jvvaccari",
+      "email": "jvva@gmail.com",
+      "password": "flasco123",
+      "role": "user",
+      "favorites": ["2", "4", "1","8"]
     }
   ]
 }
