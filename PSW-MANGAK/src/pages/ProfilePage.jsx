@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Box,
   Typography,
@@ -9,12 +9,17 @@ import {
   IconButton,
   CircularProgress,
   InputAdornment,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { fetchAccountById, updateAccount, deleteAccount } from "../../services/api";
-import PropTypes from "prop-types";
+import useAuth from "../contexts/useAuth"; // Usar o AuthContext diretamente
 
 const inputStyles = {
   bgcolor: "var(--bg-data-color)",
@@ -35,34 +40,40 @@ const inputStyles = {
 };
 
 function ProfilePage() {
-  const { id } = useParams();
+  const { user, logout } = useAuth(); // Obtemos o usuário logado
   const navigate = useNavigate();
-  const [user, setUser] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({ username: "", email: "", password: "" });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [openDialog, setOpenDialog] = useState(false);
 
   useEffect(() => {
     const loadUser = async () => {
       try {
-        const data = await fetchAccountById(id);
+        if (!user?.id) {
+          navigate("/login"); // Redireciona para login se o usuário não estiver autenticado
+          return;
+        }
+
+        const data = await fetchAccountById(user.id);
         if (data) {
-          setUser(data);
           setFormData(data);
         } else {
           throw new Error("Usuário não encontrado");
         }
       } catch (err) {
-        console.error("Erro ao carregar os dados do usuário:", err);
-        setError("Usuário não encontrado");
+        console.error("Erro ao carregar os dados do usuário:", err.message);
+        setError("Usuário não encontrado.");
+        navigate("/login");
       } finally {
-        setTimeout(() => setLoading(false), 500);
+        setLoading(false);
       }
     };
+
     loadUser();
-  }, [id]);
+  }, [user, navigate]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -71,23 +82,32 @@ function ProfilePage() {
 
   const handleSave = async () => {
     try {
-      await updateAccount(id, formData);
-      setUser(formData);
+      await updateAccount(user.id, formData);
       setIsEditing(false);
-      console.log("Conta atualizada com sucesso");
     } catch (err) {
-      console.error("Erro ao atualizar conta:", err);
+      console.error("Erro ao atualizar conta:", err.message);
+      setError("Erro ao atualizar a conta.");
     }
   };
 
   const handleDelete = async () => {
     try {
-      await deleteAccount(id);
-      console.log("Conta excluída com sucesso");
-      navigate("/");
+      await deleteAccount(user.id);
+      logout(); // Remove a autenticação do contexto
+      setOpenDialog(false);
+      navigate("/"); // Redireciona para a página inicial após a exclusão
     } catch (err) {
-      console.error("Erro ao excluir conta:", err);
+      console.error("Erro ao excluir conta:", err.message);
+      setError("Erro ao excluir a conta.");
     }
+  };
+
+  const handleOpenDialog = () => {
+    setOpenDialog(true);
+  };
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
   };
 
   if (loading) {
@@ -217,10 +237,10 @@ function ProfilePage() {
               }}
             />
             <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
-              {user.username}
+              {formData.username}
             </Typography>
             <Typography variant="body2" sx={{ color: "#A5A5A5", marginBottom: "32px" }}>
-              {user.email}
+              {formData.email}
             </Typography>
             <Button
               variant="contained"
@@ -236,7 +256,7 @@ function ProfilePage() {
             </Button>
             <Button
               variant="contained"
-              onClick={handleDelete}
+              onClick={handleOpenDialog}
               sx={{ width: "100%", maxWidth: "388px", bgcolor: "var(--btn-mangak-color)" }}
             >
               Excluir conta
@@ -244,12 +264,30 @@ function ProfilePage() {
           </Box>
         )}
       </Box>
+
+      <Dialog
+        open={openDialog}
+        onClose={handleCloseDialog}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">Confirmação de exclusão</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Tem certeza de que deseja excluir sua conta? Essa ação não pode ser desfeita.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog} color="primary">
+            Cancelar
+          </Button>
+          <Button onClick={handleDelete} color="error" autoFocus>
+            Excluir
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 }
-
-ProfilePage.propTypes = {
-  userId: PropTypes.string,
-};
 
 export default ProfilePage;

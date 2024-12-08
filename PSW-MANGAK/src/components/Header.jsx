@@ -1,141 +1,144 @@
 import { Box, IconButton, Avatar, InputBase, Typography } from "@mui/material";
-import { useUser } from "../contexts/useUser";
 import CancelIcon from "@mui/icons-material/Cancel";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import SearchIcon from "@mui/icons-material/Search";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useState } from "react";
-import styles from "./Header.module.css";
 import PropTypes from "prop-types";
+import useAuth from "../contexts/useAuth"; // Importa o AuthContext via hook useAuth
 
 const Header = ({ searchTerm = "", setSearchTerm = () => {} }) => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { user } = useAuth(); // Obtém informações do usuário logado
+
   const [showSearch, setShowSearch] = useState(false);
 
   const isCatalogPage = location.pathname === "/";
   const isProfilePage = location.pathname.startsWith("/profile");
   const isFavoritesPage = location.pathname === "/favorites";
-  const { userId } = useUser();
 
   const handleBackClick = () => {
     navigate(-1);
   };
 
   const handleSearchClick = () => {
-    setShowSearch(!showSearch);
+    setShowSearch(true);
+  };
+
+  const handleBlur = () => {
+    setShowSearch(false);
+  };
+
+  const handleProtectedRoute = (route) => {
+    if (user?.id) {
+      navigate(`${route}/${user.id}`); // Navega para a rota do usuário logado
+    } else {
+      navigate("/login"); // Redireciona para login se nenhum usuário estiver logado
+    }
   };
 
   return (
-    <Box className={styles.headerContainer}>
-<Box sx={{ display: "flex", alignItems: "center", flex: 0 }}>
-  {isFavoritesPage ? (
-    <Typography
-      variant="subtitle1"
-      component="a"
-      href="/"
+    <Box
       sx={{
-        fontWeight: "bold",
-        color: "var(--btn-mangak-color)",
-        fontSize: { xs: "1.2em", md: "1.6em", lg: "1.8em" },
-      }}
-
-    >
-      MANGAK
-    </Typography>
-  ) : isProfilePage ? (
-    <IconButton
-      color="inherit"
-      onClick={handleBackClick}
-      sx={{
-        position: "absolute",
-        top: "12px",
-        left: "92%",
-        transform: "translateX(-50%)",
-        width: "36px",
-        height: "36px",
-        padding: "0px",
+        display: "flex",
+        justifyContent: showSearch ? "center" : "space-between",
+        alignItems: "center",
+        backgroundColor: "#000",
       }}
     >
-      <CancelIcon sx={{ cursor: "pointer", borderRadius: "120px" }} />
-    </IconButton>
-  ) : (
-    !isCatalogPage && (
-      <IconButton
-        color="inherit"
-        onClick={handleBackClick}
-        sx={{ width: "30px", height: "30px", padding: "0px", marginLeft: "-5px" }}
-      >
-        <ArrowBackIcon sx={{ cursor: "pointer" }} />
-      </IconButton>
-    )
-  )}
-</Box>
+      {/* Logo ou Botão de Voltar */}
+      {!showSearch && (
+        <Box sx={{ display: "flex", alignItems: "center" }}>
+          {isFavoritesPage ? (
+            <Typography
+              variant="h6"
+              component="a"
+              href="/"
+              sx={{
+                fontWeight: "bold",
+                color: "#FF0037",
+                textDecoration: "none",
+              }}
+            >
+              MANGAK
+            </Typography>
+          ) : isProfilePage ? (
+            <IconButton onClick={handleBackClick} sx={{ color: "#fff" }}>
+              <CancelIcon />
+            </IconButton>
+          ) : !isCatalogPage ? (
+            <IconButton onClick={handleBackClick} sx={{ color: "#fff" }}>
+              <ArrowBackIcon />
+            </IconButton>
+          ) : (
+            <Typography
+              variant="h6"
+              component="a"
+              href="/"
+              sx={{
+                fontWeight: "bold",
+                color: "#FF0037",
+                textDecoration: "none",
+              }}
+            >
+              MANGAK
+            </Typography>
+          )}
+        </Box>
+      )}
 
-      <Box sx={{ display: "flex", alignItems: "center", flex: 1 }}>
-        {showSearch ? (
-          <InputBase
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Busque por mangás (nome, autor, gênero, tema)..."
-            className={styles.searchInput}
-            onBlur={() => setShowSearch(false)}
-            autoFocus
-            sx={{
-              width: "100%",
-              backgroundColor: "#1E1E1E",
-              padding: "0 10px",
-              borderRadius: "5px",
-            }}
-          />
-        ) : isCatalogPage && !showSearch ? (
-          <Typography
-            variant="subtitle1"
-            component="a"
-            href="/"
-            sx={{
-              fontWeight: "bold",
-              color: "var(--btn-mangak-color)",
-              fontSize: { xs: "1.2em", md: "1.6em", lg: "1.8em" },
-            }}
+      {/* Campo de Busca */}
+      {showSearch ? (
+        <InputBase
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          placeholder="Busque por mangás..."
+          onBlur={handleBlur} // Fecha a barra ao perder o foco
+          autoFocus
+          sx={{
+            flex: 1,
+            maxWidth: { xs: "100%", sm: "100%" },
+            backgroundColor: "#1E1E1E",
+            color: "#fff",
+            padding: "8px 16px",
+            borderRadius: "4px",
+          }}
+        />
+      ) : null}
 
-          >
-            MANGAK
-          </Typography>
-        ) : null}
-      </Box>
-      <Box sx={{ display: "flex", alignItems: "center", flex: 0, justifyContent: "flex-end", gap: "6px" }}>
-        {(isCatalogPage || isFavoritesPage) && !showSearch && (
-          <IconButton
-            color="inherit"
-            onClick={handleSearchClick}
-            sx={{ width: "30px", height: "30px" }}
-          >
-            <SearchIcon className={styles.searchIcon} />
-          </IconButton>
-        )}
+      {/* Botões do Header */}
+      {!showSearch && (
+        <Box sx={{ display: "flex", alignItems: "center", gap: { xs: "0.3em", md: "1em" } }}>
+          {isCatalogPage && (
+            <IconButton onClick={handleSearchClick} sx={{ color: "#fff" }}>
+              <SearchIcon sx={{ width: "30px", height: "30px" }} />
+            </IconButton>
+          )}
 
-        {/* Botão para acessar a página de favoritos */}
+          {/* Ícone de favoritos */}
+          {!isFavoritesPage && (
+            <IconButton
+              onClick={() => handleProtectedRoute("/favorites")}
+              sx={{ color: "#FF0037" }}
+            >
+              <FavoriteIcon sx={{ width: "30px", height: "30px" }} />
+            </IconButton>
+          )}
 
-  {(isCatalogPage || location.pathname.startsWith("/manga")) && !showSearch && (
-    <IconButton
-      color="inherit"
-      onClick={() => navigate(`/favorites/${userId}`)}
-      sx={{ width: "36px", height: "36px" }}
-    >
-      <FavoriteIcon sx={{ color: "var(--btn-mangak-color)" }} />
-    </IconButton>
-  )}
-
-        {!isProfilePage && !showSearch && (
+          {/* Ícone de perfil */}
           <Avatar
-            sx={{ cursor: "pointer" }}
-            onClick={() => navigate(`/profile/${userId}`)}
-            className={styles.avatarIcon}
+            onClick={() => handleProtectedRoute("/profile")}
+            sx={{
+              cursor: "pointer",
+              backgroundColor: "#2c2c2c",
+              maxWidth: "36px",
+              maxHeight: "36px",
+            }}
           />
-        )}
-      </Box>
+        </Box>
+      )}
     </Box>
   );
 };

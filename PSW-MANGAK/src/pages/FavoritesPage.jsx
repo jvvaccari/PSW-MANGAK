@@ -1,13 +1,13 @@
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState } from "react";
 import { Box, Typography, CircularProgress } from "@mui/material";
 import Header from "../components/Header";
 import MangaList from "../components/MangaList";
-import UserContext from "../contexts/UserContext";
 import { fetchFavorites } from "../../services/api";
 import { useNavigate } from "react-router-dom";
+import useAuth from "../contexts/useAuth";
 
 const FavoritesPage = () => {
-  const { userId } = useContext(UserContext);
+  const { user } = useAuth(); // Obtém o usuário logado do contexto
   const [favorites, setFavorites] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -16,25 +16,29 @@ const FavoritesPage = () => {
 
   useEffect(() => {
     const loadFavorites = async () => {
+      if (!user) {
+        setError("Você precisa estar logado para acessar seus favoritos.");
+        setLoading(false);
+        navigate("/login"); // Redireciona para login caso o usuário não esteja logado
+        return;
+      }
+
       try {
-        if (!userId) {
-          throw new Error("Usuário não autenticado");
-        }
-        const data = await fetchFavorites(userId);
+        const data = await fetchFavorites(user.id); // Usa o ID do usuário logado
         setFavorites(data);
       } catch (err) {
         console.error("Erro ao carregar favoritos:", err.message);
-        setError("Erro ao carregar seus favoritos");
+        setError("Erro ao carregar seus favoritos.");
       } finally {
         setLoading(false);
       }
     };
 
     loadFavorites();
-  }, [userId]);
+  }, [user, navigate]);
 
   const handleMangaClick = (id) => {
-    navigate(`/manga/${id}`); // Redireciona para a rota de detalhes do mangá
+    navigate(`/manga/${id}`);
   };
 
   if (loading) {
@@ -54,18 +58,26 @@ const FavoritesPage = () => {
 
   if (error) {
     return (
-      <Typography
-        variant="subtitle1"
+      <Box
         sx={{
-          marginTop: { xs: "2em", sm: "2.5em", lg: "3em" },
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
           textAlign: "center",
           color: "red",
-          fontWeight: 700,
-          fontSize: { xs: "1.2em", md: "1.4em", lg: "1.6em" },
         }}
       >
-        {error}
-      </Typography>
+        <Typography
+          variant="subtitle1"
+          sx={{
+            fontWeight: 700,
+            fontSize: { xs: "1.2em", md: "1.4em", lg: "1.6em" },
+          }}
+        >
+          {error}
+        </Typography>
+      </Box>
     );
   }
 
