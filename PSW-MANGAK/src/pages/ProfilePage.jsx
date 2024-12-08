@@ -39,8 +39,10 @@ function ProfilePage() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
-  const [showPassword, setShowPassword] = useState(false); // Controle de exibição de senha
+  const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({ username: "", email: "", password: "" });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const loadUser = async () => {
@@ -50,10 +52,13 @@ function ProfilePage() {
           setUser(data);
           setFormData(data);
         } else {
-          console.error("Usuário não encontrado");
+          throw new Error("Usuário não encontrado");
         }
       } catch (err) {
         console.error("Erro ao carregar os dados do usuário:", err);
+        setError("Usuário não encontrado");
+      } finally {
+        setTimeout(() => setLoading(false), 500);
       }
     };
     loadUser();
@@ -85,11 +90,26 @@ function ProfilePage() {
     }
   };
 
-  if (!user) {
+  if (loading) {
     return (
       <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
         <CircularProgress sx={{ color: "#fff" }} />
       </Box>
+    );
+  }
+
+  if (error) {
+    return (
+      <Typography
+        sx={{
+          textAlign: "center",
+          marginTop: "20px",
+          color: "red",
+          fontSize: "1.2em",
+        }}
+      >
+        {error}
+      </Typography>
     );
   }
 
@@ -221,23 +241,6 @@ function ProfilePage() {
             >
               Excluir conta
             </Button>
-            <Box>
-              <Button
-                variant="contained"
-                onClick={() => navigate("/login")}
-                sx={{
-                  position: "absolute",
-                  bottom: "16px",
-                  left: "50%",
-                  transform: "translateX(-50%)",
-                  width: "100%",
-                  maxWidth: "290.52px",
-                  bgcolor: "var(--btn-mangak-color)",
-                }}
-              >
-                Sair
-              </Button>
-            </Box> 
           </Box>
         )}
       </Box>

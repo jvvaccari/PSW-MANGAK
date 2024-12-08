@@ -1,15 +1,67 @@
+import { useContext } from "react";
+import { useParams } from "react-router-dom";
+import MangaContext from "../contexts/MangaContext";
 import Actions from "../components/Actions";
 import ArtGallery from "../components/ArtGallery";
 import Content from "../components/Content";
 import Description from "../components/Description";
 import Header from "../components/Header";
 import TagsSection from "../components/TagsSection";
-import { Box } from "@mui/material";
-import PropTypes from "prop-types";
+import { Box, CircularProgress, Typography } from "@mui/material";
 
-function MangaLandingPage({ manga }) {
-  // Garantir que manga tenha valores válidos e utilizar valores padrão se necessário
-  const safeManga = manga || {};  // Se manga for null ou undefined, utiliza um objeto vazio.
+function MangaLandingPage() {
+  const { id } = useParams();
+  const { mangas, loading, error } = useContext(MangaContext);
+
+  if (loading) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          minHeight: "100vh",
+          bgcolor: "var(--bg-page-colorr)",
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  if (error) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          minHeight: "100vh",
+          bgcolor: "var(--bg-page-color)",
+        }}
+      >
+        <Typography color="error">Erro: {error}</Typography>
+      </Box>
+    );
+  }
+
+  const manga = mangas.find((m) => m.id === id);
+
+  if (!manga) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          minHeight: "100vh",
+          bgcolor: "var(--bg-page-color)",
+        }}
+      >
+        <Typography color="error">Mangá não encontrado.</Typography>
+      </Box>
+    );
+  }
 
   return (
     <Box
@@ -18,7 +70,7 @@ function MangaLandingPage({ manga }) {
         justifyContent: "center",
         alignItems: "flex-start",
         minHeight: "100vh",
-        bgcolor: "var(--bg-color)",
+        bgcolor: "var(--bg-page-color)",
       }}
     >
       <Box
@@ -31,34 +83,30 @@ function MangaLandingPage({ manga }) {
       >
         <Header />
 
-        {safeManga.id && (
-          <Content
-            manga={{
-              image: safeManga.image || "",
-              title: safeManga.title || "Título Desconhecido",
-              author: safeManga.author || "Autor Desconhecido",
-              rating: safeManga.rating || 0,
-              status: safeManga.status || "Status Desconhecido",
-              yearPubli: safeManga.yearPubli || "????",
-            }}
-            sx={{
-              marginBottom: "var(--spacing-large)",
-            }}
-          />
-        )}
+        <Content
+          manga={{
+            image: manga.image || "",
+            title: manga.title || "Título Desconhecido",
+            author: manga.author || "Autor Desconhecido",
+            rating: manga.rating || 0,
+            status: manga.status || "Status Desconhecido",
+            yearPubli: manga.yearPubli || "????",
+          }}
+          sx={{
+            marginBottom: "var(--spacing-large)",
+          }}
+        />
 
-        {safeManga.id && (
-          <Actions
-            sx={{
-              marginBottom: "var(--spacing-large)",
-            }}
-            mangaId={safeManga.id}
-          />
-        )}
+        <Actions
+          sx={{
+            marginBottom: "var(--spacing-large)",
+          }}
+          mangaId={manga.id}
+        />
 
-        {safeManga.description && (
+        {manga.description && (
           <Description
-            text={safeManga.description}
+            text={manga.description}
             sx={{
               fontSize: "var(--font-size-body)",
               marginBottom: "var(--spacing-large)",
@@ -66,24 +114,23 @@ function MangaLandingPage({ manga }) {
           />
         )}
 
-        {safeManga.id &&
-          [
-            { section: "Genres", tags: safeManga.genres || [] },
-            { section: "Demographic", tags: [safeManga.demographic || ""] },
-            { section: "Buy", tags: safeManga.retail || [] },
-          ].map((data, index) => (
-            <TagsSection
-              key={index}
-              data={data}
-              sx={{
-                marginBottom: "var(--spacing-medium)",
-              }}
-            />
-          ))}
+        {[
+          { section: "Genres", tags: manga.genres || [] },
+          { section: "Demographic", tags: [manga.demographic || ""] },
+          { section: "Buy", tags: manga.retail || [] },
+        ].map((data, index) => (
+          <TagsSection
+            key={index}
+            data={data}
+            sx={{
+              marginBottom: "var(--spacing-medium)",
+            }}
+          />
+        ))}
 
-        {safeManga.artsList && (
+        {manga.artsList && (
           <ArtGallery
-            artsList={safeManga.artsList || []}
+            artsList={manga.artsList || []}
             sx={{
               display: "flex",
               flexWrap: "wrap",
@@ -97,29 +144,5 @@ function MangaLandingPage({ manga }) {
     </Box>
   );
 }
-
-MangaLandingPage.propTypes = {
-  manga: PropTypes.shape({
-    id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-    title: PropTypes.string.isRequired,
-    image: PropTypes.string.isRequired,
-    author: PropTypes.string.isRequired,
-    rating: PropTypes.number,
-    status: PropTypes.string.isRequired,
-    yearPubli: PropTypes.string,
-    demographic: PropTypes.string,
-    genres: PropTypes.arrayOf(PropTypes.string),
-    artsList: PropTypes.arrayOf(PropTypes.string),
-    description: PropTypes.string,
-    retail: PropTypes.arrayOf(
-      PropTypes.shape({
-        name: PropTypes.string.isRequired,
-        url: PropTypes.string.isRequired,
-      })
-    ),
-  }),
-  searchTerm: PropTypes.string,
-  setSearchTerm: PropTypes.func,
-};
 
 export default MangaLandingPage;

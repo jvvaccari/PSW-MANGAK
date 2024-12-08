@@ -42,34 +42,41 @@ export const fetchAccountById = async (id) => {
   }
 };
 
-// Fetch user's favorite mangas
 export const fetchFavorites = async (userId) => {
   try {
     if (!userId) {
-      throw new Error('ID do usuário inválido');
+      throw new Error("ID do usuário inválido");
     }
 
+    console.log(`Fetching favorites for userId: ${userId}`); // Log para depuração
+
     const response = await axios.get(`${BASE_URL}/${userId}`);
+    console.log("Response from accounts:", response.data);
+
     const account = response.data;
 
     if (!account || !Array.isArray(account.favorites)) {
-      throw new Error("Favoritos não encontrados");
+      throw new Error("Favoritos não encontrados ou formato incorreto");
     }
 
+    // Buscando detalhes dos favoritos
     const favoriteMangas = await Promise.all(
       account.favorites.map(async (mangaId) => {
-        if (typeof mangaId !== 'string' && typeof mangaId !== 'number') {
-          console.warn(`ID de manga inválido: ${mangaId}`);
-          return null;  // Ignora IDs inválidos
-        }         
-        const mangaResponse = await axios.get(`${API_URL}/mangas/${mangaId}`);
-        return mangaResponse.data;
+        try {
+          console.log(`Fetching mangaId: ${mangaId}`); // Log de depuração
+          const mangaResponse = await axios.get(`${API_URL}/mangas/${mangaId}`);
+          return mangaResponse.data;
+        } catch (error) {
+          console.warn(`Erro ao buscar mangaId ${mangaId}:`, error.message);
+          return null; // Ignora IDs que falharem
+        }
       })
     );
 
-    return favoriteMangas.filter(manga => manga !== null);
+    // Filtra nulos (em caso de erros)
+    return favoriteMangas.filter((manga) => manga !== null);
   } catch (err) {
-    console.error("Erro ao buscar favoritos:", err);
+    console.error("Erro ao buscar favoritos:", err.message);
     throw new Error("Erro ao buscar seus favoritos");
   }
 };

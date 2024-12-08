@@ -1,42 +1,40 @@
-import { useState, useEffect } from "react";
-import { useNavigate,useParams } from "react-router-dom";
+import { useEffect, useState, useContext } from "react";
+import { Box, Typography, CircularProgress } from "@mui/material";
 import Header from "../components/Header";
 import MangaList from "../components/MangaList";
-import { Box, Typography, CircularProgress } from "@mui/material";
+import UserContext from "../contexts/UserContext";
 import { fetchFavorites } from "../../services/api";
+import { useNavigate } from "react-router-dom";
 
-function FavoritesPage() {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [mangas, setMangas] = useState([]);
+const FavoritesPage = () => {
+  const { userId } = useContext(UserContext);
+  const [favorites, setFavorites] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
-  const { id } = useParams();
 
   useEffect(() => {
-    if (!id) {
-      setError("ID do usuário não encontrado.");
-      setLoading(false);
-      return;
-    }
-  
     const loadFavorites = async () => {
       try {
-        const favoriteMangas = await fetchFavorites(id);
-        setMangas(favoriteMangas || []);
+        if (!userId) {
+          throw new Error("Usuário não autenticado");
+        }
+        const data = await fetchFavorites(userId);
+        setFavorites(data);
       } catch (err) {
-        console.error("Erro ao carregar favoritos:", err);
-        setError("Falha ao carregar seus favoritos. Tente novamente mais tarde.");
+        console.error("Erro ao carregar favoritos:", err.message);
+        setError("Erro ao carregar seus favoritos");
       } finally {
         setLoading(false);
       }
     };
-  
+
     loadFavorites();
-  }, [id]);  
+  }, [userId]);
 
   const handleMangaClick = (id) => {
-    navigate(`/manga/${id}`);
+    navigate(`/manga/${id}`); // Redireciona para a rota de detalhes do mangá
   };
 
   if (loading) {
@@ -55,19 +53,25 @@ function FavoritesPage() {
   }
 
   if (error) {
-    return <div>{error}</div>;
+    return (
+      <Typography
+        variant="subtitle1"
+        sx={{
+          marginTop: { xs: "2em", sm: "2.5em", lg: "3em" },
+          textAlign: "center",
+          color: "red",
+          fontWeight: 700,
+          fontSize: { xs: "1.2em", md: "1.4em", lg: "1.6em" },
+        }}
+      >
+        {error}
+      </Typography>
+    );
   }
 
-  const filteredMangas = mangas.filter((manga) => {
-    const search = searchTerm.toLowerCase();
-    return (
-      manga.id.toString().includes(search) ||
-      manga.title.toLowerCase().includes(search) ||
-      manga.author.toLowerCase().includes(search) ||
-      manga.genres.some((genre) => genre.toLowerCase().includes(search)) ||
-      manga.demographic.toLowerCase().includes(search)
-    );
-  });
+  const filteredFavorites = favorites.filter((manga) =>
+    manga.title.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <Box
@@ -88,15 +92,13 @@ function FavoritesPage() {
           color: "#fff",
         }}
       >
-        {/* Usa o mesmo Header, mas ajustado para Favorites */}
         <Header searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-
-        {filteredMangas?.length > 0 ? (
+        {filteredFavorites.length > 0 ? (
           <>
             <Typography
               variant="subtitle1"
               sx={{
-                marginTop: { xs: "1.2em", sm: "1.4em", lg: "2em" },
+                marginTop: { xs: "3em", sm: "4em", lg: "5em" },
                 fontWeight: 700,
                 fontSize: { xs: "1.2em", md: "1.4em", lg: "1.6em" },
               }}
@@ -104,7 +106,7 @@ function FavoritesPage() {
               Seus Mangás Favoritos
             </Typography>
             <MangaList
-              mangas={filteredMangas}
+              mangas={filteredFavorites}
               searchTerm={searchTerm}
               onMangaClick={handleMangaClick}
               horizontalScroll
@@ -117,6 +119,7 @@ function FavoritesPage() {
               marginTop: { xs: "0.5em", sm: "0.8em", lg: "2em" },
               fontWeight: 700,
               fontSize: { xs: "1.2em", md: "1.4em", lg: "1.6em" },
+              textAlign: "center",
             }}
           >
             Você ainda não tem mangás favoritos!
@@ -125,6 +128,6 @@ function FavoritesPage() {
       </Box>
     </Box>
   );
-}
+};
 
 export default FavoritesPage;

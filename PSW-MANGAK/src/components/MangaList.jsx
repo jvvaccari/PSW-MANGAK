@@ -48,51 +48,93 @@ const MangaList = ({ mangas, searchTerm, onMangaClick }) => {
   const handleScroll = (genre, direction) => {
     const listRef = listRefs.current[genre];
     if (!listRef) return;
-
+  
     const scrollAmount =
       direction === "left" ? -listRef.offsetWidth / 2 : listRef.offsetWidth / 2;
-
+  
     listRef.scrollBy({
       left: scrollAmount,
       behavior: "smooth",
     });
-
-    const canScrollLeft = listRef.scrollLeft > 0;
-    const canScrollRight =
-      listRef.scrollLeft + listRef.clientWidth < listRef.scrollWidth;
-
-    if (
-      scrollPositions[genre]?.canScrollLeft !== canScrollLeft ||
-      scrollPositions[genre]?.canScrollRight !== canScrollRight
-    ) {
-      setScrollPositions((prev) => ({
-        ...prev,
-        [genre]: { canScrollLeft, canScrollRight },
-      }));
-    }
-  };
+  
+    // Atualiza imediatamente as condições de scroll
+    setTimeout(() => {
+      const canScrollLeft = listRef.scrollLeft > 0;
+      const canScrollRight =
+        listRef.scrollLeft + listRef.clientWidth < listRef.scrollWidth;
+  
+      // Atualiza o estado apenas se houver mudanças
+      if (
+        scrollPositions[genre]?.canScrollLeft !== canScrollLeft ||
+        scrollPositions[genre]?.canScrollRight !== canScrollRight
+      ) {
+        setScrollPositions((prev) => ({
+          ...prev,
+          [genre]: { canScrollLeft, canScrollRight },
+        }));
+      }
+    }, 50); // Pequeno atraso para capturar o scroll após o comportamento "smooth"
+  };  
 
   useEffect(() => {
-    // Apenas inicializa o estado para cada gênero
-    const updatedScrollPositions = {};
-
-    Object.keys(genresToDisplay).forEach((genre) => {
-      const listRef = listRefs.current[genre];
-      if (listRef) {
-        const canScrollLeft = listRef.scrollLeft > 0;
-        const canScrollRight =
-          listRef.scrollLeft + listRef.clientWidth < listRef.scrollWidth;
-
-        if (!scrollPositions[genre]) {
-          updatedScrollPositions[genre] = { canScrollLeft, canScrollRight };
+    const initializeScrollPositions = () => {
+      const updatedScrollPositions = {};
+      Object.keys(genresToDisplay).forEach((genre) => {
+        const listRef = listRefs.current[genre];
+        if (listRef) {
+          const canScrollLeft = listRef.scrollLeft > 0;
+          const canScrollRight =
+            listRef.scrollLeft + listRef.clientWidth < listRef.scrollWidth;
+  
+          // Atualize apenas se necessário
+          if (
+            !scrollPositions[genre] ||
+            scrollPositions[genre].canScrollLeft !== canScrollLeft ||
+            scrollPositions[genre].canScrollRight !== canScrollRight
+          ) {
+            updatedScrollPositions[genre] = {
+              canScrollLeft,
+              canScrollRight,
+            };
+          }
         }
+      });
+  
+      if (Object.keys(updatedScrollPositions).length > 0) {
+        setScrollPositions((prev) => ({ ...prev, ...updatedScrollPositions }));
       }
-    });
-
-    if (Object.keys(updatedScrollPositions).length > 0) {
-      setScrollPositions((prev) => ({ ...prev, ...updatedScrollPositions }));
-    }
-  }, [genresToDisplay]); // Observe apenas mudanças em `genresToDisplay`
+    };
+  
+    const addScrollListeners = () => {
+      Object.keys(genresToDisplay).forEach((genre) => {
+        const listRef = listRefs.current[genre];
+        if (listRef) {
+          const scrollHandler = () => initializeScrollPositions();
+          listRef.addEventListener("scroll", scrollHandler);
+          listRefs.current[`${genre}-handler`] = scrollHandler;
+        }
+      });
+    };
+  
+    const removeScrollListeners = () => {
+      Object.keys(genresToDisplay).forEach((genre) => {
+        const listRef = listRefs.current[genre];
+        const scrollHandler = listRefs.current[`${genre}-handler`];
+        if (listRef && scrollHandler) {
+          listRef.removeEventListener("scroll", scrollHandler);
+        }
+      });
+    };
+  
+    // Inicialização e limpeza
+    initializeScrollPositions();
+    addScrollListeners();
+  
+    return () => {
+      removeScrollListeners();
+    };
+  }, [genresToDisplay, scrollPositions]);
+      
 
   return (
     <Box>
