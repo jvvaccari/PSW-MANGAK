@@ -33,6 +33,39 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // Função para registrar um novo usuário
+  const register = async ({ username, email, password }) => {
+    try {
+      // Verifica se o e-mail já existe
+      const response = await axios.get(BASE_URL);
+      const existingUser = response.data.find(
+        (account) => account.email === email
+      );
+
+      if (existingUser) {
+        throw new Error("O e-mail já está em uso.");
+      }
+
+      // Cria um novo usuário
+      const newUser = {
+        username,
+        email,
+        password,
+        id: Date.now().toString(), // ID gerado localmente (substitua por ID gerado pelo backend, se necessário)
+        favorites: [],
+      };
+
+      await axios.post(BASE_URL, newUser); // Envia o novo usuário para o backend
+      setUser(newUser); // Define o novo usuário como autenticado
+      localStorage.setItem("userId", newUser.id); // Salva no localStorage
+
+      return newUser;
+    } catch (error) {
+      console.error("Erro ao registrar usuário:", error.message);
+      throw new Error("Erro ao registrar. Verifique os dados e tente novamente.");
+    }
+  };
+
   // Função para deslogar o usuário
   const logout = () => {
     setUser(null);
@@ -75,7 +108,7 @@ export const AuthProvider = ({ children }) => {
   }
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, login, logout, register }}>
       {children}
     </AuthContext.Provider>
   );

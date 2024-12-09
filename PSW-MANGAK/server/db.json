@@ -443,10 +443,17 @@
       "role": "user",
       "favorites": [
         "2",
-        "4",
         "1",
-        "8"
+        "8",
+        "4"
       ]
+    },
+    {
+      "id": "1733782200467",
+      "username": "Lucas",
+      "email": "lucaspsilva1610@gmail.com",
+      "password": "123",
+      "favorites": []
     }
   ]
 }

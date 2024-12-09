@@ -12,6 +12,7 @@ const ProfilePage = lazy(() => import("./pages/ProfilePage"));
 const LoginPage = lazy(() => import("./pages/LoginPage"));
 const FavoritesPage = lazy(() => import("./pages/FavoritesPage"));
 const AdminPage = lazy(() => import("./pages/AdminPage"));
+const RegisterPage = lazy(() => import("./pages/RegisterPage"));
 
 const App = () => (
   <AuthProvider>
@@ -36,6 +37,7 @@ const App = () => (
               <Route path="/" element={<CatalogPage />} />
               <Route path="/manga/:id" element={<MangaLandingPage />} />
               <Route path="/login" element={<LoginPage />} />
+              <Route path="/register" element={<RegisterPage />} />
 
               {/* Rotas Protegidas */}
               <Route
