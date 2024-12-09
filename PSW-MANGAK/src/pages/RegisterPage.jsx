@@ -105,7 +105,28 @@ export default function RegisterPage() {
           >
             MANGAK
           </Typography>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => navigate("/login")}
+            sx={{
+              fontWeight: "bold",
+              padding: "2% 5%",
+              fontSize: "3.5vw",
+              borderRadius: "6px",
+              "&:hover": {
+                bgcolor: "#CC002A",
+              },
+              "@media (min-width: 600px)": {
+                padding: "6px 16px",
+                fontSize: "0.875rem",
+              },
+            }}
+          >
+            Login
+          </Button>
         </Box>
+
 
         {/* Register Form Centered */}
         <Box
