@@ -28,19 +28,19 @@
       "retail": [
         {
           "name": "Panini",
-          "url": "https://panini.com.br/planet-manga/chainsaw-man?srsltid=AfmBOoqcmp8IaVIywAKBhhJHNeoSFZeSc23kv4xnwBD90i6orwX_zf-7"
+          "url": "https://panini.com.br/catalogsearch/result/?q=jujutsu+kaisen"
         },
         {
           "name": "Amazon",
-          "url": "https://www.amazon.com.br/Chainsaw-Man-Vol-Tatsuki-Fujimoto/dp/6555127333"
+          "url": "https://www.amazon.com.br/s?k=jujutsu+kaisen&i=stripbooks&crid=3HZN8QDR5NF4V&sprefix=jujuts%2Cstripbooks%2C248&ref=nb_sb_ss_ts-doa-p_1_6"
         },
         {
           "name": "Mercado Livre",
-          "url": "https://lista.mercadolivre.com.br/manga-chainsaw-man"
+          "url": "https://lista.mercadolivre.com.br/manga-jujutsu-kainsen#D[A:manga%20jujutsu%20kainsen]"
         },
         {
           "name": "Shopee",
-          "url": "https://shopee.com.br/list/Mang%C3%A1/Chainsaw%20Man?srsltid=AfmBOoqUZsc9IQ0q2BXI7fEmOIYvgXpjw-8gsY863RaLN_1hp_jBZOcO"
+          "url": "https://shopee.com.br/search?keyword=mang%C3%A1%20jujutsu%20kaisen"
         }
       ],
       "ratings": [
@@ -204,7 +204,13 @@
           "url": "https://shopee.com.br/list/Mang%C3%A1/Chainsaw%20Man?srsltid=AfmBOoqUZsc9IQ0q2BXI7fEmOIYvgXpjw-8gsY863RaLN_1hp_jBZOcO"
         }
       ],
-      "rating": []
+      "rating": [],
+      "ratings": [
+        {
+          "userId": "2",
+          "rating": 3.5
+        }
+      ]
     },
     {
       "id": "6",
@@ -356,7 +362,13 @@
           "url": "https://shopee.com.br/list/Mang%C3%A1/Chainsaw%20Man?srsltid=AfmBOoqUZsc9IQ0q2BXI7fEmOIYvgXpjw-8gsY863RaLN_1hp_jBZOcO"
         }
       ],
-      "rating": []
+      "rating": [],
+      "ratings": [
+        {
+          "userId": "2",
+          "rating": 4.5
+        }
+      ]
     },
     {
       "id": "10",
@@ -394,7 +406,13 @@
           "url": "https://shopee.com.br/list/Mang%C3%A1/Chainsaw%20Man?srsltid=AfmBOoqUZsc9IQ0q2BXI7fEmOIYvgXpjw-8gsY863RaLN_1hp_jBZOcO"
         }
       ],
-      "rating": []
+      "rating": [],
+      "ratings": [
+        {
+          "userId": "2",
+          "rating": 2.5
+        }
+      ]
     }
   ],
   "accounts": [
