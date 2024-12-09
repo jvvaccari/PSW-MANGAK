@@ -4,6 +4,7 @@ import { Typography, Box, TextField, Button, Paper, CircularProgress } from "@mu
 import { useNavigate } from "react-router-dom";
 import useAuth from "../contexts/useAuth";
 import backgroundImage from "../assets/img/login-background.jpg";
+import StyledTextField from "../components/StyledTextField"; 
 
 const theme = createTheme({
   palette: {
@@ -31,6 +32,8 @@ const theme = createTheme({
     },
   },
 });
+
+
 
 export default function RegisterPage() {
   const [email, setEmail] = useState("");
@@ -158,41 +161,31 @@ export default function RegisterPage() {
               },
             }}
           >
+
+            
             <form onSubmit={handleSubmit}>
-              <TextField
-                fullWidth
-                label="Nome de Usuário"
-                variant="outlined"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                sx={{ marginBottom: "16px" }}
-              />
-              <TextField
-                fullWidth
-                label="Email"
-                variant="outlined"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                sx={{ marginBottom: "16px" }}
-              />
-              <TextField
-                fullWidth
-                label="Senha"
-                variant="outlined"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                sx={{ marginBottom: "16px" }}
-              />
-              <TextField
-                fullWidth
-                label="Confirmar Senha"
-                variant="outlined"
-                type="password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                sx={{ marginBottom: "24px" }}
-              />
+            <StyledTextField
+              label="Nome de Usuário"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+            />
+            <StyledTextField
+              label="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <StyledTextField
+              label="Senha"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <StyledTextField
+              label="Confirmar Senha"
+              type="password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+            />
               {error && (
                 <Typography variant="body2" color="error" sx={{ marginBottom: "16px" }}>
                   {error}
