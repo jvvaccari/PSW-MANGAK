@@ -19,6 +19,17 @@ export const fetchMangas = async () => {
   }
 };
 
+export const createManga = async (newManga) => {
+  try {
+    const response = await axios.post("http://localhost:5001/mangas", newManga);
+    return response.data;
+  } catch (error) {
+    console.error("Erro ao criar manga:", error);
+    throw error;
+  }
+};
+
+
 export const updateManga = async (id, updatedManga) => {
   try {
     const response = await axios.put(`http://localhost:5001/mangas/${id}`, updatedManga);

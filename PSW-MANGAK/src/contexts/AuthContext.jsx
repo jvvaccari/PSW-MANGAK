@@ -1,20 +1,19 @@
 import { createContext, useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import axios from "axios";
+import { Box, CircularProgress } from "@mui/material";
 
 const BASE_URL = "http://localhost:5001/accounts";
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null); // Armazena o usuário logado
+  const [user, setUser] = useState(null); // Usuário autenticado
+  const [loading, setLoading] = useState(true); // Estado de carregamento
 
   // Função para autenticar o usuário
   const login = async (email, password) => {
     try {
-      console.log("Iniciando requisição para o banco de dados...");
       const response = await axios.get(BASE_URL);
-      console.log("Resposta da API:", response.data);
-
       const foundUser = response.data.find(
         (account) =>
           account.email === email &&
@@ -25,9 +24,8 @@ export const AuthProvider = ({ children }) => {
         throw new Error("Credenciais inválidas.");
       }
 
-      console.log("Usuário encontrado:", foundUser);
       setUser(foundUser); // Atualiza o estado do usuário
-      localStorage.setItem("userId", foundUser.id); // Salva o ID do usuário no localStorage
+      localStorage.setItem("userId", foundUser.id); // Salva no localStorage
       return foundUser;
     } catch (error) {
       console.error("Erro ao autenticar usuário:", error.message);
@@ -54,10 +52,27 @@ export const AuthProvider = ({ children }) => {
           localStorage.removeItem("userId"); // Remove o ID inválido
         }
       }
+      setLoading(false); // Conclui o carregamento
     };
 
     loadUserFromLocalStorage();
   }, []);
+
+  if (loading) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          minHeight: "100vh",
+          bgcolor: "var(--bg-page-color)",
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    );
+  }
 
   return (
     <AuthContext.Provider value={{ user, login, logout }}>

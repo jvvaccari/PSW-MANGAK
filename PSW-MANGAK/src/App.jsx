@@ -11,6 +11,7 @@ const MangaLandingPage = lazy(() => import("./pages/MangaLandingPage"));
 const ProfilePage = lazy(() => import("./pages/ProfilePage"));
 const LoginPage = lazy(() => import("./pages/LoginPage"));
 const FavoritesPage = lazy(() => import("./pages/FavoritesPage"));
+const AdminPage = lazy(() => import("./pages/AdminPage"));
 
 const App = () => (
   <AuthProvider>
@@ -53,7 +54,14 @@ const App = () => (
                   </ProtectedRoute>
                 }
               />
-
+              <Route
+                path="/admin-panel/:id"
+                element={
+                  <ProtectedRoute role="admin">
+                    <AdminPage />
+                  </ProtectedRoute>
+                }
+              />
               {/* Rota Fallback */}
               <Route path="*" element={<CatalogPage />} />
             </Routes>
