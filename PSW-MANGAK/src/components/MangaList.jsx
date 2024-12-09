@@ -21,18 +21,22 @@ const MangaList = ({ mangas, searchTerm, onMangaClick }) => {
   const [scrollPositions, setScrollPositions] = useState({});
   const lowerCaseSearchTerm = searchTerm.toLowerCase();
 
-  const groupedMangas = groupByGenres(mangas);
+  const groupedMangas = useMemo(() => groupByGenres(mangas), [mangas]);
 
-  const filteredMangas = mangas.filter(
-    (manga) =>
-      manga.title.toLowerCase().includes(lowerCaseSearchTerm) ||
-      manga.author.toLowerCase().includes(lowerCaseSearchTerm) ||
-      (manga.demographic &&
-        manga.demographic.toLowerCase().includes(lowerCaseSearchTerm)) ||
-      (manga.genres &&
-        manga.genres.some((genre) =>
-          genre.toLowerCase().includes(lowerCaseSearchTerm)
-        ))
+  const filteredMangas = useMemo(
+    () =>
+      mangas.filter(
+        (manga) =>
+          manga.title.toLowerCase().includes(lowerCaseSearchTerm) ||
+          manga.author.toLowerCase().includes(lowerCaseSearchTerm) ||
+          (manga.demographic &&
+            manga.demographic.toLowerCase().includes(lowerCaseSearchTerm)) ||
+          (manga.genres &&
+            manga.genres.some((genre) =>
+              genre.toLowerCase().includes(lowerCaseSearchTerm)
+            ))
+      ),
+    [mangas, lowerCaseSearchTerm]
   );
 
   const genresToDisplay = useMemo(() => {
@@ -44,7 +48,7 @@ const MangaList = ({ mangas, searchTerm, onMangaClick }) => {
       ? { [exactGenreMatch]: groupedMangas[exactGenreMatch] }
       : groupByGenres(filteredMangas);
   }, [groupedMangas, lowerCaseSearchTerm, filteredMangas]);
-  
+
   const updateScrollPositions = useCallback(() => {
     const updatedScrollPositions = {};
     Object.keys(genresToDisplay).forEach((genre) => {
@@ -52,21 +56,21 @@ const MangaList = ({ mangas, searchTerm, onMangaClick }) => {
       if (listRef) {
         const canScrollLeft = listRef.scrollLeft > 0;
         const canScrollRight =
-          Math.ceil(listRef.scrollLeft + listRef.clientWidth) < listRef.scrollWidth;
-  
+          Math.ceil(listRef.scrollLeft + listRef.clientWidth) <
+          listRef.scrollWidth;
+
         updatedScrollPositions[genre] = {
           canScrollLeft,
           canScrollRight,
         };
       }
     });
-  
+
     setScrollPositions((prev) => {
       const isEqual = JSON.stringify(prev) === JSON.stringify(updatedScrollPositions);
       return isEqual ? prev : updatedScrollPositions;
     });
   }, [genresToDisplay]);
-  
 
   const handleScroll = useCallback(
     (genre, direction) => {
@@ -87,11 +91,7 @@ const MangaList = ({ mangas, searchTerm, onMangaClick }) => {
   );
 
   useEffect(() => {
-    const initializeScrollPositions = () => {
-      updateScrollPositions();
-    };
-
-    initializeScrollPositions();
+    updateScrollPositions();
 
     const handleResize = () => {
       updateScrollPositions();
@@ -103,8 +103,19 @@ const MangaList = ({ mangas, searchTerm, onMangaClick }) => {
     };
   }, [updateScrollPositions]);
 
+  const arrowStyles = {
+    position: "absolute",
+    zIndex: 2,
+    width: "50px",
+    backgroundColor: "rgba(255, 0, 0, 0.6)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    cursor: "pointer",
+  };
+
   return (
-    <Box sx={{padding: "0 12px"}}>
+    <Box sx={{ padding: "0 12px" }}>
       {Object.keys(genresToDisplay).length > 0 ? (
         Object.keys(genresToDisplay).map((genre) => (
           <Box
@@ -138,19 +149,7 @@ const MangaList = ({ mangas, searchTerm, onMangaClick }) => {
                 <Box
                   className="desktop-arrow"
                   onClick={() => handleScroll(genre, "left")}
-                  sx={{
-                    position: "absolute",
-                    left: 0,
-                    zIndex: 2,
-                    height: "300px",
-                    width: "50px",
-                    marginTop: "-24px",
-                    backgroundColor: "rgba(255, 0, 0, 0.6)",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    cursor: "pointer",
-                  }}
+                  sx={{ ...arrowStyles, left: 0,height: {sm: "210px",md: "240px",lg: "300px"},marginTop: "-24px" }}
                 >
                   <ArrowBackIosNewTwoToneIcon
                     sx={{ color: "white", fontSize: "20px" }}
@@ -184,8 +183,7 @@ const MangaList = ({ mangas, searchTerm, onMangaClick }) => {
                       borderRadius: "8px",
                       scrollSnapAlign: "center",
                       flexShrink: 0,
-                      width: "200px",
-                      maxWidth: "200px",
+                      width: { xs: "120px", sm: "140px", md: "160px", lg: "200px" },
                       margin: "8px 0",
                     }}
                   >
@@ -197,9 +195,9 @@ const MangaList = ({ mangas, searchTerm, onMangaClick }) => {
                         component="img"
                         src={manga.image}
                         alt={manga.title}
+                        loading="lazy"
                         sx={{
                           borderRadius: "8px",
-                          width: "100%",
                           height: "auto",
                           objectFit: "cover",
                         }}
@@ -212,19 +210,7 @@ const MangaList = ({ mangas, searchTerm, onMangaClick }) => {
                 <Box
                   className="desktop-arrow"
                   onClick={() => handleScroll(genre, "right")}
-                  sx={{
-                    position: "absolute",
-                    right: 0,
-                    zIndex: 2,
-                    height: "300px",
-                    width: "50px",
-                    marginTop: "-24px",
-                    backgroundColor: "rgba(255, 0, 0, 0.6)",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    cursor: "pointer",
-                  }}
+                  sx={{ ...arrowStyles, right: 0,height: {sm: "210px",md: "240px",lg: "300px"},marginTop: "-24px" }}
                 >
                   <ArrowForwardIosTwoToneIcon
                     sx={{ color: "white", fontSize: "20px" }}

@@ -8,10 +8,14 @@ import Description from "../components/Description";
 import Header from "../components/Header";
 import TagsSection from "../components/TagsSection";
 import { Box, CircularProgress, Typography } from "@mui/material";
+import { updateManga } from "../../services/api";
+import useAuth from "../contexts/useAuth";
 
-function MangaLandingPage() {
+
+const MangaLandingPage = () => {
+  const { user } = useAuth();
   const { id } = useParams();
-  const { mangas, loading, error } = useContext(MangaContext);
+  const { mangas, loading, error, setMangas } = useContext(MangaContext);
 
   if (loading) {
     return (
@@ -21,7 +25,7 @@ function MangaLandingPage() {
           justifyContent: "center",
           alignItems: "center",
           minHeight: "100vh",
-          bgcolor: "var(--bg-page-colorr)",
+          bgcolor: "var(--bg-page-color)",
         }}
       >
         <CircularProgress />
@@ -63,6 +67,48 @@ function MangaLandingPage() {
     );
   }
 
+  // Sanitiza o array de ratings para garantir que todos os itens sejam objetos válidos
+  const sanitizedRatings = (manga.ratings || [])
+    .filter((rating) => typeof rating === "object" && rating !== null) // Exclui valores inválidos
+    .map((rating) => ({
+      userId: rating.userId || "unknown",
+      rating: rating.rating || 0,
+    }));
+
+    const handleRatingUpdate = async (userId, newRating) => {
+      try {
+        const updatedRatings = [...(manga.ratings || [])];
+        const existingRatingIndex = updatedRatings.findIndex(
+          (rating) => rating.userId === userId
+        );
+    
+        if (existingRatingIndex >= 0) {
+          // Atualiza a avaliação existente
+          updatedRatings[existingRatingIndex].rating = newRating;
+        } else {
+          // Adiciona nova avaliação com o ID real do usuário
+          updatedRatings.push({ userId: userId, rating: newRating });
+        }
+    
+        const updatedManga = {
+          ...manga,
+          ratings: updatedRatings,
+        };
+    
+        await updateManga(id, updatedManga);
+        setMangas((prevMangas) =>
+          prevMangas.map((m) => (m.id === id ? updatedManga : m))
+        );
+      } catch (error) {
+        console.error("Erro ao atualizar avaliação:", error);
+      }
+    };    
+
+  const averageRating = sanitizedRatings.length > 0
+    ? sanitizedRatings.reduce((total, item) => total + (item?.rating || 0), 0) /
+      sanitizedRatings.length
+    : 0;
+
   return (
     <Box
       sx={{
@@ -71,34 +117,34 @@ function MangaLandingPage() {
         alignItems: "flex-start",
         minHeight: "100vh",
         bgcolor: "var(--bg-page-color)",
+        padding: { xs: "16px", sm: "20px", md: "24px", lg: "32px" },
       }}
     >
       <Box
         sx={{
-          padding: { xs: "16px", sm: "18px", md: "22px", lg: "32px" },
+          maxWidth: "1200px",
+          width: "100%",
           color: "var(--text-color)",
-          bgcolor: "var(--bg-page-color)",
         }}
       >
         <Header />
 
         <Content
           manga={{
-            image: manga.image || "",
-            title: manga.title || "Título Desconhecido",
-            author: manga.author || "Autor Desconhecido",
-            rating: manga.rating || 0,
-            status: manga.status || "Status Desconhecido",
-            yearPubli: manga.yearPubli || "????",
+            ...manga,
+            ratings: sanitizedRatings, // Array sanitizado
+            rating: averageRating, // Média calculada
           }}
+          userId={user.id} // Passa apenas o ID do usuário autenticado
+          onRate={handleRatingUpdate} // Função para atualizar a avaliação
           sx={{
-            marginBottom: "var(--spacing-large)",
+            marginBottom: { xs: "16px", sm: "20px", md: "24px" },
           }}
         />
 
         <Actions
           sx={{
-            marginBottom: "var(--spacing-large)",
+            marginBottom: { xs: "16px", sm: "20px", md: "24px" },
           }}
           mangaId={manga.id}
         />
@@ -107,14 +153,14 @@ function MangaLandingPage() {
           <Description
             text={manga.description}
             sx={{
-              fontSize: "var(--font-size-body)",
-              marginBottom: "var(--spacing-large)",
+              fontSize: { xs: "14px", sm: "16px", md: "18px" },
+              lineHeight: { xs: "1.5", sm: "1.6", md: "1.8" },
+              marginBottom: { xs: "16px", sm: "20px", md: "24px" },
             }}
           />
         )}
 
-        {[
-          { section: "Genres", tags: manga.genres || [] },
+        {[{ section: "Genres", tags: manga.genres || [] },
           { section: "Demographic", tags: [manga.demographic || ""] },
           { section: "Buy", tags: manga.retail || [] },
         ].map((data, index) => (
@@ -122,7 +168,8 @@ function MangaLandingPage() {
             key={index}
             data={data}
             sx={{
-              marginBottom: "var(--spacing-medium)",
+              marginBottom: { xs: "12px", sm: "16px", md: "20px" },
+              fontSize: { xs: "12px", sm: "14px", md: "16px" },
             }}
           />
         ))}
@@ -134,14 +181,14 @@ function MangaLandingPage() {
               display: "flex",
               flexWrap: "wrap",
               justifyContent: "center",
-              gap: "var(--spacing-small)",
-              marginTop: "var(--spacing-medium)",
+              gap: { xs: "8px", sm: "12px", md: "16px" },
+              marginTop: { xs: "16px", sm: "20px", md: "24px" },
             }}
           />
         )}
       </Box>
     </Box>
   );
-}
+};
 
 export default MangaLandingPage;

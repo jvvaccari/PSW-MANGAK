@@ -61,7 +61,7 @@ const Header = ({ searchTerm = "", setSearchTerm = () => {} }) => {
               <CancelIcon />
             </IconButton>
           ) : !isCatalogPage ? (
-            <IconButton onClick={handleBackClick} sx={{ color: "#fff" }}>
+            <IconButton onClick={handleBackClick} sx={{ color: "#fff",padding: "0px" }}>
               <ArrowBackIcon />
             </IconButton>
           ) : (

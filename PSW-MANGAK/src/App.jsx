@@ -1,46 +1,63 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import CatalogPage from "./pages/CatalogPage";
-import MangaLandingPage from "./pages/MangaLandingPage";
-import ProfilePage from "./pages/ProfilePage";
-import LoginPage from "./pages/LoginPage";
-import FavoritesPage from "./pages/FavoritesPage";
+import { Suspense, lazy } from "react";
 import { AuthProvider } from "./contexts/AuthContext";
 import { MangaProvider } from "./contexts/MangaContext";
 import { UserProvider } from "./contexts/UserContext";
+import { Box, CircularProgress } from "@mui/material";
 import ProtectedRoute from "./routes/ProtectedRoute";
+
+const CatalogPage = lazy(() => import("./pages/CatalogPage"));
+const MangaLandingPage = lazy(() => import("./pages/MangaLandingPage"));
+const ProfilePage = lazy(() => import("./pages/ProfilePage"));
+const LoginPage = lazy(() => import("./pages/LoginPage"));
+const FavoritesPage = lazy(() => import("./pages/FavoritesPage"));
 
 const App = () => (
   <AuthProvider>
     <UserProvider>
       <MangaProvider>
         <Router>
-          <Routes>
-            {/* Rotas Públicas */}
-            <Route path="/" element={<CatalogPage />} />
-            <Route path="/manga/:id" element={<MangaLandingPage />} />
-            <Route path="/login" element={<LoginPage />} />
+          <Suspense fallback={
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                minHeight: "100vh",
+                bgcolor: "var(--bg-page-colorr)",
+              }}
+            >
+              <CircularProgress />
+            </Box>
+          }>
+            <Routes>
+              {/* Rotas Públicas */}
+              <Route path="/" element={<CatalogPage />} />
+              <Route path="/manga/:id" element={<MangaLandingPage />} />
+              <Route path="/login" element={<LoginPage />} />
 
-            {/* Rotas Protegidas */}
-            <Route
-              path="/profile/:id"
-              element={
-                <ProtectedRoute>
-                  <ProfilePage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/favorites/:id"
-              element={
-                <ProtectedRoute>
-                  <FavoritesPage />
-                </ProtectedRoute>
-              }
-            />
+              {/* Rotas Protegidas */}
+              <Route
+                path="/profile/:id"
+                element={
+                  <ProtectedRoute>
+                    <ProfilePage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/favorites/:id"
+                element={
+                  <ProtectedRoute>
+                    <FavoritesPage />
+                  </ProtectedRoute>
+                }
+              />
 
-            {/* Rota Fallback */}
-            <Route path="*" element={<CatalogPage />} />
-          </Routes>
+              {/* Rota Fallback */}
+              <Route path="*" element={<CatalogPage />} />
+            </Routes>
+          </Suspense>
         </Router>
       </MangaProvider>
     </UserProvider>

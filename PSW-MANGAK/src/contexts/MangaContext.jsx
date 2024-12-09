@@ -27,7 +27,9 @@ export const MangaProvider = ({ children }) => {
   }, []);
 
   return (
-    <MangaContext.Provider value={{ mangas, loading, error, searchTerm, setSearchTerm }}>
+    <MangaContext.Provider
+      value={{ mangas, setMangas, loading, error, searchTerm, setSearchTerm }}
+    >
       {children}
     </MangaContext.Provider>
   );

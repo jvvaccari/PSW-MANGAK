@@ -1,84 +1,79 @@
-import { Box } from "@mui/material";
+import { useState, useEffect, useCallback } from "react";
+import { fetchAccountById, updateAccount } from "../../services/api";
 import BookmarkAddIcon from "@mui/icons-material/BookmarkAdd";
 import BookmarkAddedIcon from "@mui/icons-material/BookmarkAdded";
 import IosShareIcon from "@mui/icons-material/IosShare";
-import styles from "./Actions.module.css";
-import { useState, useEffect, useContext, useCallback } from "react";
-import { fetchAccountById, updateAccount } from "../../services/api";
+import { Button, Box } from "@mui/material";
 import PropTypes from "prop-types";
-import UserContext from "../contexts/UserContext";
+import useAuth from "../contexts/useAuth";
 
 const Actions = ({ mangaId }) => {
-  const { userId } = useContext(UserContext); // Pega o userId do contexto
+  const { user } = useAuth(); // Obtém o usuário autenticado
   const [favorite, setFavorite] = useState(false);
 
   // Verifica se o mangá está nos favoritos
   const checkIfFavorite = useCallback(async () => {
-    if (!userId) {
+    if (!user?.id) {
       console.warn("Usuário não autenticado.");
       return;
     }
 
     try {
-      const user = await fetchAccountById(userId);
-      if (user && Array.isArray(user.favorites)) {
-        setFavorite(user.favorites.includes(mangaId));
+      const fetchedUser = await fetchAccountById(user.id);
+      if (fetchedUser && Array.isArray(fetchedUser.favorites)) {
+        setFavorite(fetchedUser.favorites.includes(mangaId));
       } else {
         console.error("Estrutura de favoritos inválida para o usuário.");
       }
     } catch (err) {
       console.error("Erro ao verificar favoritos:", err);
     }
-  }, [userId, mangaId]);
+  }, [user?.id, mangaId]);
 
-  // Atualiza os favoritos com base no estado inicial
   useEffect(() => {
     checkIfFavorite();
   }, [checkIfFavorite]);
 
-  // Adiciona o mangá aos favoritos
   const handleAddToFavorites = async () => {
-    if (!userId) {
+    if (!user?.id) {
       console.warn("Usuário não autenticado.");
       return;
     }
 
     try {
-      const user = await fetchAccountById(userId);
-      if (!user || !Array.isArray(user.favorites)) {
+      const fetchedUser = await fetchAccountById(user.id);
+      if (!fetchedUser || !Array.isArray(fetchedUser.favorites)) {
         throw new Error("Estrutura de favoritos inválida.");
       }
 
-      const updatedFavorites = [...new Set([...user.favorites, mangaId])]; // Garante que não haja duplicatas
-      await updateAccount(userId, { ...user, favorites: updatedFavorites });
+      const updatedFavorites = [...new Set([...fetchedUser.favorites, mangaId])];
+      await updateAccount(user.id, { ...fetchedUser, favorites: updatedFavorites });
       setFavorite(true);
     } catch (err) {
       console.error("Erro ao adicionar aos favoritos:", err);
     }
   };
 
-  // Remove o mangá dos favoritos
   const handleRemoveFromFavorites = async () => {
-    if (!userId) {
+    if (!user?.id) {
       console.warn("Usuário não autenticado.");
       return;
     }
 
     try {
-      const user = await fetchAccountById(userId);
-      if (!user || !Array.isArray(user.favorites)) {
+      const fetchedUser = await fetchAccountById(user.id);
+      if (!fetchedUser || !Array.isArray(fetchedUser.favorites)) {
         throw new Error("Estrutura de favoritos inválida.");
       }
 
-      const updatedFavorites = user.favorites.filter((id) => id !== mangaId);
-      await updateAccount(userId, { ...user, favorites: updatedFavorites });
+      const updatedFavorites = fetchedUser.favorites.filter((id) => id !== mangaId);
+      await updateAccount(user.id, { ...fetchedUser, favorites: updatedFavorites });
       setFavorite(false);
     } catch (err) {
       console.error("Erro ao remover dos favoritos:", err);
     }
   };
 
-  // Compartilhar usando Web Share API (opcional)
   const handleShare = () => {
     if (navigator.share) {
       navigator
@@ -94,19 +89,47 @@ const Actions = ({ mangaId }) => {
   };
 
   return (
-    <Box sx={{ display: "flex", gap: "8px" }}>
+    <Box sx={{ display: "flex", gap: "12px", marginTop: "16px" }}>
       {!favorite ? (
-        <button className={styles.actionButton} onClick={handleAddToFavorites}>
-          <BookmarkAddIcon className={styles.actionIcon} />
-        </button>
+        <Button
+          variant="outlined"
+          onClick={handleAddToFavorites}
+          sx={{
+            borderColor: "var(--btn-mangak-color)",
+            color: "var(--btn-mangak-color)",
+            "&:hover": { backgroundColor: "rgba(255, 0, 0, 0.1)" },
+          }}
+        >
+          <BookmarkAddIcon sx={{ marginRight: "8px" }} />
+          Adicionar aos Favoritos
+        </Button>
       ) : (
-        <button className={styles.actionButton} onClick={handleRemoveFromFavorites}>
-          <BookmarkAddedIcon className={styles.actionIcon} />
-        </button>
+        <Button
+          variant="contained"
+          onClick={handleRemoveFromFavorites}
+          sx={{
+            backgroundColor: "var(--btn-mangak-color)",
+            color: "#fff",
+            "&:hover": { backgroundColor: "rgba(200, 0, 0, 0.8)" },
+          }}
+        >
+          <BookmarkAddedIcon sx={{ marginRight: "8px" }} />
+          Remover dos Favoritos
+        </Button>
       )}
-      <button className={styles.actionButton} onClick={handleShare}>
-        <IosShareIcon className={styles.actionIcon} />
-      </button>
+
+      <Button
+        variant="contained"
+        onClick={handleShare}
+        sx={{
+          backgroundColor: "var(--btn-mangak-color)",
+          color: "#fff",
+          "&:hover": { backgroundColor: "rgba(200, 0, 0, 0.8)" },
+        }}
+      >
+        <IosShareIcon sx={{ marginRight: "8px" }} />
+        Compartilhar
+      </Button>
     </Box>
   );
 };

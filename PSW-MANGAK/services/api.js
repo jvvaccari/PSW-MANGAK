@@ -19,6 +19,43 @@ export const fetchMangas = async () => {
   }
 };
 
+export const updateManga = async (id, updatedManga) => {
+  try {
+    const response = await axios.put(`http://localhost:5001/mangas/${id}`, updatedManga);
+    return response.data;
+  } catch (error) {
+    console.error("Erro ao atualizar o mangá:", error.message);
+    throw error;
+  }
+};
+
+export const updateRating = async (userId, mangaId, rating) => {
+  try {
+    // Busca o usuário
+    const userResponse = await axios.get(`${API_URL}/accounts/${userId}`);
+    const user = userResponse.data;
+
+    // Atualiza ou adiciona a avaliação
+    const updatedRatings = { ...user.ratings, [mangaId]: rating };
+    await axios.put(`${API_URL}/accounts/${userId}`, { ...user, ratings: updatedRatings });
+
+    // Recalcula a média do mangá
+    const mangaResponse = await axios.get(`${API_URL}/mangas/${mangaId}`);
+    const manga = mangaResponse.data;
+
+    const allRatings = Object.values(updatedRatings).filter((value) => value !== undefined);
+    const averageRating =
+      allRatings.reduce((sum, value) => sum + value, 0) / allRatings.length;
+
+    await axios.put(`${API_URL}/mangas/${mangaId}`, { ...manga, rating: averageRating });
+
+    return { success: true };
+  } catch (error) {
+    console.error("Erro ao atualizar avaliação:", error.message);
+    throw error;
+  }
+};
+
 // Fetch a single manga by ID
 export const fetchMangaById = async (id) => {
   try {
@@ -120,9 +157,3 @@ export const deleteAccount = async (id) => {
     handleError(error, "Erro ao excluir conta do usuário.");
   }
 };
-
-
-
-
-
-
