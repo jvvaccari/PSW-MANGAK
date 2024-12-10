@@ -820,7 +820,9 @@
       "username": "Lucas",
       "email": "lucaspsilva1610@gmail.com",
       "password": "123",
-      "favorites": []
+      "favorites": [
+        "9"
+      ]
     }
   ]
 }
