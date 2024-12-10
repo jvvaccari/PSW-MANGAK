@@ -4,12 +4,15 @@ import BookmarkAddIcon from "@mui/icons-material/BookmarkAdd";
 import BookmarkAddedIcon from "@mui/icons-material/BookmarkAdded";
 import IosShareIcon from "@mui/icons-material/IosShare";
 import { Button, Box } from "@mui/material";
+import CommentIcon from "@mui/icons-material/Comment";
 import PropTypes from "prop-types";
+import { useNavigate } from "react-router-dom";
 import useAuth from "../contexts/useAuth";
 
 const Actions = ({ mangaId }) => {
   const { user } = useAuth(); // Obtém o usuário autenticado
   const [favorite, setFavorite] = useState(false);
+  const navigate = useNavigate();
 
   // Verifica se o mangá está nos favoritos
   const checkIfFavorite = useCallback(async () => {
@@ -88,49 +91,111 @@ const Actions = ({ mangaId }) => {
     }
   };
 
-  return (
-    <Box sx={{ display: "flex", gap: "12px", marginTop: "16px" }}>
-      {!favorite ? (
-        <Button
-          variant="outlined"
-          onClick={handleAddToFavorites}
-          sx={{
-            borderColor: "var(--btn-mangak-color)",
-            color: "var(--btn-mangak-color)",
-            "&:hover": { backgroundColor: "rgba(255, 0, 0, 0.1)" },
-          }}
-        >
-          <BookmarkAddIcon sx={{ marginRight: "8px" }} />
-          Adicionar aos Favoritos
-        </Button>
-      ) : (
-        <Button
-          variant="contained"
-          onClick={handleRemoveFromFavorites}
-          sx={{
-            backgroundColor: "var(--btn-mangak-color)",
-            color: "#fff",
-            "&:hover": { backgroundColor: "rgba(200, 0, 0, 0.8)" },
-          }}
-        >
-          <BookmarkAddedIcon sx={{ marginRight: "8px" }} />
-          Remover dos Favoritos
-        </Button>
-      )}
 
-      <Button
-        variant="contained"
-        onClick={handleShare}
-        sx={{
-          backgroundColor: "var(--btn-mangak-color)",
-          color: "#fff",
-          "&:hover": { backgroundColor: "rgba(200, 0, 0, 0.8)" },
-        }}
-      >
-        <IosShareIcon sx={{ marginRight: "8px" }} />
-        Compartilhar
-      </Button>
-    </Box>
+  const handleViewComments = () => {
+    if (!user?.id) {
+      console.warn("Usuário não autenticado.");
+      return;
+    }
+    navigate(`/comments/${mangaId}`);
+  };
+
+
+  return (
+    <Box
+  sx={{
+    display: "flex",
+    flexWrap: "wrap",
+    flexDirection: { xs: "column", sm: "row" },
+    gap: "8px",
+    marginTop: "16px",
+    justifyContent: "center",
+    alignItems: "center",
+  }}
+>
+  {!favorite ? (
+    <Button
+      variant="outlined"
+      onClick={handleAddToFavorites}
+      sx={{
+        borderColor: "var(--btn-mangak-color)",
+        color: "var(--btn-mangak-color)",
+        fontSize: "0.9rem",
+        padding: "8px 12px",
+        width: "90%",
+        maxWidth: "280px",
+        "&:hover": { backgroundColor: "rgba(255, 0, 0, 0.1)" },
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      <BookmarkAddIcon sx={{ fontSize: "1.2rem", marginRight: "8px" }} />
+      Adicionar aos Favoritos
+    </Button>
+  ) : (
+    <Button
+      variant="contained"
+      onClick={handleRemoveFromFavorites}
+      sx={{
+        backgroundColor: "var(--btn-mangak-color)",
+        color: "#fff",
+        fontSize: "0.9rem",
+        padding: "8px 12px",
+        width: "90%",
+        maxWidth: "280px",
+        "&:hover": { backgroundColor: "rgba(200, 0, 0, 0.8)" },
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      <BookmarkAddedIcon sx={{ fontSize: "1.2rem", marginRight: "8px" }} />
+      Remover dos Favoritos
+    </Button>
+  )}
+
+  <Button
+    variant="contained"
+    onClick={handleShare}
+    sx={{
+      backgroundColor: "var(--btn-mangak-color)",
+      color: "#fff",
+      fontSize: "0.9rem",
+      padding: "8px 12px",
+      width: "90%",
+      maxWidth: "280px",
+      "&:hover": { backgroundColor: "rgba(200, 0, 0, 0.8)" },
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+    }}
+  >
+    <IosShareIcon sx={{ fontSize: "1.2rem", marginRight: "8px" }} />
+    Compartilhar
+  </Button>
+
+  <Button
+    variant="contained"
+    onClick={handleViewComments}
+    sx={{
+      backgroundColor: "var(--btn-mangak-color)",
+      color: "#fff",
+      fontSize: "0.9rem",
+      padding: "8px 12px",
+      width: "90%",
+      maxWidth: "280px",
+      "&:hover": { backgroundColor: "rgba(200, 0, 0, 0.8)" },
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+    }}
+  >
+    <CommentIcon sx={{ fontSize: "1.2rem", marginRight: "8px" }} />
+    Ver Comentários
+  </Button>
+</Box>
+
   );
 };
 

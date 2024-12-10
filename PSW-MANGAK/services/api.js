@@ -168,3 +168,94 @@ export const deleteAccount = async (id) => {
     handleError(error, "Erro ao excluir conta do usuário.");
   }
 };
+
+export const fetchComments = async (mangaId) => {
+  try {
+    if (!mangaId) throw new Error("ID do mangá inválido.");
+    const manga = await fetchMangaById(mangaId); // Busca o mangá específico
+    return manga.comments || []; // Retorna os comentários ou um array vazio
+  } catch (error) {
+    handleError(error, "Erro ao buscar comentários.");
+  }
+};
+
+// Post a new comment
+export const postComment = async (mangaId, commentData) => {
+  try {
+    if (!mangaId) throw new Error("ID do mangá inválido.");
+    const manga = await fetchMangaById(mangaId); // Busca o mangá específico
+    const newComment = {
+      id: `c${Date.now()}`, // Gera um ID único para o comentário
+      ...commentData,
+    };
+    const updatedManga = {
+      ...manga,
+      comments: [...(manga.comments || []), newComment], // Adiciona o novo comentário
+    };
+    await axios.put(`${API_URL}/mangas/${mangaId}`, updatedManga); // Atualiza o mangá
+    return newComment;
+  } catch (error) {
+    handleError(error, "Erro ao postar comentário.");
+  }
+};
+
+// Update comment reactions (like or dislike)
+export const updateCommentReaction = async (mangaId, commentId, reactionType) => {
+  try {
+    const manga = await fetchMangaById(mangaId); // Busca o mangá específico
+    const updatedComments = manga.comments.map((comment) => {
+      if (comment.id === commentId) {
+        const reactions = comment.reactions || { likes: 0, dislikes: 0 };
+        if (reactionType === "like") {
+          reactions.likes += 1;
+        } else if (reactionType === "dislike") {
+          reactions.dislikes += 1;
+        }
+        return { ...comment, reactions }; // Atualiza as reações
+      }
+      return comment;
+    });
+    const updatedManga = { ...manga, comments: updatedComments };
+    await axios.put(`${API_URL}/mangas/${mangaId}`, updatedManga); // Atualiza o mangá
+    return updatedComments.find((comment) => comment.id === commentId);
+  } catch (error) {
+    handleError(
+      error,
+      `Erro ao ${reactionType === "like" ? "curtir" : "descurtir"} comentário.`
+    );
+  }
+};
+
+// Fetch replies for a comment
+export const fetchReplies = async (mangaId, commentId) => {
+  try {
+    const manga = await fetchMangaById(mangaId); // Busca o mangá específico
+    const comment = manga.comments.find((c) => c.id === commentId);
+    return comment?.replies || []; // Retorna as respostas ou um array vazio
+  } catch (error) {
+    handleError(error, "Erro ao buscar respostas.");
+  }
+};
+
+// Post a reply to a comment
+export const postReply = async (mangaId, commentId, replyData) => {
+  try {
+    const manga = await fetchMangaById(mangaId); // Busca o mangá específico
+    const updatedComments = manga.comments.map((comment) => {
+      if (comment.id === commentId) {
+        const newReply = {
+          id: `r${Date.now()}`, // Gera um ID único para a resposta
+          ...replyData,
+        };
+        const replies = comment.replies || [];
+        return { ...comment, replies: [...replies, newReply] }; // Adiciona a nova resposta
+      }
+      return comment;
+    });
+    const updatedManga = { ...manga, comments: updatedComments };
+    await axios.put(`${API_URL}/mangas/${mangaId}`, updatedManga); // Atualiza o mangá
+    return updatedComments.find((comment) => comment.id === commentId).replies.at(-1); // Retorna a última resposta
+  } catch (error) {
+    handleError(error, "Erro ao postar resposta.");
+  }
+};
