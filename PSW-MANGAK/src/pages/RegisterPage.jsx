@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { Typography, Box, TextField, Button, Paper, CircularProgress } from "@mui/material";
+import { Typography, Box, Button, Paper, CircularProgress } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import PropTypes from "prop-types"; // Importação de PropTypes
 import useAuth from "../contexts/useAuth";
 import backgroundImage from "../assets/img/login-background.jpg";
-import StyledTextField from "../components/StyledTextField"; 
+import StyledTextField from "../components/StyledTextField";
 
 const theme = createTheme({
   palette: {
@@ -33,16 +34,15 @@ const theme = createTheme({
   },
 });
 
-
-
 export default function RegisterPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
-  const { register } = useAuth(); // Função de registro do contexto
+  const { register } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -60,8 +60,8 @@ export default function RegisterPage() {
     setError(null);
     try {
       console.log("Tentando registrar com", username, email, password);
-      await register({ username, email, password }); // Chama a função register do contexto
-      navigate("/"); // Redireciona para o catálogo
+      await register({ username, email, password });
+      navigate("/");
     } catch (err) {
       console.error("Erro ao registrar:", err.message);
       setError(err.message || "Erro ao registrar. Tente novamente.");
@@ -130,8 +130,6 @@ export default function RegisterPage() {
           </Button>
         </Box>
 
-
-        {/* Register Form Centered */}
         <Box
           sx={{
             flex: 1,
@@ -161,31 +159,34 @@ export default function RegisterPage() {
               },
             }}
           >
-
-            
             <form onSubmit={handleSubmit}>
-            <StyledTextField
-              label="Nome de Usuário"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-            />
-            <StyledTextField
-              label="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-            <StyledTextField
-              label="Senha"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-            <StyledTextField
-              label="Confirmar Senha"
-              type="password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-            />
+              <StyledTextField
+                label="Nome de Usuário"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+              />
+              <StyledTextField
+                label="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+              <StyledTextField
+                label="Senha"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+              <StyledTextField
+                label="Confirmar Senha"
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+              />
+              <StyledTextField
+                label="Buscar Mangás"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
               {error && (
                 <Typography variant="body2" color="error" sx={{ marginBottom: "16px" }}>
                   {error}
@@ -202,9 +203,22 @@ export default function RegisterPage() {
                 {loading ? <CircularProgress size={24} sx={{ color: "#fff" }} /> : "Registrar"}
               </Button>
             </form>
+
+            
           </Paper>
         </Box>
       </Box>
     </ThemeProvider>
   );
 }
+
+// Validação de Props
+RegisterPage.propTypes = {
+  mangas: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+      title: PropTypes.string.isRequired,
+      author: PropTypes.string.isRequired,
+    })
+  ).isRequired,
+};

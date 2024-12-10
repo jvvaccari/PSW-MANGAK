@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import MangaContext from "../contexts/MangaContext";
 import Actions from "../components/Actions";
@@ -11,11 +11,35 @@ import { Box, CircularProgress, Typography } from "@mui/material";
 import { updateManga } from "../../services/api";
 import useAuth from "../contexts/useAuth";
 
-
 const MangaLandingPage = () => {
   const { user } = useAuth();
   const { id } = useParams();
   const { mangas, loading, error, setMangas } = useContext(MangaContext);
+  const [artsLoading, setArtsLoading] = useState(true); // Estado de carregamento das artes
+
+  const manga = mangas.find((m) => m.id === id);
+
+  useEffect(() => {
+    if (manga?.artsList?.length) {
+      // Cria uma lista de promessas para carregar todas as imagens
+      const imagePromises = manga.artsList.map(
+        (src) =>
+          new Promise((resolve) => {
+            const img = new Image();
+            img.src = src;
+            img.onload = resolve;
+            img.onerror = resolve; // Evita erro caso alguma imagem não carregue
+          })
+      );
+
+      Promise.all(imagePromises).then(() => {
+        setArtsLoading(false); // Todas as imagens carregadas
+      });
+    } else {
+      setArtsLoading(false); // Não há artes para carregar
+    }
+    window.scrollTo(0, 0);
+  }, [manga]);
 
   if (loading) {
     return (
@@ -49,8 +73,6 @@ const MangaLandingPage = () => {
     );
   }
 
-  const manga = mangas.find((m) => m.id === id);
-
   if (!manga) {
     return (
       <Box
@@ -67,47 +89,43 @@ const MangaLandingPage = () => {
     );
   }
 
-  // Sanitiza o array de ratings para garantir que todos os itens sejam objetos válidos
-  const sanitizedRatings = (manga.ratings || [])
-    .filter((rating) => typeof rating === "object" && rating !== null) // Exclui valores inválidos
-    .map((rating) => ({
-      userId: rating.userId || "unknown",
-      rating: rating.rating || 0,
-    }));
+  const calculateAverageRating = (ratings) => {
+    if (!ratings || ratings.length === 0) return 0;
+    return (
+      ratings.reduce((total, item) => total + (item.rating || 0), 0) /
+      ratings.length
+    );
+  };
 
-    const handleRatingUpdate = async (userId, newRating) => {
-      try {
-        const updatedRatings = [...(manga.ratings || [])];
-        const existingRatingIndex = updatedRatings.findIndex(
-          (rating) => rating.userId === userId
-        );
-    
-        if (existingRatingIndex >= 0) {
-          // Atualiza a avaliação existente
-          updatedRatings[existingRatingIndex].rating = newRating;
-        } else {
-          // Adiciona nova avaliação com o ID real do usuário
-          updatedRatings.push({ userId: userId, rating: newRating });
-        }
-    
-        const updatedManga = {
-          ...manga,
-          ratings: updatedRatings,
-        };
-    
-        await updateManga(id, updatedManga);
-        setMangas((prevMangas) =>
-          prevMangas.map((m) => (m.id === id ? updatedManga : m))
-        );
-      } catch (error) {
-        console.error("Erro ao atualizar avaliação:", error);
+  const sanitizedRatings = (manga.ratings || []).filter(
+    (rating) => typeof rating === "object" && rating !== null
+  );
+
+  const handleRatingUpdate = async (userId, newRating) => {
+    try {
+      const updatedRatings = [...(manga.ratings || [])];
+      const existingRatingIndex = updatedRatings.findIndex(
+        (rating) => rating.userId === userId
+      );
+
+      if (existingRatingIndex >= 0) {
+        updatedRatings[existingRatingIndex].rating = newRating;
+      } else {
+        updatedRatings.push({ userId, rating: newRating });
       }
-    };    
 
-  const averageRating = sanitizedRatings.length > 0
-    ? sanitizedRatings.reduce((total, item) => total + (item?.rating || 0), 0) /
-      sanitizedRatings.length
-    : 0;
+      const updatedManga = { ...manga, ratings: updatedRatings };
+
+      await updateManga(id, updatedManga);
+      setMangas((prevMangas) =>
+        prevMangas.map((m) => (m.id === id ? updatedManga : m))
+      );
+    } catch (error) {
+      console.error("Erro ao atualizar avaliação:", error);
+    }
+  };
+
+  const averageRating = calculateAverageRating(sanitizedRatings);
 
   return (
     <Box
@@ -132,20 +150,16 @@ const MangaLandingPage = () => {
         <Content
           manga={{
             ...manga,
-            ratings: sanitizedRatings, // Array sanitizado
-            rating: averageRating, // Média calculada
+            ratings: sanitizedRatings,
+            rating: averageRating,
           }}
-          userId={user.id} // Passa apenas o ID do usuário autenticado
-          onRate={handleRatingUpdate} // Função para atualizar a avaliação
-          sx={{
-            marginBottom: { xs: "16px", sm: "20px", md: "24px" },
-          }}
+          userId={user?.id || "guest"}
+          onRate={handleRatingUpdate}
+          sx={{ marginBottom: { xs: "16px", sm: "20px", md: "24px" } }}
         />
 
         <Actions
-          sx={{
-            marginBottom: { xs: "16px", sm: "20px", md: "24px" },
-          }}
+          sx={{ marginBottom: { xs: "16px", sm: "20px", md: "24px" } }}
           mangaId={manga.id}
         />
 
@@ -163,28 +177,44 @@ const MangaLandingPage = () => {
         {[{ section: "Genres", tags: manga.genres || [] },
           { section: "Demographic", tags: [manga.demographic || ""] },
           { section: "Buy", tags: manga.retail || [] },
-        ].map((data, index) => (
-          <TagsSection
-            key={index}
-            data={data}
-            sx={{
-              marginBottom: { xs: "12px", sm: "16px", md: "20px" },
-              fontSize: { xs: "12px", sm: "14px", md: "16px" },
-            }}
-          />
-        ))}
+        ].map(
+          (data, index) =>
+            data.tags.length > 0 && (
+              <TagsSection
+                key={index}
+                data={data}
+                sx={{
+                  marginBottom: { xs: "12px", sm: "16px", md: "20px" },
+                  fontSize: { xs: "12px", sm: "14px", md: "16px" },
+                }}
+              />
+            )
+        )}
 
-        {manga.artsList && (
-          <ArtGallery
-            artsList={manga.artsList || []}
+        {artsLoading ? (
+          <Box
             sx={{
               display: "flex",
-              flexWrap: "wrap",
               justifyContent: "center",
-              gap: { xs: "8px", sm: "12px", md: "16px" },
-              marginTop: { xs: "16px", sm: "20px", md: "24px" },
+              alignItems: "center",
+              height: "200px",
             }}
-          />
+          >
+            <CircularProgress />
+          </Box>
+        ) : (
+          manga.artsList?.length > 0 && (
+            <ArtGallery
+              artsList={manga.artsList}
+              sx={{
+                display: "flex",
+                flexWrap: "wrap",
+                justifyContent: "center",
+                gap: { xs: "8px", sm: "12px", md: "16px" },
+                marginTop: { xs: "16px", sm: "20px", md: "24px" },
+              }}
+            />
+          )
         )}
       </Box>
     </Box>
