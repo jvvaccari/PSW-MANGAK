@@ -178,7 +178,7 @@ export const postComment = async (mangaId, commentData) => {
     const newComment = {
       id: `c${Date.now()}`,
       ...commentData,
-      reactions: { likes: 0, dislikes: 0 }, // Inicializa com 0 reações
+      reactions: { likes: 0, dislikes: 0 },
     };
     const updatedManga = {
       ...manga,
@@ -198,7 +198,6 @@ export const updateCommentReaction = async (mangaId, commentId, reactionType) =>
       if (comment.id === commentId) {
         const reactions = comment.reactions || { likes: 0, dislikes: 0 };
         
-        // Verifica se o usuário já reagiu, e atualiza a reação
         if (reactionType === "like") {
           reactions.likes += 1;
         } else if (reactionType === "dislike") {

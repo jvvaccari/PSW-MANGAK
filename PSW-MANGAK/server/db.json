@@ -53,7 +53,18 @@
           "rating": 2.5
         }
       ],
-      "comments": []
+      "comments": [
+        {
+          "id": "c1733869030906",
+          "text": "Muito boa a obra\n",
+          "userId": "1",
+          "timestamp": "2024-12-10T22:17:10.890Z",
+          "reactions": {
+            "likes": 2,
+            "dislikes": 1
+          }
+        }
+      ]
     },
     {
       "id": "2",
@@ -890,8 +901,7 @@
           "url": "https://shopee.com.br/search?keyword=mang%C3%A1%20kimi%20ni%20todoke"
         }
       ],
-      "ratings": [
-      ]
+      "ratings": []
     },
     {
       "id": "21",
@@ -912,7 +922,6 @@
         "https://i.pinimg.com/236x/0d/74/a6/0d74a61f6137ad443d0cb1039084595c.jpg",
         "https://www.momie.fr/uploads/images/products/9782413000778_1.png",
         "https://images.squarespace-cdn.com/content/v1/5ace4845e17ba35c9d8eb95e/1553883947558-J3Y54BSYHRBAOQ53UYE4/image-asset.png?format=1500w"
-
       ],
       "retail": [
         {
@@ -931,10 +940,8 @@
           "name": "Shopee",
           "url": "https://shopee.com.br/search?keyword=mang%C3%A1%20fruits%20basket"
         }
-        
       ],
-      "ratings": [
-      ]
+      "ratings": []
     },
     {
       "id": "22",
@@ -955,7 +962,6 @@
         "https://s1.zerochan.net/GANGSTA..600.980503.jpg",
         "https://static.zerochan.net/GANGSTA..full.866011.jpg",
         "https://cdn.anime-planet.com/anime/primary/gangsta-1.jpg?t=1625753081"
-
       ],
       "retail": [
         {
@@ -974,10 +980,8 @@
           "name": "Shopee",
           "url": "https://shopee.com.br/search?keyword=mang%C3%A1%20gangsta"
         }
-        
       ],
-      "ratings": [
-      ]
+      "ratings": []
     },
     {
       "id": "23",
@@ -998,7 +1002,6 @@
         "https://pbs.twimg.com/media/EuzrAyrXMAALU4N?format=jpg&name=900x900",
         "https://pbs.twimg.com/media/EuzrAy0WgAEn8g7?format=jpg&name=small",
         "https://pbs.twimg.com/media/EuzrAysWQAEX733?format=jpg&name=medium"
-
       ],
       "retail": [
         {
@@ -1017,10 +1020,8 @@
           "name": "Shopee",
           "url": "https://shopee.com.br/Mang%C3%A1-Given-(Novo-Lacrado)-i.489126743.8978620079?sp_atk=9c089345-35e7-4ec8-8a19-8ea7d2afe80c&xptdk=9c089345-35e7-4ec8-8a19-8ea7d2afe80c"
         }
-        
       ],
-      "ratings": [
-      ]
+      "ratings": []
     },
     {
       "id": "24",
@@ -1041,7 +1042,6 @@
         "https://i.redd.it/dhwi590yeq861.jpg",
         "https://dw9to29mmj727.cloudfront.net/promo/2016/5392-SeriesHeader_Tier02_BEX_2000x800_wm.jpg",
         "https://64.media.tumblr.com/300bef465897be04292031440b2b07dd/e7f6e083a21506ec-69/s1280x1920/417bb0b2b9811da09ff7bd5c1e9fda1e3763a905.pnj"
-
       ],
       "retail": [
         {
@@ -1060,14 +1060,10 @@
           "name": "Shopee",
           "url": "https://shopee.com.br/search?keyword=manga%20ao%20no%20exorcist"
         }
-        
       ],
-      "ratings": [
-      ]
+      "ratings": []
     }
-
   ],
-
   "accounts": [
     {
       "id": "adm",
@@ -1085,8 +1081,7 @@
       "favorites": [
         "3",
         "5",
-        "10",
-        "4"
+        "10"
       ]
     },
     {
@@ -1113,8 +1108,8 @@
     }
   ],
   "comments": [
-    {}
+    {
+      "id": "67f9"
+    }
   ]
-
 }
-

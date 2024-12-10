@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import { Box, Typography, Rating, Button } from "@mui/material";
-import CommentIcon from '@mui/icons-material/Comment';
+import CommentIcon from "@mui/icons-material/Comment";
 import { useNavigate } from "react-router-dom";
 import styles from "./Content.module.css";
 
@@ -10,7 +10,7 @@ const Content = ({ manga, userId, onRate }) => {
   const calculateAverageRating = (ratings) => {
     if (!Array.isArray(ratings) || ratings.length === 0) return 0.0;
     const total = ratings.reduce((acc, item) => acc + (item?.rating || 0), 0);
-    return (total / ratings.length).toFixed(1); // Retorna a média com uma casa decimal
+    return (total / ratings.length).toFixed(1);
   };
 
   const getUserRating = (ratings, userId) => {
@@ -19,8 +19,8 @@ const Content = ({ manga, userId, onRate }) => {
     return userRating ? userRating.rating : null;
   };
 
-  const averageRating = calculateAverageRating(manga.ratings); // Calcula a média
-  const userRating = getUserRating(manga.ratings, userId); // Avaliação do usuário
+  const averageRating = calculateAverageRating(manga.ratings);
+  const userRating = getUserRating(manga.ratings, userId);
 
   const status = manga.status ? manga.status.toUpperCase() : "INDEFINIDO";
 
@@ -44,7 +44,7 @@ const Content = ({ manga, userId, onRate }) => {
     }
 
     if (onRate && newRating) {
-      onRate(userId, newRating); // Callback para enviar a avaliação ao backend
+      onRate(userId, newRating);
     } else {
       console.warn("Erro ao enviar avaliação: Callback `onRate` não definido.");
     }
@@ -55,7 +55,7 @@ const Content = ({ manga, userId, onRate }) => {
       console.warn("Usuário não autenticado.");
       return;
     }
-    navigate(`/comments/${manga.id}`); // Redireciona para a página de comentários
+    navigate(`/comments/${manga.id}`);
   };
 
   return (
@@ -71,8 +71,12 @@ const Content = ({ manga, userId, onRate }) => {
         <Box
           component="img"
           src={manga.image}
-          alt={manga.title}
-          sx={{ width: "50%" }}
+          alt={`Capa do mangá ${manga.title}`}
+          sx={{
+            width: "50%",
+            borderRadius: "8px",
+            boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
+          }}
         />
         <Box className={styles.detailsContainer}>
           <Typography
@@ -116,7 +120,7 @@ const Content = ({ manga, userId, onRate }) => {
                 color: "var(--text-color)",
               }}
             >
-              {`(${averageRating})`} {/* Exibe a média das avaliações */}
+              {`(${averageRating})`}
             </Typography>
             <Button
               variant="text"
@@ -135,11 +139,18 @@ const Content = ({ manga, userId, onRate }) => {
         </Box>
       </Box>
       <Box sx={{ display: "flex", alignItems: "center", marginTop: "0.5em" }}>
-        <span className={styles.statusDot} style={{ color: getStatusColor() }}>
+        <span
+          className={styles.statusDot}
+          style={{
+            color: getStatusColor(),
+            fontSize: "1.4em",
+            marginRight: "0.5em",
+          }}
+        >
           •
         </span>
         <Typography variant="caption">
-          {`PUBLICATION: ${manga.yearPubli || "????"}, ${status}`}
+          {`PUBLICAÇÃO: ${manga.yearPubli || "????"}, ${status}`}
         </Typography>
       </Box>
     </Box>
@@ -148,7 +159,7 @@ const Content = ({ manga, userId, onRate }) => {
 
 Content.propTypes = {
   manga: PropTypes.shape({
-    id: PropTypes.string.isRequired, // Adiciona o ID do mangá
+    id: PropTypes.string.isRequired,
     image: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
     author: PropTypes.string.isRequired,
@@ -158,12 +169,11 @@ Content.propTypes = {
         rating: PropTypes.number.isRequired,
       })
     ),
-    saved: PropTypes.number,
     yearPubli: PropTypes.string,
     status: PropTypes.string,
   }).isRequired,
-  userId: PropTypes.string, // ID do usuário atual
-  onRate: PropTypes.func, // Callback para enviar avaliação
+  userId: PropTypes.string,
+  onRate: PropTypes.func,
 };
 
 export default Content;

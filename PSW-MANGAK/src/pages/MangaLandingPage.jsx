@@ -8,10 +8,13 @@ import Description from "../components/Description";
 import Header from "../components/Header";
 import TagsSection from "../components/TagsSection";
 import { Box, CircularProgress, Typography } from "@mui/material";
+import useAuth from "../contexts/useAuth";
 
 function MangaLandingPage() {
   const { id } = useParams();
   const { mangas, loading, error } = useContext(MangaContext);
+  const { user } = useAuth();
+  const userId = user?.id;
 
   if (loading) {
     return (
@@ -63,6 +66,10 @@ function MangaLandingPage() {
     );
   }
 
+  const handleRate = (userId, rating) => {
+    console.log(`Usuário ${userId} avaliou com nota ${rating}`);
+  };
+
   return (
     <Box
       sx={{
@@ -84,13 +91,16 @@ function MangaLandingPage() {
 
         <Content
           manga={{
+            id: manga.id || "ID Desconhecido",
             image: manga.image || "",
             title: manga.title || "Título Desconhecido",
             author: manga.author || "Autor Desconhecido",
-            rating: manga.rating || 0,
+            ratings: manga.ratings || [],
             status: manga.status || "Status Desconhecido",
             yearPubli: manga.yearPubli || "????",
           }}
+          userId={userId}
+          onRate={handleRate}
           sx={{
             marginBottom: "var(--spacing-large)",
           }}

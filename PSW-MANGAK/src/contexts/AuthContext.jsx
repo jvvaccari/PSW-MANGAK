@@ -7,10 +7,9 @@ const BASE_URL = "http://localhost:5001/accounts";
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null); // Usuário autenticado
-  const [loading, setLoading] = useState(true); // Estado de carregamento
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  // Função para autenticar o usuário
   const login = async (email, password) => {
     try {
       const response = await axios.get(BASE_URL);
@@ -24,8 +23,8 @@ export const AuthProvider = ({ children }) => {
         throw new Error("Credenciais inválidas.");
       }
 
-      setUser(foundUser); // Atualiza o estado do usuário
-      localStorage.setItem("userId", foundUser.id); // Salva no localStorage
+      setUser(foundUser);
+      localStorage.setItem("userId", foundUser.id);
       return foundUser;
     } catch (error) {
       console.error("Erro ao autenticar usuário:", error.message);
@@ -33,10 +32,8 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Função para registrar um novo usuário
   const register = async ({ username, email, password }) => {
     try {
-      // Verifica se o e-mail já existe
       const response = await axios.get(BASE_URL);
       const existingUser = response.data.find(
         (account) => account.email === email
@@ -46,18 +43,17 @@ export const AuthProvider = ({ children }) => {
         throw new Error("O e-mail já está em uso.");
       }
 
-      // Cria um novo usuário
       const newUser = {
         username,
         email,
         password,
-        id: Date.now().toString(), // ID gerado localmente (substitua por ID gerado pelo backend, se necessário)
+        id: Date.now().toString(),
         favorites: [],
       };
 
-      await axios.post(BASE_URL, newUser); // Envia o novo usuário para o backend
-      setUser(newUser); // Define o novo usuário como autenticado
-      localStorage.setItem("userId", newUser.id); // Salva no localStorage
+      await axios.post(BASE_URL, newUser);
+      setUser(newUser);
+      localStorage.setItem("userId", newUser.id);
 
       return newUser;
     } catch (error) {
@@ -66,13 +62,11 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Função para deslogar o usuário
   const logout = () => {
     setUser(null);
-    localStorage.removeItem("userId"); // Remove o ID do localStorage
+    localStorage.removeItem("userId");
   };
 
-  // Carregar o usuário do localStorage ao inicializar
   useEffect(() => {
     const loadUserFromLocalStorage = async () => {
       const userId = localStorage.getItem("userId");
@@ -82,10 +76,10 @@ export const AuthProvider = ({ children }) => {
           setUser(response.data);
         } catch (error) {
           console.error("Erro ao carregar usuário do localStorage:", error.message);
-          localStorage.removeItem("userId"); // Remove o ID inválido
+          localStorage.removeItem("userId");
         }
       }
-      setLoading(false); // Conclui o carregamento
+      setLoading(false);
     };
 
     loadUserFromLocalStorage();

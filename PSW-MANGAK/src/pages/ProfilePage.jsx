@@ -40,7 +40,7 @@ const inputStyles = {
 };
 
 function ProfilePage() {
-  const { user, logout } = useAuth(); // Obtemos o usuário logado
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
   const [showPassword, setShowPassword] = useState(false);

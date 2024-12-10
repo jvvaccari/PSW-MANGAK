@@ -54,11 +54,11 @@ export default function LoginPage() {
     setError(null);
     try {
       console.log("Tentando login com", email, password);
-      const user = await login(email, password); // Chama a função login do contexto
+      const user = await login(email, password);
   
       if (user && user.id) {
         console.log("Usuário logado com sucesso:", user);
-        navigate("/"); // Redireciona para o catálogo
+        navigate("/");
       }
     } catch (err) {
       console.error("Erro ao realizar login:", err.message);
@@ -83,7 +83,6 @@ export default function LoginPage() {
           backgroundRepeat: "no-repeat",
         }}
       >
-        {/* Top Navigation Bar */}
         <Box
           sx={{
             display: "flex",
@@ -130,7 +129,6 @@ export default function LoginPage() {
           </Button>
         </Box>
 
-        {/* Login Form Centered */}
         <Box
           sx={{
             flex: 1,
@@ -168,27 +166,27 @@ export default function LoginPage() {
               value={email}
               onChange={(e) => {
                 setEmail(e.target.value);
-                setError(null); // Reseta erro ao digitar
+                setError(null);
               }}
               sx={{
                 marginBottom: "16px",
                 "& .MuiInputBase-root": {
-                  bgcolor: "#1E1E1E", // Fundo consistente
-                  color: "#FFFFFF", // Cor do texto
+                  bgcolor: "#1E1E1E",
+                  color: "#FFFFFF",
                 },
                 "& .MuiOutlinedInput-root": {
                   "&:hover .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "#FF0037", // Borda no hover
+                    borderColor: "#FF0037",
                   },
                   "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "#FF0037", // Borda no foco
+                    borderColor: "#FF0037",
                   },
                 },
                 "& .MuiInputLabel-root": {
-                  color: "#FFFFFF", // Cor do label
+                  color: "#FFFFFF",
                 },
                 "& .MuiInputLabel-root.Mui-focused": {
-                  color: "#FFFFFF", // Cor do label no foco
+                  color: "#FFFFFF",
                 },
               }}
             />  
@@ -201,7 +199,7 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => {
                   setPassword(e.target.value);
-                  setError(null); // Reseta erro ao digitar
+                  setError(null);
                 }}
                 sx={{
                   marginBottom: "24px",

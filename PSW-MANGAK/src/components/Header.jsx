@@ -3,16 +3,16 @@ import CancelIcon from "@mui/icons-material/Cancel";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import SearchIcon from "@mui/icons-material/Search";
 import FavoriteIcon from "@mui/icons-material/Favorite";
-import EditIcon from "@mui/icons-material/Edit"; // Importa o ícone de edição
+import EditIcon from "@mui/icons-material/Edit";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useState } from "react";
 import PropTypes from "prop-types";
-import useAuth from "../contexts/useAuth"; // Importa o AuthContext via hook useAuth
+import useAuth from "../contexts/useAuth";
 
 const Header = ({ searchTerm = "", setSearchTerm = () => {} }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user } = useAuth(); // Obtém informações do usuário logado
+  const { user } = useAuth();
 
   const [showSearch, setShowSearch] = useState(false);
 
@@ -34,9 +34,9 @@ const Header = ({ searchTerm = "", setSearchTerm = () => {} }) => {
 
   const handleProtectedRoute = (route) => {
     if (user?.id) {
-      navigate(`${route}/${user.id}`); // Navega para a rota do usuário logado
+      navigate(`${route}/${user.id}`);
     } else {
-      navigate("/login"); // Redireciona para login se nenhum usuário estiver logado
+      navigate("/login");
     }
   };
 
@@ -49,7 +49,6 @@ const Header = ({ searchTerm = "", setSearchTerm = () => {} }) => {
         backgroundColor: "#000",
       }}
     >
-      {/* Logo ou Botão de Voltar */}
       {!showSearch && (
         <Box sx={{ display: "flex", alignItems: "center" }}>
           {isFavoritesPage ? (
@@ -82,13 +81,12 @@ const Header = ({ searchTerm = "", setSearchTerm = () => {} }) => {
         </Box>
       )}
 
-      {/* Campo de Busca */}
       {showSearch ? (
         <InputBase
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           placeholder="Busque por mangás..."
-          onBlur={handleBlur} // Fecha a barra ao perder o foco
+          onBlur={handleBlur}
           autoFocus
           sx={{
             flex: 1,
@@ -109,7 +107,6 @@ const Header = ({ searchTerm = "", setSearchTerm = () => {} }) => {
             </IconButton>
           )}
 
-          {/* Ícone condicional: Favoritos ou Editar */}
           {!isFavoritesPage && (
             <IconButton
               onClick={() => handleProtectedRoute(user?.role === "admin" ? "/admin-panel" : "/favorites")}
@@ -123,7 +120,6 @@ const Header = ({ searchTerm = "", setSearchTerm = () => {} }) => {
             </IconButton>
           )}
 
-          {/* Ícone de perfil */}
           <Avatar
             onClick={() => handleProtectedRoute("/profile")}
             sx={{

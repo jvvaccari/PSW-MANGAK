@@ -7,7 +7,6 @@ import { Box, CircularProgress } from "@mui/material";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import CatalogPage from "./pages/CatalogPage";
 
-// const CatalogPage = lazy(() => import("./pages/CatalogPage"));
 const MangaLandingPage = lazy(() => import("./pages/MangaLandingPage"));
 const ProfilePage = lazy(() => import("./pages/ProfilePage"));
 const LoginPage = lazy(() => import("./pages/LoginPage"));
