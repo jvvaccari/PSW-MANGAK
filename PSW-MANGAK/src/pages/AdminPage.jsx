@@ -1,11 +1,12 @@
 import { useContext, useState } from "react";
 import { Box, Button, TextField, Typography, IconButton } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
-import { updateManga, createManga } from "../../services/api";
+import { updateManga, createManga, deleteManga } from "../../services/api"; // Importando a função deleteManga
 import MangaContext from "../contexts/MangaContext";
 import EditIcon from "@mui/icons-material/Edit";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import DeleteIcon from "@mui/icons-material/Delete"; // Importando o ícone de Delete
 import { useNavigate } from "react-router-dom";
 
 const AdminPage = () => {
@@ -44,6 +45,15 @@ const AdminPage = () => {
     setFormData(row);
   };
 
+  const handleDeleteClick = async (id) => {
+    try {
+      await deleteManga(id); // Chamada para a API para deletar o manga
+      setMangas((prev) => prev.filter((manga) => manga.id !== id)); // Remover o manga da lista
+    } catch (error) {
+      console.error("Erro ao excluir manga:", error);
+    }
+  };
+
   const handleCancelClick = () => {
     setEditingRow(null);
     setIsCreating(false);
@@ -59,14 +69,22 @@ const AdminPage = () => {
     {
       field: "actions",
       headerName: "Ações",
-      width: 150,
+      width: 200,
       renderCell: (params) => (
-        <IconButton
-          onClick={() => handleEditClick(params.row)}
-          sx={{ color: "var(--btn-mangak-color)" }}
-        >
-          <EditIcon />
-        </IconButton>
+        <>
+          <IconButton
+            onClick={() => handleEditClick(params.row)}
+            sx={{ color: "var(--btn-mangak-color)" }}
+          >
+            <EditIcon />
+          </IconButton>
+          <IconButton
+            onClick={() => handleDeleteClick(params.row.id)} // Chamada para deletar manga
+            sx={{ color: "var(--btn-mangak-color)" }}
+          >
+            <DeleteIcon />
+          </IconButton>
+        </>
       ),
     },
   ];
@@ -87,20 +105,20 @@ const AdminPage = () => {
       <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
         <IconButton
           onClick={() => navigate(-1)}
-          sx={{ color: "#fff",padding: "0px" }}
+          sx={{ color: "#fff", padding: "0px" }}
         >
           <ArrowBackIcon />
         </IconButton>
       </Box>
       <Typography
-          variant="h4"
-          sx={{
-            fontFamily: "var(--font-title)",
-            color: "var(--text-color)",
-          }}
-        >
-          Administração de Mangás
-        </Typography>
+        variant="h4"
+        sx={{
+          fontFamily: "var(--font-title)",
+          color: "var(--text-color)",
+        }}
+      >
+        Administração de Mangás
+      </Typography>
 
       {/* Botão Adicionar */}
       <Button
@@ -176,17 +194,7 @@ const AdminPage = () => {
           >
             {isCreating ? "Adicionar Novo Mangá" : "Editar Mangá"}
           </Typography>
-          {[
-            { label: "Título", field: "title" },
-            { label: "Autor", field: "author" },
-            { label: "Descrição", field: "description" },
-            { label: "Ano de Publicação", field: "yearPubli" },
-            { label: "Status", field: "status" },
-            { label: "Demografia", field: "demographic" },
-            { label: "Gêneros (separados por vírgula)", field: "genres" },
-            { label: "URL da Imagem", field: "image" },
-            { label: "Links de Artes (separados por vírgula)", field: "artsList" },
-          ].map(({ label, field }) => (
+          {[ /* Campos do formulário */ ].map(({ label, field }) => (
             <TextField
               key={field}
               label={label}

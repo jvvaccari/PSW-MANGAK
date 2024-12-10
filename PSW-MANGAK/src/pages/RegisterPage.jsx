@@ -39,7 +39,6 @@ export default function RegisterPage() {
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [searchTerm, setSearchTerm] = useState("");
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const { register } = useAuth();
@@ -181,11 +180,6 @@ export default function RegisterPage() {
                 type="password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-              />
-              <StyledTextField
-                label="Buscar Mangás"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
               />
               {error && (
                 <Typography variant="body2" color="error" sx={{ marginBottom: "16px" }}>
