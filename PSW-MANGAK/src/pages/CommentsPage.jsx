@@ -9,27 +9,25 @@ import {
   CardContent,
   IconButton,
   List,
-  ListItem,
-  ListItemText,
   CircularProgress,
 } from "@mui/material";
-import { ThumbUp, ThumbDown, Reply, ArrowBack } from "@mui/icons-material";
+import { ThumbUp, ThumbDown, ArrowBack, Edit, Delete } from "@mui/icons-material";
 import useAuth from "../contexts/useAuth";
 import {
   fetchComments,
   postComment,
   updateCommentReaction,
-  fetchReplies,
-  postReply,
+  deleteComment,
+  updateComment,
 } from "../../services/api";
 
 const CommentsPage = () => {
   const { mangaId } = useParams();
   const { user } = useAuth();
   const [comments, setComments] = useState([]);
-  const [replies, setReplies] = useState({});
-  const [replyText, setReplyText] = useState({});
   const [newComment, setNewComment] = useState("");
+  const [editingCommentId, setEditingCommentId] = useState(null);
+  const [editText, setEditText] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
@@ -76,6 +74,32 @@ const CommentsPage = () => {
     }
   };
 
+  const handleEditComment = async (commentId) => {
+    if (!editText.trim()) return;
+
+    try {
+      const updatedComment = await updateComment(mangaId, commentId, editText);
+      setComments((prev) =>
+        prev.map((comment) =>
+          comment.id === commentId ? updatedComment : comment
+        )
+      );
+      setEditingCommentId(null);
+      setEditText("");
+    } catch (err) {
+      console.error("Erro ao editar comentário:", err.message);
+    }
+  };
+
+  const handleDeleteComment = async (commentId) => {
+    try {
+      await deleteComment(mangaId, commentId);
+      setComments((prev) => prev.filter((comment) => comment.id !== commentId));
+    } catch (err) {
+      console.error("Erro ao excluir comentário:", err.message);
+    }
+  };
+
   const handleReaction = async (commentId, type) => {
     try {
       const updatedComment = await updateCommentReaction(mangaId, commentId, type);
@@ -83,39 +107,10 @@ const CommentsPage = () => {
         prev.map((comment) => (comment.id === commentId ? updatedComment : comment))
       );
     } catch (err) {
-      console.error(`Erro ao ${type === "like" ? "curtir" : "descurtir"} comentário:`, err.message);
-    }
-  };
-
-  const loadReplies = async (commentId) => {
-    if (replies[commentId]) return;
-
-    try {
-      const fetchedReplies = await fetchReplies(mangaId, commentId);
-      setReplies((prev) => ({ ...prev, [commentId]: fetchedReplies }));
-    } catch (err) {
-      console.error("Erro ao carregar respostas:", err.message);
-    }
-  };
-
-  const handlePostReply = async (commentId) => {
-    if (!replyText[commentId]?.trim()) return;
-
-    const replyData = {
-      text: replyText[commentId],
-      userId: user.id,
-      timestamp: new Date().toISOString(),
-    };
-
-    try {
-      const createdReply = await postReply(mangaId, commentId, replyData);
-      setReplies((prev) => ({
-        ...prev,
-        [commentId]: [...(prev[commentId] || []), createdReply],
-      }));
-      setReplyText((prev) => ({ ...prev, [commentId]: "" }));
-    } catch (err) {
-      console.error("Erro ao postar resposta:", err.message);
+      console.error(
+        `Erro ao ${type === "like" ? "curtir" : "descurtir"} comentário:`,
+        err.message
+      );
     }
   };
 
@@ -127,9 +122,10 @@ const CommentsPage = () => {
           justifyContent: "center",
           alignItems: "center",
           height: "100vh",
+          backgroundColor: "var(--bg-page-color)",
         }}
       >
-        <CircularProgress sx={{ color: "var(--primary-color)" }} />
+        <CircularProgress color="inherit" />
       </Box>
     );
   }
@@ -144,9 +140,11 @@ const CommentsPage = () => {
           height: "100vh",
           textAlign: "center",
           color: "red",
+          padding: "var(--spacing-medium)",
+          backgroundColor: "var(--bg-page-color)",
         }}
       >
-        <Typography variant="subtitle1">{error}</Typography>
+        <Typography variant="h6">{error}</Typography>
       </Box>
     );
   }
@@ -154,26 +152,24 @@ const CommentsPage = () => {
   return (
     <Box
       sx={{
-        padding: "16px",
-        maxWidth: "320px",
-        height: "568px",
-        margin: "0 auto",
-        backgroundColor: "var(--background-color)",
+        padding: "var(--spacing-medium)",
+        maxWidth: "700px",
+        margin: "var(--spacing-medium) auto",
+        backgroundColor: "var(--bg-data-color)",
+        borderRadius: "8px",
+        boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
         overflowY: "auto",
       }}
     >
-      {/* Back Button */}
+      {/* Header */}
       <Box
         sx={{
           display: "flex",
           alignItems: "center",
-          marginBottom: "16px",
+          marginBottom: "var(--spacing-medium)",
         }}
       >
-        <IconButton
-          onClick={() => navigate(-1)}
-          sx={{ color: "var(--icon-color)" }}
-        >
+        <IconButton onClick={() => navigate(-1)} sx={{ color: "var(--text-color)" }}>
           <ArrowBack />
         </IconButton>
         <Typography
@@ -182,121 +178,133 @@ const CommentsPage = () => {
             flexGrow: 1,
             textAlign: "center",
             color: "var(--text-color)",
+            fontWeight: "bold",
           }}
         >
           Comentários
         </Typography>
       </Box>
 
-      {/* Comment Input */}
-      <TextField
-        fullWidth
-        label="Escreva um comentário..."
-        value={newComment}
-        onChange={(e) => setNewComment(e.target.value)}
-        variant="outlined"
-        margin="normal"
-        sx={{
-          backgroundColor: "var(--input-bg-color)",
-          borderRadius: "4px",
-        }}
-      />
-      <Button
-        variant="contained"
-        onClick={handlePostComment}
-        sx={{
-          width: "100%",
-          backgroundColor: "#ff0000",
-          color: "var(--text-color)",
-          "&:hover": { backgroundColor: "#cc0000" },
-          marginBottom: "16px",
-        }}
-      >
-        Postar Comentário
-      </Button>
+      {/* Campo para adicionar comentários */}
+      <Box sx={{ marginBottom: "var(--spacing-medium)" }}>
+        <TextField
+          fullWidth
+          label="Escreva um comentário..."
+          value={newComment}
+          onChange={(e) => setNewComment(e.target.value)}
+          variant="outlined"
+          multiline
+          minRows={3}
+          sx={{
+            backgroundColor: "#fff",
+            borderRadius: "8px",
+            marginBottom: "var(--spacing-small)",
+          }}
+        />
+        <Button
+          variant="contained"
+          onClick={handlePostComment}
+          sx={{
+            backgroundColor: "var(--btn-mangak-color)",
+            color: "var(--text-color)",
+            "&:hover": { backgroundColor: "#e6002e" },
+            borderRadius: "8px",
+            padding: "10px 16px",
+            fontWeight: "bold",
+          }}
+        >
+          Postar Comentário
+        </Button>
+      </Box>
 
-      {/* Comments List */}
+      {/* Lista de Comentários */}
       <List>
         {comments.map((comment) => (
-          <div key={comment.id}>
+          <Box key={comment.id}>
             <Card
-              variant="outlined"
               sx={{
-                marginY: 2,
-                backgroundColor: "var(--card-bg-color)",
-                color: "var(--text-color)",
+                backgroundColor: "var(--bg-data-color)",
+                borderRadius: "8px",
+                padding: "var(--spacing-medium)",
+                marginBottom: "var(--spacing-small)",
+                boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
               }}
             >
               <CardContent>
-                <Typography variant="body1">{comment.text}</Typography>
-                <Typography
-                  variant="caption"
-                  color="var(--secondary-text-color)"
-                >
-                  {new Date(comment.timestamp).toLocaleString()}
-                </Typography>
-                <Box sx={{ display: "flex", gap: "8px", marginTop: "8px" }}>
-                  <IconButton
-                    onClick={() => handleReaction(comment.id, "like")}
-                    sx={{ color: "var(--icon-color)" }}
-                  >
-                    <ThumbUp />
-                  </IconButton>
-                  <IconButton
-                    onClick={() => handleReaction(comment.id, "dislike")}
-                    sx={{ color: "var(--icon-color)" }}
-                  >
-                    <ThumbDown />
-                  </IconButton>
-                  <IconButton
-                    onClick={() => loadReplies(comment.id)}
-                    sx={{ color: "var(--icon-color)" }}
-                  >
-                    <Reply />
-                  </IconButton>
-                </Box>
+                {editingCommentId === comment.id ? (
+                  <>
+                    <TextField
+                      fullWidth
+                      value={editText}
+                      onChange={(e) => setEditText(e.target.value)}
+                      sx={{ marginBottom: "8px", backgroundColor: "#fff" }}
+                    />
+                    <Button
+                      variant="contained"
+                      onClick={() => handleEditComment(comment.id)}
+                      sx={{ marginRight: "8px" }}
+                    >
+                      Salvar
+                    </Button>
+                    <Button
+                      variant="outlined"
+                      onClick={() => setEditingCommentId(null)}
+                    >
+                      Cancelar
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Typography variant="body1" sx={{ color: "var(--text-color)" }}>
+                      {comment.text}
+                    </Typography>
+                    <Typography
+                      variant="caption"
+                      color="text.secondary"
+                      sx={{ display: "block", marginTop: "var(--spacing-small)" }}
+                    >
+                      {new Date(comment.timestamp).toLocaleString()}
+                    </Typography>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        marginTop: "var(--spacing-small)",
+                      }}
+                    >
+                      <IconButton
+                        onClick={() => handleReaction(comment.id, "like")}
+                        sx={{ color: "var(--rating-color)" }}
+                      >
+                        <ThumbUp />
+                      </IconButton>
+                      <IconButton
+                        onClick={() => handleReaction(comment.id, "dislike")}
+                        sx={{ color: "var(--status-red)" }}
+                      >
+                        <ThumbDown />
+                      </IconButton>
+                      <IconButton
+                        onClick={() => {
+                          setEditingCommentId(comment.id);
+                          setEditText(comment.text);
+                        }}
+                        sx={{ color: "var(--text-color)" }}
+                      >
+                        <Edit />
+                      </IconButton>
+                      <IconButton
+                        onClick={() => handleDeleteComment(comment.id)}
+                        sx={{ color: "var(--status-red)" }}
+                      >
+                        <Delete />
+                      </IconButton>
+                    </Box>
+                  </>
+                )}
               </CardContent>
             </Card>
-
-            {replies[comment.id] && (
-              <List sx={{ pl: 4 }}>
-                {replies[comment.id].map((reply) => (
-                  <ListItem key={reply.id}>
-                    <ListItemText
-                      primary={reply.text}
-                      secondary={new Date(reply.timestamp).toLocaleString()}
-                      sx={{ color: "var(--text-color)" }}
-                    />
-                  </ListItem>
-                ))}
-                <TextField
-                  fullWidth
-                  label="Escreva uma resposta..."
-                  value={replyText[comment.id] || ""}
-                  onChange={(e) =>
-                    setReplyText((prev) => ({ ...prev, [comment.id]: e.target.value }))
-                  }
-                  variant="outlined"
-                  margin="normal"
-                  sx={{
-                    backgroundColor: "var(--input-bg-color)",
-                    borderRadius: "4px",
-                  }}
-                />
-                <Button
-                  variant="contained"
-                  onClick={() => handlePostReply(comment.id)}
-                  sx={{
-                    backgroundColor: "#ff0000",
-                    color: "var(--btn-text-color)",
-                    "&:hover": { backgroundColor: "#cc0000" },
-                  }}
-                >
-                  Responder
-                </Button>
-              </List>
-            )}
-          </div>
+          </Box>
         ))}
       </List>
     </Box>

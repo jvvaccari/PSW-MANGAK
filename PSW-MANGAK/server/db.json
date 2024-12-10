@@ -14,32 +14,6 @@
         "Sobrenatural",
         "Terror"
       ],
-      "comments": [
-        {
-          "id": "c101",
-          "userId": "1",
-          "text": "Este mangá é incrível! As cenas de luta são épicas.",
-          "timestamp": "2024-12-10T12:00:00Z",
-          "reactions": { "likes": 15, "dislikes": 2 },
-          "replies": [
-            {
-              "id": "r101",
-              "userId": "2",
-              "text": "Concordo! O Sukuna é o melhor vilão.",
-              "timestamp": "2024-12-10T12:30:00Z",
-              "reactions": { "likes": 5, "dislikes": 0 }
-            }
-          ]
-        },
-        {
-          "id": "c102",
-          "userId": "2",
-          "text": "Achei que o último arco foi meio devagar.",
-          "timestamp": "2024-12-10T13:00:00Z",
-          "reactions": { "likes": 3, "dislikes": 4 },
-          "replies": []
-        }
-      ],
       "artsList": [
         "https://criticalhits.com.br/wp-content/uploads/2021/04/jujutsu-kaisen-wallpaper-smartphone-09.jpg",
         "https://wallpapers.com/images/hd/itadori-hand-jujutsu-kaisen-iphone-483xqcsa46culk5s.jpg",
@@ -78,7 +52,8 @@
           "userId": "1",
           "rating": 2.5
         }
-      ]
+      ],
+      "comments": []
     },
     {
       "id": "2",
@@ -100,18 +75,24 @@
           "userId": "1",
           "text": "One Piece é uma obra-prima. Oda nunca decepciona.",
           "timestamp": "2024-12-10T14:00:00Z",
-          "reactions": { "likes": 20, "dislikes": 1 },
+          "reactions": {
+            "likes": 20,
+            "dislikes": 1
+          },
           "replies": [
             {
               "id": "r201",
               "userId": "3",
               "text": "Concordo plenamente. Wano foi fenomenal.",
               "timestamp": "2024-12-10T14:30:00Z",
-              "reactions": { "likes": 10, "dislikes": 0 }
+              "reactions": {
+                "likes": 10,
+                "dislikes": 0
+              }
             }
           ]
         }
-        ],
+      ],
       "artsList": [
         "https://wallpapers.com/images/hd/one-piece-luffy-gear-5-portrait-4k-uwwl7iz0hx6wbjvk.jpg",
         "https://wallpapers.com/images/hd/monkey-d-luffy-ace-sabo-one-piece-4k-stmn8dqcz5yux2nx.jpg"
@@ -156,14 +137,20 @@
           "userId": "1",
           "text": "Sempre rio muito com este mangá.",
           "timestamp": "2024-12-11T15:00:00Z",
-          "reactions": { "likes": 15, "dislikes": 0 },
+          "reactions": {
+            "likes": 15,
+            "dislikes": 0
+          },
           "replies": [
             {
               "id": "r301",
               "userId": "2",
               "text": "É a mistura perfeita de romance e comédia.",
               "timestamp": "2024-12-11T16:00:00Z",
-              "reactions": { "likes": 8, "dislikes": 0 }
+              "reactions": {
+                "likes": 8,
+                "dislikes": 0
+              }
             }
           ]
         }
@@ -211,14 +198,20 @@
           "userId": "3",
           "text": "O final foi muito polêmico, mas gostei.",
           "timestamp": "2024-12-10T17:00:00Z",
-          "reactions": { "likes": 12, "dislikes": 10 },
+          "reactions": {
+            "likes": 12,
+            "dislikes": 10
+          },
           "replies": [
             {
               "id": "r401",
               "userId": "1",
               "text": "Gostei também! Fechou bem a jornada do Eren.",
               "timestamp": "2024-12-10T17:30:00Z",
-              "reactions": { "likes": 5, "dislikes": 3 }
+              "reactions": {
+                "likes": 5,
+                "dislikes": 3
+              }
             }
           ]
         }
@@ -883,7 +876,8 @@
       "favorites": [
         "3",
         "5",
-        "10"
+        "10",
+        "4"
       ]
     },
     {
@@ -908,5 +902,8 @@
         "9"
       ]
     }
+  ],
+  "comments": [
+    {}
   ]
 }

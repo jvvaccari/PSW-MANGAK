@@ -1,21 +1,24 @@
 import PropTypes from "prop-types";
-import { Box, Typography, Rating } from "@mui/material";
-import TurnedInNotIcon from "@mui/icons-material/TurnedInNot";
+import { Box, Typography, Rating, Button } from "@mui/material";
+import CommentIcon from '@mui/icons-material/Comment';
+import { useNavigate } from "react-router-dom";
 import styles from "./Content.module.css";
 
-const calculateAverageRating = (ratings) => {
-  if (!Array.isArray(ratings) || ratings.length === 0) return 0.0;
-  const total = ratings.reduce((acc, item) => acc + (item?.rating || 0), 0);
-  return (total / ratings.length).toFixed(1); // Retorna a média com uma casa decimal
-};
-
-const getUserRating = (ratings, userId) => {
-  if (!Array.isArray(ratings) || !userId) return null;
-  const userRating = ratings.find((item) => item?.userId === userId);
-  return userRating ? userRating.rating : null;
-};
-
 const Content = ({ manga, userId, onRate }) => {
+  const navigate = useNavigate();
+
+  const calculateAverageRating = (ratings) => {
+    if (!Array.isArray(ratings) || ratings.length === 0) return 0.0;
+    const total = ratings.reduce((acc, item) => acc + (item?.rating || 0), 0);
+    return (total / ratings.length).toFixed(1); // Retorna a média com uma casa decimal
+  };
+
+  const getUserRating = (ratings, userId) => {
+    if (!Array.isArray(ratings) || !userId) return null;
+    const userRating = ratings.find((item) => item?.userId === userId);
+    return userRating ? userRating.rating : null;
+  };
+
   const averageRating = calculateAverageRating(manga.ratings); // Calcula a média
   const userRating = getUserRating(manga.ratings, userId); // Avaliação do usuário
 
@@ -45,6 +48,14 @@ const Content = ({ manga, userId, onRate }) => {
     } else {
       console.warn("Erro ao enviar avaliação: Callback `onRate` não definido.");
     }
+  };
+
+  const handleViewComments = () => {
+    if (!userId) {
+      console.warn("Usuário não autenticado.");
+      return;
+    }
+    navigate(`/comments/${manga.id}`); // Redireciona para a página de comentários
   };
 
   return (
@@ -107,22 +118,19 @@ const Content = ({ manga, userId, onRate }) => {
             >
               {`(${averageRating})`} {/* Exibe a média das avaliações */}
             </Typography>
-            <Typography
-              variant="body2"
+            <Button
+              variant="text"
+              onClick={handleViewComments}
               sx={{
-                fontSize: "var(--font-size-body)",
-                color: "var(--text-color)",
                 display: "flex",
+                alignItems: "center",
+                color: "var(--text-color)",
+                fontSize: { xs: "1em", sm: "1.2em", md: "1.4em" },
+                textTransform: "none",
               }}
             >
-              <TurnedInNotIcon
-                sx={{
-                  paddingTop: "1.2px",
-                  fontSize: { xs: "1.4em", sm: "1.5em", md: "1.6em", lg: "1.8em" },
-                }}
-              />
-              {manga.saved}
-            </Typography>
+              <CommentIcon sx={{ marginLeft: "12px" }} />
+            </Button>
           </Box>
         </Box>
       </Box>
@@ -140,6 +148,7 @@ const Content = ({ manga, userId, onRate }) => {
 
 Content.propTypes = {
   manga: PropTypes.shape({
+    id: PropTypes.string.isRequired, // Adiciona o ID do mangá
     image: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
     author: PropTypes.string.isRequired,
