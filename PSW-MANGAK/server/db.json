@@ -5,9 +5,9 @@
       "title": "Jujutsu Kaisen",
       "image": "https://upload.wikimedia.org/wikipedia/pt/4/4b/Jujutsu_Kaisen_Cover.png",
       "author": "Gege Akutami",
-      "description": "Yuji Itadori, um adolescente, entra no mundo da feitiçaria.",
+      "description": "Jujutsu Kaisen is a Japanese manga series written and illustrated by Gege Akutami. It was serialized in Shueisha's shōnen manga magazine Weekly Shōnen Jump from March 2018 to September 2024, with its chapters collected in 28 tankōbon volumes as of October 2024.",
       "yearPubli": "2021",
-      "status": "EM ANDAMENTO",
+      "status": "Em andamento",
       "demographic": "Shonen",
       "genres": [
         "Ação",
@@ -28,21 +28,32 @@
       "retail": [
         {
           "name": "Panini",
-          "url": "https://panini.com.br/planet-manga/chainsaw-man?srsltid=AfmBOoqcmp8IaVIywAKBhhJHNeoSFZeSc23kv4xnwBD90i6orwX_zf-7"
+          "url": "https://panini.com.br/catalogsearch/result/?q=jujutsu+kaisen"
         },
         {
           "name": "Amazon",
-          "url": "https://www.amazon.com.br/Chainsaw-Man-Vol-Tatsuki-Fujimoto/dp/6555127333"
+          "url": "https://www.amazon.com.br/s?k=jujutsu+kaisen&i=stripbooks&crid=3HZN8QDR5NF4V&sprefix=jujuts%2Cstripbooks%2C248&ref=nb_sb_ss_ts-doa-p_1_6"
         },
         {
           "name": "Mercado Livre",
-          "url": "https://lista.mercadolivre.com.br/manga-chainsaw-man"
+          "url": "https://lista.mercadolivre.com.br/manga-jujutsu-kainsen#D[A:manga%20jujutsu%20kainsen]"
         },
         {
           "name": "Shopee",
-          "url": "https://shopee.com.br/list/Mang%C3%A1/Chainsaw%20Man?srsltid=AfmBOoqUZsc9IQ0q2BXI7fEmOIYvgXpjw-8gsY863RaLN_1hp_jBZOcO"
+          "url": "https://shopee.com.br/search?keyword=mang%C3%A1%20jujutsu%20kaisen"
         }
-      ]
+      ],
+      "ratings": [
+        {
+          "userId": "2",
+          "rating": 5
+        },
+        {
+          "userId": "1",
+          "rating": 2.5
+        }
+      ],
+      "comments": []
     },
     {
       "id": "2",
@@ -57,6 +68,30 @@
         "Aventura",
         "Comédia",
         "Fantasia"
+      ],
+      "comments": [
+        {
+          "id": "c201",
+          "userId": "1",
+          "text": "One Piece é uma obra-prima. Oda nunca decepciona.",
+          "timestamp": "2024-12-10T14:00:00Z",
+          "reactions": {
+            "likes": 20,
+            "dislikes": 1
+          },
+          "replies": [
+            {
+              "id": "r201",
+              "userId": "3",
+              "text": "Concordo plenamente. Wano foi fenomenal.",
+              "timestamp": "2024-12-10T14:30:00Z",
+              "reactions": {
+                "likes": 10,
+                "dislikes": 0
+              }
+            }
+          ]
+        }
       ],
       "artsList": [
         "https://wallpapers.com/images/hd/one-piece-luffy-gear-5-portrait-4k-uwwl7iz0hx6wbjvk.jpg",
@@ -79,7 +114,8 @@
           "name": "Shopee",
           "url": "https://shopee.com.br/list/Mang%C3%A1/Chainsaw%20Man?srsltid=AfmBOoqUZsc9IQ0q2BXI7fEmOIYvgXpjw-8gsY863RaLN_1hp_jBZOcO"
         }
-      ]
+      ],
+      "rating": []
     },
     {
       "id": "3",
@@ -94,6 +130,30 @@
         "Romance",
         "Comédia",
         "Psicológico"
+      ],
+      "comments": [
+        {
+          "id": "c301",
+          "userId": "1",
+          "text": "Sempre rio muito com este mangá.",
+          "timestamp": "2024-12-11T15:00:00Z",
+          "reactions": {
+            "likes": 15,
+            "dislikes": 0
+          },
+          "replies": [
+            {
+              "id": "r301",
+              "userId": "2",
+              "text": "É a mistura perfeita de romance e comédia.",
+              "timestamp": "2024-12-11T16:00:00Z",
+              "reactions": {
+                "likes": 8,
+                "dislikes": 0
+              }
+            }
+          ]
+        }
       ],
       "artsList": [
         "https://wallpapers.com/images/hd/kaguya-sama-love-is-war-character-poster-r6ydgixrhrpy9c7z.jpg"
@@ -115,7 +175,8 @@
           "name": "Shopee",
           "url": "https://shopee.com.br/list/Mang%C3%A1/Chainsaw%20Man?srsltid=AfmBOoqUZsc9IQ0q2BXI7fEmOIYvgXpjw-8gsY863RaLN_1hp_jBZOcO"
         }
-      ]
+      ],
+      "rating": []
     },
     {
       "id": "4",
@@ -130,6 +191,30 @@
         "Ação",
         "Drama",
         "Sobrenatural"
+      ],
+      "comments": [
+        {
+          "id": "c401",
+          "userId": "3",
+          "text": "O final foi muito polêmico, mas gostei.",
+          "timestamp": "2024-12-10T17:00:00Z",
+          "reactions": {
+            "likes": 12,
+            "dislikes": 10
+          },
+          "replies": [
+            {
+              "id": "r401",
+              "userId": "1",
+              "text": "Gostei também! Fechou bem a jornada do Eren.",
+              "timestamp": "2024-12-10T17:30:00Z",
+              "reactions": {
+                "likes": 5,
+                "dislikes": 3
+              }
+            }
+          ]
+        }
       ],
       "artsList": [
         "https://wallpapers.com/images/hd/attack-on-titan-eren-jaeger-destruction-7k-uhwoq4qx9he9zkgj.jpg"
@@ -151,6 +236,9 @@
           "name": "Shopee",
           "url": "https://shopee.com.br/list/Mang%C3%A1/Chainsaw%20Man?srsltid=AfmBOoqUZsc9IQ0q2BXI7fEmOIYvgXpjw-8gsY863RaLN_1hp_jBZOcO"
         }
+      ],
+      "ratings": [
+        1
       ]
     },
     {
@@ -187,6 +275,17 @@
         {
           "name": "Shopee",
           "url": "https://shopee.com.br/list/Mang%C3%A1/Chainsaw%20Man?srsltid=AfmBOoqUZsc9IQ0q2BXI7fEmOIYvgXpjw-8gsY863RaLN_1hp_jBZOcO"
+        }
+      ],
+      "rating": [],
+      "ratings": [
+        {
+          "userId": "2",
+          "rating": 3.5
+        },
+        {
+          "userId": "1733782200467",
+          "rating": 5
         }
       ]
     },
@@ -225,7 +324,8 @@
           "name": "Shopee",
           "url": "https://shopee.com.br/list/Mang%C3%A1/Chainsaw%20Man?srsltid=AfmBOoqUZsc9IQ0q2BXI7fEmOIYvgXpjw-8gsY863RaLN_1hp_jBZOcO"
         }
-      ]
+      ],
+      "rating": []
     },
     {
       "id": "7",
@@ -262,7 +362,8 @@
           "name": "Shopee",
           "url": "https://shopee.com.br/list/Mang%C3%A1/Chainsaw%20Man?srsltid=AfmBOoqUZsc9IQ0q2BXI7fEmOIYvgXpjw-8gsY863RaLN_1hp_jBZOcO"
         }
-      ]
+      ],
+      "rating": []
     },
     {
       "id": "8",
@@ -299,6 +400,13 @@
           "name": "Shopee",
           "url": "https://shopee.com.br/list/Mang%C3%A1/Chainsaw%20Man?srsltid=AfmBOoqUZsc9IQ0q2BXI7fEmOIYvgXpjw-8gsY863RaLN_1hp_jBZOcO"
         }
+      ],
+      "rating": [],
+      "ratings": [
+        {
+          "userId": "1733782200467",
+          "rating": 5
+        }
       ]
     },
     {
@@ -316,25 +424,47 @@
         "Aventura"
       ],
       "artsList": [
-        "https://wallpapers.com/images/hd/ichigo-kurosaki-bleach-fighting-form-dcqbd2kg5r0mm7v6.jpg",
-        "https://wallpapers.com/images/hd/rukia-kuchiki-bleach-fan-art-t9b6kdhu9uvs2fpo.jpg"
+        "https://wallpapers.com/images/high/bleach-pictures-rrzrjrshk2x0pt3x.webp",
+        "https://wallpapers.com/images/high/bleach-pictures-ofgtlaijurp3g9mv.webp",
+        "https://wallpapers.com/images/high/bleach-pictures-5u1on1f5fgveltm5.webp",
+        "https://wallpapers.com/images/high/bleach-hollowfied-ichigo-0v4gg0lalxtpb91s.webp",
+        "https://wallpapers.com/images/hd/bleach-final-getsuga-tenshou-0ybvj1z85hefxozd.webp",
+        "https://wallpapers.com/images/high/bleach-pictures-4apps1b3eisnfum4.webp",
+        "https://wallpapers.com/images/high/bleach-pictures-kw5243gpjl3oqmib.webp",
+        "https://wallpapers.com/images/high/bleach-phone-1378-x-2039-16cyqkdz84nff7z0.webp",
+        "https://i.pinimg.com/736x/92/56/8a/92568aad81cca8e11f2ad0e70300e466.jpg",
+        "https://images7.alphacoders.com/135/thumb-1920-1359298.png",
+        "https://images8.alphacoders.com/135/1355402.png",
+        "https://images6.alphacoders.com/727/thumb-1920-727838.png",
+        "https://images5.alphacoders.com/100/thumb-1920-1003262.jpg"
       ],
       "retail": [
         {
           "name": "Panini",
-          "url": "https://panini.com.br/planet-manga/chainsaw-man?srsltid=AfmBOoqcmp8IaVIywAKBhhJHNeoSFZeSc23kv4xnwBD90i6orwX_zf-7"
+          "url": "https://panini.com.br/catalogsearch/result/?q=bleach"
         },
         {
           "name": "Amazon",
-          "url": "https://www.amazon.com.br/Chainsaw-Man-Vol-Tatsuki-Fujimoto/dp/6555127333"
+          "url": "https://www.amazon.com.br/s?k=manga+bleach&__mk_pt_BR=%C3%85M%C3%85%C5%BD%C3%95%C3%91&crid=3RR3ON2HJY73W&sprefix=manga+bleac%2Caps%2C265&ref=nb_sb_noss_2"
         },
         {
           "name": "Mercado Livre",
-          "url": "https://lista.mercadolivre.com.br/manga-chainsaw-man"
+          "url": "https://lista.mercadolivre.com.br/manga-bleach#D[A:manga%20bleach]"
         },
         {
           "name": "Shopee",
-          "url": "https://shopee.com.br/list/Mang%C3%A1/Chainsaw%20Man?srsltid=AfmBOoqUZsc9IQ0q2BXI7fEmOIYvgXpjw-8gsY863RaLN_1hp_jBZOcO"
+          "url": "https://shopee.com.br/search?keyword=bleach%20mang%C3%A1"
+        }
+      ],
+      "rating": [],
+      "ratings": [
+        {
+          "userId": "2",
+          "rating": 4.5
+        },
+        {
+          "userId": "1733782200467",
+          "rating": 5
         }
       ]
     },
@@ -373,7 +503,360 @@
           "name": "Shopee",
           "url": "https://shopee.com.br/list/Mang%C3%A1/Chainsaw%20Man?srsltid=AfmBOoqUZsc9IQ0q2BXI7fEmOIYvgXpjw-8gsY863RaLN_1hp_jBZOcO"
         }
+      ],
+      "rating": [],
+      "ratings": [
+        {
+          "userId": "2",
+          "rating": 2.5
+        },
+        {
+          "userId": "1733782200467",
+          "rating": 5
+        },
+        {
+          "userId": "1",
+          "rating": 4.5
+        }
       ]
+    },
+    {
+      "id": "11",
+      "title": "Fairy Tail",
+      "image": "https://upload.wikimedia.org/wikipedia/pt/c/ce/FairyTail_vol._01.jpg",
+      "author": "Hiro Mashima",
+      "description": "Acompanhe as aventuras de Natsu Dragneel e a guilda Fairy Tail.",
+      "yearPubli": "2006",
+      "status": "Finalizado",
+      "demographic": "Shonen",
+      "genres": [
+        "Ação",
+        "Fantasia",
+        "Aventura"
+      ],
+      "artsList": [
+        "https://wallpapers.com/images/hd/fairy-tail-natsu-dragneel-happy-y6m3yzs80ld5hymh.jpg"
+      ],
+      "retail": [
+        {
+          "name": "Panini",
+          "url": "https://panini.com.br/planet-manga/chainsaw-man?srsltid=AfmBOoqcmp8IaVIywAKBhhJHNeoSFZeSc23kv4xnwBD90i6orwX_zf-7"
+        },
+        {
+          "name": "Amazon",
+          "url": "https://www.amazon.com.br/Chainsaw-Man-Vol-Tatsuki-Fujimoto/dp/6555127333"
+        },
+        {
+          "name": "Mercado Livre",
+          "url": "https://lista.mercadolivre.com.br/manga-chainsaw-man"
+        },
+        {
+          "name": "Shopee",
+          "url": "https://shopee.com.br/list/Mang%C3%A1/Chainsaw%20Man?srsltid=AfmBOoqUZsc9IQ0q2BXI7fEmOIYvgXpjw-8gsY863RaLN_1hp_jBZOcO"
+        }
+      ],
+      "ratings": []
+    },
+    {
+      "id": "12",
+      "title": "Sword Art Online",
+      "image": "https://upload.wikimedia.org/wikipedia/pt/thumb/b/b2/SwordArtOnlineVol.1.jpg/250px-SwordArtOnlineVol.1.jpg",
+      "author": "Reki Kawahara",
+      "description": "Jogadores ficam presos no mundo virtual de Sword Art Online.",
+      "yearPubli": "2009",
+      "status": "Finalizado",
+      "demographic": "Shonen",
+      "genres": [
+        "Ação",
+        "Aventura",
+        "Fantasia"
+      ],
+      "artsList": [
+        "https://wallpapers.com/images/hd/kirito-and-asuna-sword-art-online-lx92xhmh9wdfzlmg.jpg"
+      ],
+      "retail": [
+        {
+          "name": "Panini",
+          "url": "https://panini.com.br/catalogsearch/result/?q=sword+art+online"
+        },
+        {
+          "name": "Amazon",
+          "url": "https://www.amazon.com.br/Chainsaw-Man-Vol-Tatsuki-Fujimoto/dp/6555127333"
+        },
+        {
+          "name": "Mercado Livre",
+          "url": "https://lista.mercadolivre.com.br/manga-chainsaw-man"
+        },
+        {
+          "name": "Shopee",
+          "url": "https://shopee.com.br/list/Mang%C3%A1/Chainsaw%20Man?srsltid=AfmBOoqUZsc9IQ0q2BXIYvgXpjw-8gsY863RaLN_1hp_jBZOcO"
+        }
+      ],
+      "ratings": [
+        {
+          "userId": "1733782200467",
+          "rating": 5
+        }
+      ]
+    },
+    {
+      "id": "13",
+      "title": "Berserk",
+      "image": "https://upload.wikimedia.org/wikipedia/pt/thumb/4/45/Berserk_vol01.jpg/220px-Berserk_vol01.jpg",
+      "author": "Kentaro Miura",
+      "description": "A sombria jornada de Guts enquanto enfrenta inimigos sobrenaturais.",
+      "yearPubli": "1989",
+      "status": "Em andamento",
+      "demographic": "Seinen",
+      "genres": [
+        "Ação",
+        "Fantasia",
+        "Drama"
+      ],
+      "artsList": [
+        "https://wallpapers.com/images/hd/berserk-guts-dark-warrior-4k-y5gzk4hx5w9s97l7.jpg"
+      ],
+      "retail": [
+        {
+          "name": "Panini",
+          "url": "https://panini.com.br/catalogsearch/result/?q=berserk"
+        },
+        {
+          "name": "Amazon",
+          "url": "https://www.amazon.com.br/Chainsaw-Man-Vol-Tatsuki-Fujimoto/dp/6555127333"
+        },
+        {
+          "name": "Mercado Livre",
+          "url": "https://lista.mercadolivre.com.br/manga-chainsaw-man"
+        },
+        {
+          "name": "Shopee",
+          "url": "https://shopee.com.br/list/Mang%C3%A1/Chainsaw%20Man?srsltid=AfmBOoqUZsc9IQ0q2BXIYvgXpjw-8gsY863RaLN_1hp_jBZOcO"
+        }
+      ],
+      "ratings": []
+    },
+    {
+      "id": "14",
+      "title": "Dragon Ball",
+      "image": "https://upload.wikimedia.org/wikipedia/pt/thumb/0/06/Dragon_Ball_vol._01.jpg/250px-Dragon_Ball_vol._01.jpg",
+      "author": "Akira Toriyama",
+      "description": "Goku e seus amigos enfrentam desafios em busca das esferas do dragão.",
+      "yearPubli": "1984",
+      "status": "Finalizado",
+      "demographic": "Shonen",
+      "genres": [
+        "Ação",
+        "Aventura",
+        "Fantasia"
+      ],
+      "artsList": [
+        "https://wallpapers.com/images/hd/dragon-ball-goku-super-saiyan-4k-9fsjx5clj0pw5vxz.jpg"
+      ],
+      "retail": [
+        {
+          "name": "Panini",
+          "url": "https://panini.com.br/catalogsearch/result/?q=dragon+ball"
+        },
+        {
+          "name": "Amazon",
+          "url": "https://www.amazon.com.br/Chainsaw-Man-Vol-Tatsuki-Fujimoto/dp/6555127333"
+        },
+        {
+          "name": "Mercado Livre",
+          "url": "https://lista.mercadolivre.com.br/manga-chainsaw-man"
+        },
+        {
+          "name": "Shopee",
+          "url": "https://shopee.com.br/list/Mang%C3%A1/Chainsaw%20Man?srsltid=AfmBOoqUZsc9IQ0q2BXIYvgXpjw-8gsY863RaLN_1hp_jBZOcO"
+        }
+      ],
+      "ratings": []
+    },
+    {
+      "id": "15",
+      "title": "Fullmetal Alchemist",
+      "image": "https://upload.wikimedia.org/wikipedia/pt/thumb/9/9f/Fullmetal_Alchemist.jpg/250px-Fullmetal_Alchemist.jpg",
+      "author": "Hiromu Arakawa",
+      "description": "Dois irmãos alquimistas buscam a Pedra Filosofal para restaurar seus corpos.",
+      "yearPubli": "2001",
+      "status": "Finalizado",
+      "demographic": "Shonen",
+      "genres": [
+        "Ação",
+        "Fantasia",
+        "Drama"
+      ],
+      "artsList": [
+        "https://wallpapers.com/images/hd/fullmetal-alchemist-edward-and-alphonse-4k-kdgf9y0dk85rl2c4.jpg"
+      ],
+      "retail": [
+        {
+          "name": "Panini",
+          "url": "https://panini.com.br/planet-manga/chainsaw-man?srsltid=AfmBOoqcmp8IaVIywAKBhhJHNeoSFZeSc23kv4xnwBD90i6orwX_zf-7"
+        },
+        {
+          "name": "Amazon",
+          "url": "https://www.amazon.com.br/Chainsaw-Man-Vol-Tatsuki-Fujimoto/dp/6555127333"
+        },
+        {
+          "name": "Mercado Livre",
+          "url": "https://lista.mercadolivre.com.br/manga-chainsaw-man"
+        },
+        {
+          "name": "Shopee",
+          "url": "https://shopee.com.br/list/Mang%C3%A1/Chainsaw%20Man?srsltid=AfmBOoqUZsc9IQ0q2BXIYvgXpjw-8gsY863RaLN_1hp_jBZOcO"
+        }
+      ],
+      "ratings": []
+    },
+    {
+      "id": "16",
+      "title": "Gintama",
+      "image": "https://upload.wikimedia.org/wikipedia/pt/6/65/Gintamavol01capa.jpg",
+      "author": "Hideaki Sorachi",
+      "description": "Sakata Gintoki e seus amigos enfrentam aventuras hilárias no Japão alienígena.",
+      "yearPubli": "2003",
+      "status": "Finalizado",
+      "demographic": "Shonen",
+      "genres": [
+        "Comédia",
+        "Ação",
+        "Fantasia"
+      ],
+      "artsList": [
+        "https://wallpapers.com/images/hd/gintama-gintoki-sakata-kagura-and-shinpachi-2k-2uwf4y0z3b7j5vnw.jpg"
+      ],
+      "retail": [
+        {
+          "name": "Panini",
+          "url": "https://panini.com.br/planet-manga/chainsaw-man"
+        },
+        {
+          "name": "Amazon",
+          "url": "https://www.amazon.com.br/Chainsaw-Man-Vol-Tatsuki-Fujimoto/dp/6555127333"
+        },
+        {
+          "name": "Mercado Livre",
+          "url": "https://lista.mercadolivre.com.br/manga-chainsaw-man"
+        },
+        {
+          "name": "Shopee",
+          "url": "https://shopee.com.br/list/Mang%C3%A1/Chainsaw%20Man?srsltid=AfmBOoqUZsc9IQ0q2BXIYvgXpjw-8gsY863RaLN_1hp_jBZOcO"
+        }
+      ],
+      "ratings": []
+    },
+    {
+      "id": "17",
+      "title": "Haikyuu!!",
+      "image": "https://upload.wikimedia.org/wikipedia/pt/thumb/7/73/Haiky%C5%AB%21%21_vol_5.jpg/250px-Haiky%C5%AB%21%21_vol_5.jpg",
+      "author": "Haruichi Furudate",
+      "description": "Hinata Shoyo busca ser um dos melhores jogadores de vôlei do Japão.",
+      "yearPubli": "2012",
+      "status": "Finalizado",
+      "demographic": "Shonen",
+      "genres": [
+        "Esportes",
+        "Comédia",
+        "Drama"
+      ],
+      "artsList": [
+        "https://wallpapers.com/images/hd/haikyuu-hinata-and-kageyama-4k-zklq4y9u9j7lm48h.jpg"
+      ],
+      "retail": [
+        {
+          "name": "Panini",
+          "url": "https://panini.com.br/planet-manga/chainsaw-man"
+        },
+        {
+          "name": "Amazon",
+          "url": "https://www.amazon.com.br/Chainsaw-Man-Vol-Tatsuki-Fujimoto/dp/6555127333"
+        },
+        {
+          "name": "Mercado Livre",
+          "url": "https://lista.mercadolivre.com.br/manga-chainsaw-man"
+        },
+        {
+          "name": "Shopee",
+          "url": "https://shopee.com.br/list/Mang%C3%A1/Chainsaw%20Man?srsltid=AfmBOoqUZsc9IQ0q2BXIYvgXpjw-8gsY863RaLN_1hp_jBZOcO"
+        }
+      ],
+      "ratings": []
+    },
+    {
+      "id": "18",
+      "title": "The Promised Neverland",
+      "image": "https://m.media-amazon.com/images/I/51pC5TDB86L._SY445_SX342_.jpg",
+      "author": "Kaiu Shirai",
+      "description": "Crianças descobrem um terrível segredo no orfanato Grace Field.",
+      "yearPubli": "2016",
+      "status": "Finalizado",
+      "demographic": "Shonen",
+      "genres": [
+        "Suspense",
+        "Fantasia",
+        "Drama"
+      ],
+      "artsList": [
+        "https://wallpapers.com/images/hd/the-promised-neverland-emma-norman-ray-4k-0lf9r2i8zlf4vxdq.jpg"
+      ],
+      "retail": [
+        {
+          "name": "Panini",
+          "url": "https://panini.com.br/planet-manga/chainsaw-man"
+        },
+        {
+          "name": "Amazon",
+          "url": "https://www.amazon.com.br/Chainsaw-Man-Vol-Tatsuki-Fujimoto/dp/6555127333"
+        },
+        {
+          "name": "Mercado Livre",
+          "url": "https://lista.mercadolivre.com.br/manga-chainsaw-man"
+        },
+        {
+          "name": "Shopee",
+          "url": "https://shopee.com.br/list/Mang%C3%A1/Chainsaw%20Man?srsltid=AfmBOoqUZsc9IQ0q2BXIYvgXpjw-8gsY863RaLN_1hp_jBZOcO"
+        }
+      ],
+      "ratings": []
+    },
+    {
+      "id": "19",
+      "title": "Toradora!",
+      "image": "https://upload.wikimedia.org/wikipedia/pt/thumb/c/cd/Toradora%21_light_novel_volume_1_cover.jpg/250px-Toradora%21_light_novel_volume_1_cover.jpg",
+      "author": "Yuyuko Takemiya",
+      "description": "Ryuuji e Taiga formam uma aliança para conquistar seus amores.",
+      "yearPubli": "2006",
+      "status": "Finalizado",
+      "demographic": "Shonen",
+      "genres": [
+        "Comédia",
+        "Romance",
+        "Drama"
+      ],
+      "artsList": [
+        "https://wallpapers.com/images/hd/toradora-taiga-and-ryuuji-4k-lqwlmp7ydpkfxh0p.jpg"
+      ],
+      "retail": [
+        {
+          "name": "Panini",
+          "url": "https://panini.com.br/planet-manga/chainsaw-man"
+        },
+        {
+          "name": "Amazon",
+          "url": "https://www.amazon.com.br/Chainsaw-Man-Vol-Tatsuki-Fujimoto/dp/6555127333"
+        },
+        {
+          "name": "Mercado Livre",
+          "url": "https://lista.mercadolivre.com.br/manga-chainsaw-man"
+        },
+        {
+          "name": "Shopee",
+          "url": "https://shopee.com.br/list/Mang%C3%A1/Chainsaw%20Man?srsltid=AfmBOoqUZsc9IQ0q2BXIYvgXpjw-8gsY863RaLN_1hp_jBZOcO"
+        }
+      ],
+      "ratings": []
     }
   ],
   "accounts": [
@@ -390,7 +873,12 @@
       "email": "pedroX@gmail.com",
       "password": "flasco123",
       "role": "user",
-      "favorites": ["3", "5", "10"]
+      "favorites": [
+        "3",
+        "5",
+        "10",
+        "4"
+      ]
     },
     {
       "id": "2",
@@ -398,7 +886,24 @@
       "email": "jvva@gmail.com",
       "password": "flasco123",
       "role": "user",
-      "favorites": ["2", "4", "1","8"]
+      "favorites": [
+        "2",
+        "1",
+        "8",
+        "4"
+      ]
+    },
+    {
+      "id": "1733782200467",
+      "username": "Lucas",
+      "email": "lucaspsilva1610@gmail.com",
+      "password": "123",
+      "favorites": [
+        "9"
+      ]
     }
+  ],
+  "comments": [
+    {}
   ]
 }

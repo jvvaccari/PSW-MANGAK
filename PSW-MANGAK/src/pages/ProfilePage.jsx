@@ -252,7 +252,7 @@ function ProfilePage() {
                   bgcolor: "#000",
                 }}
               />
-              <Box sx={{ padding: "0px" }}>
+              <Box sx={{ padding: "0px",maxWidth: "290.52px" }}>
                 <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
                   {formData.username}
                 </Typography>
@@ -261,30 +261,35 @@ function ProfilePage() {
                 </Typography>
               </Box>
             </Box>
-            <Button
-              variant="contained"
-              onClick={() => setIsEditing(true)}
-              sx={{
-                width: "100%",
-                maxWidth: "388px",
-                bgcolor: "var(--btn-mangak-color)",
-                marginBottom: "3em",
-              }}
-            >
-              Editar dados
-            </Button>
-            <Button
-              variant="contained"
-              onClick={handleOpenDialog}
-              sx={{
-                width: "100%",
-                maxWidth: "388px",
-                bgcolor: "var(--btn-mangak-color)",
-                marginBottom: "2em",
-              }}
-            >
-              Excluir conta
-            </Button>
+            {/* Verificar se o usuário é admin */}
+            {user.role !== "admin" && (
+              <>
+                <Button
+                  variant="contained"
+                  onClick={() => setIsEditing(true)}
+                  sx={{
+                    width: "100%",
+                    maxWidth: "388px",
+                    bgcolor: "var(--btn-mangak-color)",
+                    marginBottom: "3em",
+                  }}
+                >
+                  Editar dados
+                </Button>
+                <Button
+                  variant="contained"
+                  onClick={handleOpenDialog}
+                  sx={{
+                    width: "100%",
+                    maxWidth: "388px",
+                    bgcolor: "var(--btn-mangak-color)",
+                    marginBottom: "2em",
+                  }}
+                >
+                  Excluir conta
+                </Button>
+              </>
+            )}
           </Box>
         )}
 

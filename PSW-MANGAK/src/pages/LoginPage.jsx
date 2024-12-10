@@ -185,10 +185,10 @@ export default function LoginPage() {
                   },
                 },
                 "& .MuiInputLabel-root": {
-                  color: "#FF0037", // Cor do label
+                  color: "#FFFFFF", // Cor do label
                 },
                 "& .MuiInputLabel-root.Mui-focused": {
-                  color: "#FF0037", // Cor do label no foco
+                  color: "#FFFFFF", // Cor do label no foco
                 },
               }}
             />  
@@ -210,7 +210,7 @@ export default function LoginPage() {
                     color: "#FFFFFF",
                   },
                   "& .MuiInputLabel-root": {
-                    color: "#CCCCCC",
+                    color: "#FFFFFF",
                   },
                   "& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline": {
                     borderColor: "#FF0037",
