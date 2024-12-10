@@ -19,6 +19,7 @@ import {
   updateCommentReaction,
   deleteComment,
   updateComment,
+  fetchUserById,
 } from "../../services/api";
 
 const CommentsPage = () => {
@@ -43,9 +44,21 @@ const CommentsPage = () => {
 
       try {
         const fetchedComments = await fetchComments(mangaId);
-        setComments(fetchedComments);
+
+        // Adiciona o username a cada comentário, se necessário
+        const commentsWithUsernames = await Promise.all(
+          fetchedComments.map(async (comment) => {
+            if (!comment.username) {
+              const userData = await fetchUserById(comment.userId);
+              return { ...comment, username: userData.name || `Usuário ${comment.userId}` };
+            }
+            return comment;
+          })
+        );
+
+        setComments(commentsWithUsernames);
       } catch (err) {
-        console.error("Erro ao carregar comentários:", err.message);
+        console.error("Erro ao carregar os comentários:", err);
         setError("Erro ao carregar os comentários.");
       } finally {
         setLoading(false);
@@ -66,10 +79,13 @@ const CommentsPage = () => {
 
     try {
       const createdComment = await postComment(mangaId, commentData);
-      setComments((prev) => [...prev, createdComment]);
+      setComments((prev) => [
+        ...prev,
+        { ...createdComment, username: user.name || user.username || `Usuário ${user.id}` },
+      ]);
       setNewComment("");
     } catch (err) {
-      console.error("Erro ao postar comentário:", err.message);
+      console.error("Erro ao postar comentário:", err);
       setError("Erro ao postar comentário.");
     }
   };
@@ -81,13 +97,16 @@ const CommentsPage = () => {
       const updatedComment = await updateComment(mangaId, commentId, editText);
       setComments((prev) =>
         prev.map((comment) =>
-          comment.id === commentId ? updatedComment : comment
+          comment.id === commentId
+            ? { ...updatedComment, username: comment.username }
+            : comment
         )
       );
       setEditingCommentId(null);
       setEditText("");
     } catch (err) {
-      console.error("Erro ao editar comentário:", err.message);
+      console.error("Erro ao editar comentário:", err);
+      setError("Erro ao editar comentário.");
     }
   };
 
@@ -96,7 +115,8 @@ const CommentsPage = () => {
       await deleteComment(mangaId, commentId);
       setComments((prev) => prev.filter((comment) => comment.id !== commentId));
     } catch (err) {
-      console.error("Erro ao excluir comentário:", err.message);
+      console.error("Erro ao excluir comentário:", err);
+      setError("Erro ao excluir comentário.");
     }
   };
 
@@ -107,10 +127,8 @@ const CommentsPage = () => {
         prev.map((comment) => (comment.id === commentId ? updatedComment : comment))
       );
     } catch (err) {
-      console.error(
-        `Erro ao ${type === "like" ? "curtir" : "descurtir"} comentário:`,
-        err.message
-      );
+      console.error(`Erro ao ${type === "like" ? "curtir" : "descurtir"} comentário:`, err);
+      setError(`Erro ao ${type === "like" ? "curtir" : "descurtir"} comentário.`);
     }
   };
 
@@ -122,7 +140,7 @@ const CommentsPage = () => {
           justifyContent: "center",
           alignItems: "center",
           height: "100vh",
-          backgroundColor: "var(--bg-page-color)",
+          backgroundColor: "#121212",
         }}
       >
         <CircularProgress color="inherit" />
@@ -140,8 +158,8 @@ const CommentsPage = () => {
           height: "100vh",
           textAlign: "center",
           color: "red",
-          padding: "var(--spacing-medium)",
-          backgroundColor: "var(--bg-page-color)",
+          padding: "16px",
+          backgroundColor: "#121212",
         }}
       >
         <Typography variant="h6">{error}</Typography>
@@ -152,41 +170,131 @@ const CommentsPage = () => {
   return (
     <Box
       sx={{
-        padding: "var(--spacing-medium)",
+        padding: "24px",
         maxWidth: "700px",
-        margin: "var(--spacing-medium) auto",
-        backgroundColor: "var(--bg-data-color)",
+        margin: "auto",
+        backgroundColor: "#1E1E1E",
         borderRadius: "8px",
         boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
-        overflowY: "auto",
       }}
     >
-      {/* Header */}
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          marginBottom: "var(--spacing-medium)",
-        }}
-      >
-        <IconButton onClick={() => navigate(-1)} sx={{ color: "var(--text-color)" }}>
+      <Box sx={{ display: "flex", alignItems: "center", marginBottom: "24px" }}>
+        <IconButton onClick={() => navigate(-1)} sx={{ color: "#FFF" }}>
           <ArrowBack />
         </IconButton>
         <Typography
           variant="h5"
-          sx={{
-            flexGrow: 1,
-            textAlign: "center",
-            color: "var(--text-color)",
-            fontWeight: "bold",
-          }}
+          sx={{ flexGrow: 1, textAlign: "center", color: "#FFF" }}
         >
           Comentários
         </Typography>
       </Box>
 
-      {/* Campo para adicionar comentários */}
-      <Box sx={{ marginBottom: "var(--spacing-medium)" }}>
+      <List>
+        {comments.map((comment) => (
+          <Card
+            key={comment.id}
+            sx={{
+              backgroundColor: "#2C2C2C",
+              borderRadius: "8px",
+              padding: "16px",
+              marginBottom: "16px",
+            }}
+          >
+            <CardContent>
+              <Typography
+                variant="subtitle2"
+                sx={{ color: "#FF0037", fontWeight: "bold", marginBottom: "8px" }}
+              >
+                {comment.username}
+              </Typography>
+              {editingCommentId === comment.id ? (
+                <>
+                  <TextField
+                    fullWidth
+                    value={editText}
+                    onChange={(e) => setEditText(e.target.value)}
+                    sx={{
+                      marginBottom: "8px",
+                      backgroundColor: "#FFF",
+                      borderRadius: "4px",
+                    }}
+                  />
+                  <Button
+                    variant="contained"
+                    onClick={() => handleEditComment(comment.id)}
+                    sx={{
+                      backgroundColor: "#FF0037",
+                      color: "#FFF",
+                      "&:hover": { backgroundColor: "#E6002E" },
+                      marginRight: "8px",
+                    }}
+                  >
+                    Salvar
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    onClick={() => setEditingCommentId(null)}
+                    sx={{
+                      color: "#FF0037",
+                      borderColor: "#FF0037",
+                      "&:hover": {
+                        backgroundColor: "rgba(230, 0, 46, 0.1)",
+                      },
+                    }}
+                  >
+                    Cancelar
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Typography variant="body1" sx={{ color: "#FFF" }}>
+                    {comment.text}
+                  </Typography>
+                  <Typography variant="caption" sx={{ color: "#A5A5A5" }}>
+                    {new Date(comment.timestamp).toLocaleString()}
+                  </Typography>
+                  <Box sx={{ display: "flex", gap: "8px", marginTop: "8px" }}>
+                    <IconButton
+                      onClick={() => handleReaction(comment.id, "like")}
+                      sx={{ color: "#FFF" }}
+                    >
+                      <ThumbUp />
+                    </IconButton>
+                    <IconButton
+                      onClick={() => handleReaction(comment.id, "dislike")}
+                      sx={{ color: "#FF0037" }}
+                    >
+                      <ThumbDown />
+                    </IconButton>
+                    {comment.userId === user.id && (
+                      <>
+                        <IconButton
+                          onClick={() => {
+                            setEditingCommentId(comment.id);
+                            setEditText(comment.text);
+                          }}
+                          sx={{ color: "#FFF" }}
+                        >
+                          <Edit />
+                        </IconButton>
+                        <IconButton
+                          onClick={() => handleDeleteComment(comment.id)}
+                          sx={{ color: "#FF0037" }}
+                        >
+                          <Delete />
+                        </IconButton>
+                      </>
+                    )}
+                  </Box>
+                </>
+              )}
+            </CardContent>
+          </Card>
+        ))}
+      </List>
+
+      <Box>
         <TextField
           fullWidth
           label="Escreva um comentário..."
@@ -196,18 +304,18 @@ const CommentsPage = () => {
           multiline
           minRows={3}
           sx={{
-            backgroundColor: "#fff",
+            backgroundColor: "#FFF",
             borderRadius: "8px",
-            marginBottom: "var(--spacing-small)",
+            marginBottom: "8px",
           }}
         />
         <Button
           variant="contained"
           onClick={handlePostComment}
           sx={{
-            backgroundColor: "var(--btn-mangak-color)",
-            color: "var(--text-color)",
-            "&:hover": { backgroundColor: "#e6002e" },
+            backgroundColor: "#FF0037",
+            color: "#FFF",
+            "&:hover": { backgroundColor: "#E6002E" },
             borderRadius: "8px",
             padding: "10px 16px",
             fontWeight: "bold",
@@ -216,97 +324,6 @@ const CommentsPage = () => {
           Postar Comentário
         </Button>
       </Box>
-
-      {/* Lista de Comentários */}
-      <List>
-        {comments.map((comment) => (
-          <Box key={comment.id}>
-            <Card
-              sx={{
-                backgroundColor: "var(--bg-data-color)",
-                borderRadius: "8px",
-                padding: "var(--spacing-medium)",
-                marginBottom: "var(--spacing-small)",
-                boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-              }}
-            >
-              <CardContent>
-                {editingCommentId === comment.id ? (
-                  <>
-                    <TextField
-                      fullWidth
-                      value={editText}
-                      onChange={(e) => setEditText(e.target.value)}
-                      sx={{ marginBottom: "8px", backgroundColor: "#fff" }}
-                    />
-                    <Button
-                      variant="contained"
-                      onClick={() => handleEditComment(comment.id)}
-                      sx={{ marginRight: "8px" }}
-                    >
-                      Salvar
-                    </Button>
-                    <Button
-                      variant="outlined"
-                      onClick={() => setEditingCommentId(null)}
-                    >
-                      Cancelar
-                    </Button>
-                  </>
-                ) : (
-                  <>
-                    <Typography variant="body1" sx={{ color: "var(--text-color)" }}>
-                      {comment.text}
-                    </Typography>
-                    <Typography
-                      variant="caption"
-                      color="text.secondary"
-                      sx={{ display: "block", marginTop: "var(--spacing-small)" }}
-                    >
-                      {new Date(comment.timestamp).toLocaleString()}
-                    </Typography>
-                    <Box
-                      sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        marginTop: "var(--spacing-small)",
-                      }}
-                    >
-                      <IconButton
-                        onClick={() => handleReaction(comment.id, "like")}
-                        sx={{ color: "var(--rating-color)" }}
-                      >
-                        <ThumbUp />
-                      </IconButton>
-                      <IconButton
-                        onClick={() => handleReaction(comment.id, "dislike")}
-                        sx={{ color: "var(--status-red)" }}
-                      >
-                        <ThumbDown />
-                      </IconButton>
-                      <IconButton
-                        onClick={() => {
-                          setEditingCommentId(comment.id);
-                          setEditText(comment.text);
-                        }}
-                        sx={{ color: "var(--text-color)" }}
-                      >
-                        <Edit />
-                      </IconButton>
-                      <IconButton
-                        onClick={() => handleDeleteComment(comment.id)}
-                        sx={{ color: "var(--status-red)" }}
-                      >
-                        <Delete />
-                      </IconButton>
-                    </Box>
-                  </>
-                )}
-              </CardContent>
-            </Card>
-          </Box>
-        ))}
-      </List>
     </Box>
   );
 };

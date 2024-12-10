@@ -245,3 +245,15 @@ export const deleteComment = async (mangaId, commentId) => {
     handleError(error, "Erro ao deletar comentário.");
   }
 };
+
+export const fetchUserById = async (userId) => {
+  try {
+    if (!userId) throw new Error("ID do usuário inválido.");
+    const response = await axiosInstance.get(`/accounts/${userId}`);
+    if (!response.data) throw new Error("Usuário não encontrado.");
+    return response.data;
+  } catch (error) {
+    handleError(error, `Erro ao buscar o usuário com ID ${userId}.`);
+  }
+};
+

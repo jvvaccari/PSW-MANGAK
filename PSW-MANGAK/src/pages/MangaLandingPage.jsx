@@ -103,6 +103,14 @@ function MangaLandingPage() {
           onRate={handleRate}
           sx={{
             marginBottom: "var(--spacing-large)",
+            "& .manga-title": {
+              fontSize: "3rem",
+              fontWeight: "bold",
+            },
+            "& .manga-author": {
+              fontSize: "2.5rem",
+              fontWeight: "500",
+            },
           }}
         />
 
