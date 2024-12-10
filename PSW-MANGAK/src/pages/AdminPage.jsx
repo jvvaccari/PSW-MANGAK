@@ -1,12 +1,11 @@
 import { useContext, useState } from "react";
 import { Box, Button, TextField, Typography, IconButton } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
-import { updateManga, createManga, deleteManga } from "../../services/api"; // Importando a função deleteManga
+import { updateManga, createManga, deleteManga } from "../../services/api";
 import MangaContext from "../contexts/MangaContext";
 import EditIcon from "@mui/icons-material/Edit";
-import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import DeleteIcon from "@mui/icons-material/Delete"; // Importando o ícone de Delete
+import DeleteIcon from "@mui/icons-material/Delete";
 import { useNavigate } from "react-router-dom";
 
 const AdminPage = () => {
@@ -18,6 +17,10 @@ const AdminPage = () => {
 
   const handleFieldChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleArrayFieldChange = (field, value) => {
+    setFormData((prev) => ({ ...prev, [field]: value.split(",").map((v) => v.trim()) }));
   };
 
   const handleSaveClick = async () => {
@@ -36,21 +39,21 @@ const AdminPage = () => {
       setIsCreating(false);
       setFormData({});
     } catch (error) {
-      console.error("Erro ao salvar manga:", error);
+      console.error("Erro ao salvar mangá:", error);
     }
   };
 
   const handleEditClick = (row) => {
     setEditingRow(row);
-    setFormData(row);
+    setFormData({ ...row, genres: row.genres?.join(", "), artsList: row.artsList?.join(", ") });
   };
 
   const handleDeleteClick = async (id) => {
     try {
-      await deleteManga(id); // Chamada para a API para deletar o manga
-      setMangas((prev) => prev.filter((manga) => manga.id !== id)); // Remover o manga da lista
+      await deleteManga(id);
+      setMangas((prev) => prev.filter((manga) => manga.id !== id));
     } catch (error) {
-      console.error("Erro ao excluir manga:", error);
+      console.error("Erro ao excluir mangá:", error);
     }
   };
 
@@ -72,16 +75,10 @@ const AdminPage = () => {
       width: 200,
       renderCell: (params) => (
         <>
-          <IconButton
-            onClick={() => handleEditClick(params.row)}
-            sx={{ color: "var(--btn-mangak-color)" }}
-          >
+          <IconButton onClick={() => handleEditClick(params.row)}>
             <EditIcon />
           </IconButton>
-          <IconButton
-            onClick={() => handleDeleteClick(params.row.id)} // Chamada para deletar manga
-            sx={{ color: "var(--btn-mangak-color)" }}
-          >
+          <IconButton onClick={() => handleDeleteClick(params.row.id)}>
             <DeleteIcon />
           </IconButton>
         </>
@@ -89,165 +86,90 @@ const AdminPage = () => {
     },
   ];
 
+  const formFields = [
+    { label: "Título", field: "title" },
+    { label: "Autor", field: "author" },
+    { label: "Descrição", field: "description" },
+    { label: "Ano de Publicação", field: "yearPubli" },
+    { label: "Status", field: "status" },
+    { label: "Demografia", field: "demographic" },
+    { label: "Gêneros (separados por vírgulas)", field: "genres", isArray: true },
+    { label: "Lista de Artes (URLs separadas por vírgulas)", field: "artsList", isArray: true },
+    { label: "Imagem (URLs separadas por vírgulas)", field: "image" },
+  ];
+
   return (
-    <Box
-      sx={{
-        padding: "var(--spacing-large)",
-        backgroundColor: "var(--bg-page-color)",
-        minHeight: "100vh",
-        color: "var(--text-color)",
-        display: "flex",
-        flexDirection: "column",
-        gap: "var(--spacing-large)",
-      }}
-    >
-      {/* Header */}
-      <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-        <IconButton
-          onClick={() => navigate(-1)}
-          sx={{ color: "#fff", padding: "0px" }}
-        >
+    <Box sx={{ padding: "20px", backgroundColor: "#1E1E1E", minHeight: "100vh", color: "#FFF" }}>
+      <Box sx={{ display: "flex", alignItems: "center", marginBottom: "20px" }}>
+        <IconButton onClick={() => navigate(-1)} sx={{ color: "#FFF" }}>
           <ArrowBackIcon />
         </IconButton>
+        <Typography variant="h4" sx={{ marginLeft: "10px" }}>
+          Administração de Mangás
+        </Typography>
       </Box>
-      <Typography
-        variant="h4"
-        sx={{
-          fontFamily: "var(--font-title)",
-          color: "var(--text-color)",
-        }}
-      >
-        Administração de Mangás
-      </Typography>
 
-      {/* Botão Adicionar */}
       <Button
         onClick={() => {
           setIsCreating(true);
           setFormData({});
         }}
         variant="contained"
-        color="primary"
-        startIcon={<AddCircleOutlineIcon />}
-        sx={{
-          backgroundColor: "var(--btn-mangak-color)",
-          alignSelf: "flex-start",
-          "&:hover": {
-            backgroundColor: "#CC002A",
-          },
-        }}
+        sx={{ backgroundColor: "#FF0037", marginBottom: "20px" }}
       >
         Adicionar Novo Mangá
       </Button>
 
-      {/* Tabela */}
       <DataGrid
         rows={mangas}
         columns={columns}
         pageSize={5}
-        rowsPerPageOptions={[5]}
-        autoHeight
-        sx={{
-          backgroundColor: "var(--bg-data-color)",
-          color: "var(--text-color)",
-          "& .MuiDataGrid-cell": {
-            borderColor: "#fff",
-          },
-          "& .MuiDataGrid-row:hover": {
-            backgroundImage:
-              "linear-gradient(to right, rgba(255, 0, 0, 0.2), rgba(255, 0, 0, 0.1))",
-          },
-          "& .Mui-selected": {
-            backgroundImage:
-              "linear-gradient(to right, rgba(255, 0, 0, 0.4), rgba(255, 0, 0, 0.2)) !important",
-            color: "#fff",
-          },
-          "& .MuiDataGrid-columnHeaders": {
-            backgroundColor: "#fff",
-            color: "var(--bg-page-color)",
-            fontWeight: "bold",
-          },
-          "& .MuiDataGrid-columnSeparator": {
-            display: "none",
-          },
-        }}
+        sx={{ height: 400, backgroundColor: "#2C2C2C", color: "#FFF" }}
       />
 
-      {/* Formulário de Edição/Criação */}
       {(editingRow || isCreating) && (
-        <Box
-          sx={{
-            marginTop: "var(--spacing-large)",
-            border: "1px solid #fff",
-            backgroundColor: "#1E1E1E",
-            padding: "var(--spacing-medium)",
-            borderRadius: "8px",
-          }}
-        >
-          <Typography
-            variant="h5"
-            gutterBottom
-            sx={{
-              fontFamily: "var(--font-title)",
-              color: "var(--text-color)",
-            }}
-          >
+        <Box sx={{ marginTop: "20px", backgroundColor: "#333", padding: "20px", borderRadius: "8px",display: "flex",flexDirection:"column",gap:"2em" }}>
+          <Typography variant="h6">
             {isCreating ? "Adicionar Novo Mangá" : "Editar Mangá"}
           </Typography>
-          {[ /* Campos do formulário */ ].map(({ label, field }) => (
+          {formFields.map(({ label, field, isArray }) => (
             <TextField
               key={field}
               label={label}
               value={formData[field] || ""}
-              onChange={(e) => handleFieldChange(field, e.target.value)}
+              onChange={(e) =>
+                isArray
+                  ? handleArrayFieldChange(field, e.target.value)
+                  : handleFieldChange(field, e.target.value)
+              }
               fullWidth
-              margin="normal"
-              size="small"
               sx={{
-                margin: "24px 0",
+                marginBottom: "10px",
                 "& .MuiInputBase-root": {
-                  bgcolor: "#1E1E1E",
                   color: "#FFFFFF",
-                },
-                "& .MuiOutlinedInput-root": {
-                  "& .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "#FFFFFF",
-                  },
-                  "&:hover .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "#FFFFFF",
-                  },
-                  "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "#FF0037",
-                  },
                 },
                 "& .MuiInputLabel-root": {
-                  color: "#FFFFFF",
+                  color: "#A5A5A5",
                 },
-                "& .MuiInputLabel-root.Mui-focused": {
-                  color: "#FF0037",
+                "& .MuiOutlinedInput-root": {
+                  "& fieldset": {
+                    borderColor: "#FFFFFF",
+                  },
+                  "&:hover fieldset": {
+                    borderColor: "#FF0037",
+                  },
+                  "&.Mui-focused fieldset": {
+                    borderColor: "#FF0037",
+                  },
                 },
               }}
             />
           ))}
-          <Box sx={{ marginTop: "var(--spacing-medium)", display: "flex", gap: "8px" }}>
-            <Button
-              onClick={handleSaveClick}
-              variant="contained"
-              sx={{
-                backgroundColor: "var(--btn-mangak-color)",
-                "&:hover": { backgroundColor: "#CC002A" },
-              }}
-            >
+          <Box sx={{ display: "flex", gap: "10px" }}>
+            <Button onClick={handleSaveClick} variant="contained" sx={{ backgroundColor: "#FF0037" }}>
               Salvar
             </Button>
-            <Button
-              onClick={handleCancelClick}
-              variant="outlined"
-              sx={{
-                color: "var(--text-color)",
-                borderColor: "var(--btn-mangak-color)",
-              }}
-            >
+            <Button onClick={handleCancelClick} variant="outlined">
               Cancelar
             </Button>
           </Box>
