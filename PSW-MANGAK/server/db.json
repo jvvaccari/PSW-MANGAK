@@ -52,7 +52,8 @@
           "userId": "1",
           "rating": 2.5
         }
-      ]
+      ],
+      "comments": []
     },
     {
       "id": "2",
@@ -67,6 +68,30 @@
         "Aventura",
         "Comédia",
         "Fantasia"
+      ],
+      "comments": [
+        {
+          "id": "c201",
+          "userId": "1",
+          "text": "One Piece é uma obra-prima. Oda nunca decepciona.",
+          "timestamp": "2024-12-10T14:00:00Z",
+          "reactions": {
+            "likes": 20,
+            "dislikes": 1
+          },
+          "replies": [
+            {
+              "id": "r201",
+              "userId": "3",
+              "text": "Concordo plenamente. Wano foi fenomenal.",
+              "timestamp": "2024-12-10T14:30:00Z",
+              "reactions": {
+                "likes": 10,
+                "dislikes": 0
+              }
+            }
+          ]
+        }
       ],
       "artsList": [
         "https://wallpapers.com/images/hd/one-piece-luffy-gear-5-portrait-4k-uwwl7iz0hx6wbjvk.jpg",
@@ -106,6 +131,30 @@
         "Comédia",
         "Psicológico"
       ],
+      "comments": [
+        {
+          "id": "c301",
+          "userId": "1",
+          "text": "Sempre rio muito com este mangá.",
+          "timestamp": "2024-12-11T15:00:00Z",
+          "reactions": {
+            "likes": 15,
+            "dislikes": 0
+          },
+          "replies": [
+            {
+              "id": "r301",
+              "userId": "2",
+              "text": "É a mistura perfeita de romance e comédia.",
+              "timestamp": "2024-12-11T16:00:00Z",
+              "reactions": {
+                "likes": 8,
+                "dislikes": 0
+              }
+            }
+          ]
+        }
+      ],
       "artsList": [
         "https://wallpapers.com/images/hd/kaguya-sama-love-is-war-character-poster-r6ydgixrhrpy9c7z.jpg"
       ],
@@ -142,6 +191,30 @@
         "Ação",
         "Drama",
         "Sobrenatural"
+      ],
+      "comments": [
+        {
+          "id": "c401",
+          "userId": "3",
+          "text": "O final foi muito polêmico, mas gostei.",
+          "timestamp": "2024-12-10T17:00:00Z",
+          "reactions": {
+            "likes": 12,
+            "dislikes": 10
+          },
+          "replies": [
+            {
+              "id": "r401",
+              "userId": "1",
+              "text": "Gostei também! Fechou bem a jornada do Eren.",
+              "timestamp": "2024-12-10T17:30:00Z",
+              "reactions": {
+                "likes": 5,
+                "dislikes": 3
+              }
+            }
+          ]
+        }
       ],
       "artsList": [
         "https://wallpapers.com/images/hd/attack-on-titan-eren-jaeger-destruction-7k-uhwoq4qx9he9zkgj.jpg"
@@ -1012,7 +1085,8 @@
       "favorites": [
         "3",
         "5",
-        "10"
+        "10",
+        "4"
       ]
     },
     {
@@ -1037,6 +1111,9 @@
         "9"
       ]
     }
+  ],
+  "comments": [
+    {}
   ]
 
 }

@@ -3,80 +3,79 @@ import axios from "axios";
 const API_URL = "http://localhost:5001";
 const BASE_URL = `${API_URL}/accounts`;
 
-// Helper para tratar erros de API
 const handleError = (error, customMessage) => {
   console.error(customMessage, error.message || error);
   throw new Error(customMessage);
 };
 
-// Fetch all mangas
+const axiosInstance = axios.create({
+  baseURL: API_URL,
+  timeout: 10000,
+  headers: { 'Content-Type': 'application/json' },
+});
+
 export const fetchMangas = async () => {
   try {
-    const response = await axios.get(`${API_URL}/mangas`);
+    const response = await axiosInstance.get("/mangas");
     return response.data;
   } catch (error) {
     handleError(error, "Erro ao buscar mangás.");
   }
 };
 
-// Criar manga
 export const createManga = async (newManga) => {
   try {
-    const response = await axios.post(`${API_URL}/mangas`, newManga);
+    const response = await axiosInstance.post("/mangas", newManga);
     return response.data;
   } catch (error) {
     handleError(error, "Erro ao criar mangá.");
   }
 };
 
-// Atualizar manga
 export const updateManga = async (id, updatedManga) => {
   try {
-    const response = await axios.put(`${API_URL}/mangas/${id}`, updatedManga);
+    const response = await axiosInstance.put(`/mangas/${id}`, updatedManga);
     return response.data;
   } catch (error) {
     handleError(error, "Erro ao atualizar o mangá.");
   }
 };
 
-// Deletar manga
 export const deleteManga = async (id) => {
   try {
-    const response = await axios.delete(`${API_URL}/mangas/${id}`);
+    const response = await axiosInstance.delete(`/mangas/${id}`);
     return response.data;
   } catch (error) {
     handleError(error, "Erro ao excluir o mangá.");
   }
 };
 
-// Fetch uma manga por ID
 export const fetchMangaById = async (id) => {
   try {
     if (!id) throw new Error("ID do mangá inválido.");
-    const response = await axios.get(`${API_URL}/mangas/${id}`);
+    const response = await axiosInstance.get(`/mangas/${id}`);
     return response.data;
   } catch (error) {
     handleError(error, `Erro ao buscar o mangá com ID ${id}.`);
   }
 };
 
-// Atualizar avaliações
 export const updateRating = async (userId, mangaId, rating) => {
   try {
-    const userResponse = await axios.get(`${API_URL}/accounts/${userId}`);
+    const userResponse = await axiosInstance.get(`/accounts/${userId}`);
     const user = userResponse.data;
 
     const updatedRatings = { ...user.ratings, [mangaId]: rating };
-    await axios.put(`${API_URL}/accounts/${userId}`, { ...user, ratings: updatedRatings });
+    await axiosInstance.put(`/accounts/${userId}`, { ...user, ratings: updatedRatings });
 
-    const mangaResponse = await axios.get(`${API_URL}/mangas/${mangaId}`);
+    const mangaResponse = await axiosInstance.get(`/mangas/${mangaId}`);
     const manga = mangaResponse.data;
 
     const allRatings = Object.values(updatedRatings).filter((value) => value !== undefined);
     const averageRating =
       allRatings.reduce((sum, value) => sum + value, 0) / allRatings.length;
 
-    await axios.put(`${API_URL}/mangas/${mangaId}`, { ...manga, rating: averageRating });
+    await axiosInstance.put(`/mangas/${mangaId}`, { ...manga, rating: averageRating });
 
     return { success: true };
   } catch (error) {
@@ -84,11 +83,10 @@ export const updateRating = async (userId, mangaId, rating) => {
   }
 };
 
-// Fetch conta do usuário por ID
 export const fetchAccountById = async (id) => {
   try {
     if (!id) throw new Error("ID do usuário inválido.");
-    const response = await axios.get(`${BASE_URL}/${id}`);
+    const response = await axiosInstance.get(`${BASE_URL}/${id}`);
     if (!response.data) throw new Error("Conta não encontrada.");
     return response.data;
   } catch (error) {
@@ -96,7 +94,6 @@ export const fetchAccountById = async (id) => {
   }
 };
 
-// Fetch favoritos do usuário
 export const fetchFavorites = async (userId) => {
   try {
     if (!userId) throw new Error("ID do usuário inválido.");
@@ -110,28 +107,25 @@ export const fetchFavorites = async (userId) => {
         try {
           return await fetchMangaById(mangaId);
         } catch (error) {
-          handleError(error, "Erro ao favoritar mangá."); // Ignora mangas inválidos
+          handleError(error, "Erro ao favoritar mangá.");
         }
       })
     );
 
-    return favoriteMangas.filter(Boolean); // Filtra mangás válidos
+    return favoriteMangas.filter(Boolean);
   } catch (error) {
     handleError(error, "Erro ao buscar favoritos do usuário.");
   }
 };
 
-// Adicionar manga aos favoritos
 export const addFavorite = async (userId, mangaId) => {
   return await updateFavorites(userId, mangaId, "add");
 };
 
-// Remover manga dos favoritos
 export const removeFavorite = async (userId, mangaId) => {
   return await updateFavorites(userId, mangaId, "remove");
 };
 
-// Atualizar favoritos (adicionar/remover)
 const updateFavorites = async (userId, mangaId, action) => {
   try {
     if (!mangaId) throw new Error("ID do mangá inválido.");
@@ -149,22 +143,106 @@ const updateFavorites = async (userId, mangaId, action) => {
   }
 };
 
-// Atualizar conta do usuário
 export const updateAccount = async (id, data) => {
   try {
-    const response = await axios.put(`${BASE_URL}/${id}`, data);
+    const response = await axiosInstance.put(`${BASE_URL}/${id}`, data);
     return response.data;
   } catch (error) {
     handleError(error, "Erro ao atualizar conta do usuário.");
   }
 };
 
-// Deletar conta do usuário
 export const deleteAccount = async (id) => {
   try {
-    const response = await axios.delete(`${BASE_URL}/${id}`);
+    const response = await axiosInstance.delete(`${BASE_URL}/${id}`);
     return response.data;
   } catch (error) {
     handleError(error, "Erro ao excluir conta do usuário.");
+  }
+};
+
+export const fetchComments = async (mangaId) => {
+  try {
+    if (!mangaId) throw new Error("ID do mangá inválido.");
+    const manga = await fetchMangaById(mangaId);
+    return manga.comments || [];
+  } catch (error) {
+    handleError(error, "Erro ao buscar comentários.");
+  }
+};
+
+export const postComment = async (mangaId, commentData) => {
+  try {
+    if (!mangaId) throw new Error("ID do mangá inválido.");
+    const manga = await fetchMangaById(mangaId);
+    const newComment = {
+      id: `c${Date.now()}`,
+      ...commentData,
+      reactions: { likes: 0, dislikes: 0 }, // Inicializa com 0 reações
+    };
+    const updatedManga = {
+      ...manga,
+      comments: [...(manga.comments || []), newComment],
+    };
+    await axiosInstance.put(`/mangas/${mangaId}`, updatedManga);
+    return newComment;
+  } catch (error) {
+    handleError(error, "Erro ao postar comentário.");
+  }
+};
+
+export const updateCommentReaction = async (mangaId, commentId, reactionType) => {
+  try {
+    const manga = await fetchMangaById(mangaId);
+    const updatedComments = manga.comments.map((comment) => {
+      if (comment.id === commentId) {
+        const reactions = comment.reactions || { likes: 0, dislikes: 0 };
+        
+        // Verifica se o usuário já reagiu, e atualiza a reação
+        if (reactionType === "like") {
+          reactions.likes += 1;
+        } else if (reactionType === "dislike") {
+          reactions.dislikes += 1;
+        }
+        return { ...comment, reactions };
+      }
+      return comment;
+    });
+    const updatedManga = { ...manga, comments: updatedComments };
+    await axiosInstance.put(`/mangas/${mangaId}`, updatedManga);
+    return updatedComments.find((comment) => comment.id === commentId);
+  } catch (error) {
+    handleError(error, `Erro ao ${reactionType === "like" ? "curtir" : "descurtir"} comentário.`);
+  }
+};
+
+export const updateComment = async (mangaId, commentId, newText) => {
+  try {
+    if (!mangaId || !commentId) throw new Error("ID do mangá ou comentário inválido.");
+    const manga = await fetchMangaById(mangaId);
+    const updatedComments = manga.comments.map((comment) => {
+      if (comment.id === commentId) {
+        return { ...comment, text: newText };
+      }
+      return comment;
+    });
+    const updatedManga = { ...manga, comments: updatedComments };
+    await axiosInstance.put(`/mangas/${mangaId}`, updatedManga);
+    return updatedComments.find((comment) => comment.id === commentId);
+  } catch (error) {
+    handleError(error, "Erro ao atualizar comentário.");
+  }
+};
+
+export const deleteComment = async (mangaId, commentId) => {
+  try {
+    if (!mangaId || !commentId) throw new Error("ID do mangá ou comentário inválido.");
+    const manga = await fetchMangaById(mangaId);
+    const updatedComments = manga.comments.filter((comment) => comment.id !== commentId);
+    const updatedManga = { ...manga, comments: updatedComments };
+    await axiosInstance.put(`/mangas/${mangaId}`, updatedManga);
+    return updatedComments;
+  } catch (error) {
+    handleError(error, "Erro ao deletar comentário.");
   }
 };

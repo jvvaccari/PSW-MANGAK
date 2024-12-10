@@ -13,6 +13,7 @@ const LoginPage = lazy(() => import("./pages/LoginPage"));
 const FavoritesPage = lazy(() => import("./pages/FavoritesPage"));
 const AdminPage = lazy(() => import("./pages/AdminPage"));
 const RegisterPage = lazy(() => import("./pages/RegisterPage"));
+const CommentsPage = lazy(() => import("./pages/CommentsPage"));
 
 const App = () => (
   <AuthProvider>
@@ -61,6 +62,14 @@ const App = () => (
                 element={
                   <ProtectedRoute role="admin">
                     <AdminPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/comments/:mangaId"
+                element={
+                  <ProtectedRoute>
+                    <CommentsPage />
                   </ProtectedRoute>
                 }
               />

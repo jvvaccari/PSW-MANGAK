@@ -95,7 +95,6 @@ const Header = ({ searchTerm = "", setSearchTerm = () => {} }) => {
             maxWidth: { xs: "100%", sm: "100%" },
             backgroundColor: "#1E1E1E",
             color: "#fff",
-            padding: "8px 16px",
             borderRadius: "4px",
           }}
         />

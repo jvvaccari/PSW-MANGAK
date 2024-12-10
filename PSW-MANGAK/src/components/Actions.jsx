@@ -88,8 +88,28 @@ const Actions = ({ mangaId }) => {
     }
   };
 
+  // Definindo estilos compartilhados para os botões
+  const buttonStyles = {
+    fontSize: "0.8rem",
+    padding: "6px 10px",
+    width: "100%",
+    maxWidth: "250px",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: "12px", // Espaçamento entre os botões
+    "&:hover": { backgroundColor: "rgba(200, 0, 0, 0.8)" },
+  };
+
   return (
-    <Box sx={{ display: "flex", gap: "12px", marginTop: "16px" }}>
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        gap: "8px",
+        marginTop: "16px",
+      }}
+    >
       {!favorite ? (
         <Button
           variant="outlined"
@@ -97,11 +117,12 @@ const Actions = ({ mangaId }) => {
           sx={{
             borderColor: "var(--btn-mangak-color)",
             color: "var(--btn-mangak-color)",
+            ...buttonStyles,
             "&:hover": { backgroundColor: "rgba(255, 0, 0, 0.1)" },
           }}
         >
-          <BookmarkAddIcon sx={{ marginRight: "8px" }} />
-          Adicionar aos Favoritos
+          <BookmarkAddIcon sx={{ fontSize: "1rem", marginRight: "6px" }} />
+          Adicionar
         </Button>
       ) : (
         <Button
@@ -110,11 +131,11 @@ const Actions = ({ mangaId }) => {
           sx={{
             backgroundColor: "var(--btn-mangak-color)",
             color: "#fff",
-            "&:hover": { backgroundColor: "rgba(200, 0, 0, 0.8)" },
+            ...buttonStyles,
           }}
         >
-          <BookmarkAddedIcon sx={{ marginRight: "8px" }} />
-          Remover dos Favoritos
+          <BookmarkAddedIcon sx={{ fontSize: "1rem", marginRight: "6px" }} />
+          Remover
         </Button>
       )}
 
@@ -124,12 +145,15 @@ const Actions = ({ mangaId }) => {
         sx={{
           backgroundColor: "var(--btn-mangak-color)",
           color: "#fff",
-          "&:hover": { backgroundColor: "rgba(200, 0, 0, 0.8)" },
+          ...buttonStyles,
         }}
       >
-        <IosShareIcon sx={{ marginRight: "8px" }} />
+        <IosShareIcon sx={{ fontSize: "1rem", marginRight: "6px" }} />
         Compartilhar
       </Button>
+
+      {/* Opcional: Adicionar espaçamento adicional na parte inferior */}
+      <Box sx={{ height: "12px" }} />
     </Box>
   );
 };
