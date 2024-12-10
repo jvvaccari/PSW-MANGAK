@@ -1,11 +1,11 @@
 import { useContext, useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import MangaContext from "../contexts/MangaContext";
 import Actions from "../components/Actions";
 import ArtGallery from "../components/ArtGallery";
 import Content from "../components/Content";
 import Description from "../components/Description";
-import Header from "../components/Header";
+import Navbar from "../components/Navbar";
 import TagsSection from "../components/TagsSection";
 import { Box, CircularProgress, Typography } from "@mui/material";
 import { updateManga } from "../../services/api";
@@ -14,6 +14,7 @@ import useAuth from "../contexts/useAuth";
 const MangaLandingPage = () => {
   const { user } = useAuth();
   const { id } = useParams();
+  const navigate = useNavigate();
   const { mangas, loading, error, setMangas } = useContext(MangaContext);
   const [artsLoading, setArtsLoading] = useState(true); // Estado de carregamento das artes
 
@@ -136,6 +137,7 @@ const MangaLandingPage = () => {
         minHeight: "100vh",
         bgcolor: "var(--bg-page-color)",
         padding: { xs: "16px", sm: "20px", md: "24px", lg: "32px" },
+        
       }}
     >
       <Box
@@ -143,9 +145,16 @@ const MangaLandingPage = () => {
           maxWidth: "1200px",
           width: "100%",
           color: "var(--text-color)",
+          
         }}
       >
-        <Header />
+        {/* Navbar com apenas a seta de voltar */}
+        <Navbar
+          backButton // Propriedade que indica que deve exibir a seta de voltar
+          onBackClick={() => navigate(-1)} // Define a ação para a seta de voltar (voltar para a página anterior)
+        />
+
+
 
         <Content
           manga={{

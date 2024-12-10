@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Box, Typography, CircularProgress } from "@mui/material";
-import Header from "../components/Header";
 import MangaList from "../components/MangaList";
+import Navbar from "../components/Navbar"; // Importa a Navbar
 import { fetchFavorites } from "../../services/api";
 import { useNavigate } from "react-router-dom";
 import useAuth from "../contexts/useAuth";
@@ -89,22 +89,27 @@ const FavoritesPage = () => {
     <Box
       sx={{
         display: "flex",
-        justifyContent: "center",
-        alignItems: "flex-start",
+        flexDirection: "column", // Garante que a Navbar está no topo
         minHeight: "100vh",
-        bgcolor: "#000",
+        backgroundImage: `url(https://wallpapers.com/images/high/manga-panel-background-kuf2jydpzczvq45j.webp)`,
+        backgroundSize: "cover",
+        backgroundPosition: "center top",
+        backgroundRepeat: "no-repeat",
+        backgroundAttachment: "fixed"
+
       }}
     >
+      {/* Adiciona a Navbar */}
+      <Navbar showSearch searchTerm={searchTerm} setSearchTerm={setSearchTerm} title="Favoritos" />
+
       <Box
         sx={{
-          width: "100%",
-          maxWidth: "100vw",
-          bgcolor: "#000",
+          flex: 1, // Garante que o conteúdo ocupa o restante da tela
+          bgcolor: "rgba(0, 0, 0, 0.95)", // Fundo com opacidade
           padding: "16px",
           color: "#fff",
         }}
       >
-        <Header searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
         {filteredFavorites.length > 0 ? (
           <>
             <Typography

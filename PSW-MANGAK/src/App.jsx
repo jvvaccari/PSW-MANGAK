@@ -37,11 +37,11 @@ const App = () => (
               <Route path="/" element={<CatalogPage />} />
               <Route path="/manga/:id" element={<MangaLandingPage />} />
               <Route path="/login" element={<LoginPage />} />
-              <Route path="/register" element={<RegisterPage />} />
+              <Route path="/login" element={<RegisterPage />} />
 
               {/* Rotas Protegidas */}
               <Route
-                path="/profile/:id"
+                path="/profile"
                 element={
                   <ProtectedRoute>
                     <ProfilePage />
@@ -49,7 +49,7 @@ const App = () => (
                 }
               />
               <Route
-                path="/favorites/:id"
+                path="/favorites"
                 element={
                   <ProtectedRoute>
                     <FavoritesPage />
@@ -57,7 +57,7 @@ const App = () => (
                 }
               />
               <Route
-                path="/admin-panel/:id"
+                path="/admin-panel"
                 element={
                   <ProtectedRoute role="admin">
                     <AdminPage />
