@@ -1,8 +1,8 @@
-import { useContext,useState } from "react";
+import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Header from "../components/Header";
+import Navbar from "../components/Navbar";
 import MangaList from "../components/MangaList";
-import { Box, Typography, CircularProgress } from "@mui/material";
+import { Box, Typography, CircularProgress, Container } from "@mui/material";
 import MangaContext from "../contexts/MangaContext";
 
 function CatalogPage() {
@@ -46,49 +46,51 @@ function CatalogPage() {
   });
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "flex-start",
-        minHeight: "100vh",
-        bgcolor: "#000",
-      }}
-    >
-      <Box
-        sx={{
-          width: "100%",
-          maxWidth: "100vw",
-          bgcolor: "#000",
-          padding: "16px",
-          color: "#fff",
-        }}
-      >
-        <Header searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-
-        {filteredMangas?.length > 0 ? (
-          <>
-            <MangaList
-              mangas={filteredMangas}
-              searchTerm={searchTerm}
-              onMangaClick={handleMangaClick}
-              horizontalScroll
-            />
-          </>
-        ) : (
-          <Typography
-            variant="subtitle1"
+    <>
+      <Navbar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+      <Container maxWidth="xxl">
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "flex-start",
+            minHeight: "100vh",
+            bgcolor: "#000",
+          }}
+        >
+          <Box
             sx={{
-              marginTop: { xs: "0.5em", sm: "0.8em", lg: "2em" },
-              fontWeight: 700,
-              fontSize: { xs: "1.2em", md: "1.4em", lg: "1.6em" },
+              width: "100%",
+              maxWidth: "100vw",
+              bgcolor: "#000",
+              color: "#fff",
             }}
           >
-            Nenhum mangá encontrado
-          </Typography>
-        )}
-      </Box>
-    </Box>
+            {filteredMangas?.length > 0 ? (
+              <>
+                <MangaList
+                  mangas={filteredMangas}
+                  searchTerm={searchTerm}
+                  onMangaClick={handleMangaClick}
+                  horizontalScroll
+                />
+              </>
+            ) : (
+              <Typography
+                variant="subtitle1"
+                sx={{
+                  marginTop: { xs: "0.5em", sm: "0.8em", lg: "2em" },
+                  fontWeight: 700,
+                  fontSize: { xs: "1.2em", md: "1.4em", lg: "1.6em" },
+                }}
+              >
+                Nenhum mangá encontrado
+              </Typography>
+            )}
+          </Box>
+        </Box>
+      </Container>
+    </>
   );
 }
 

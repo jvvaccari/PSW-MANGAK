@@ -1,12 +1,6 @@
-.galleryTitle {
-    font-weight: bold;
-    margin-bottom: 16px;
-    font-size: 1em;
-}
-
 .line{
     border-top: 1px solid #444;
-    width: 40%;
-    margin-bottom: 16px;
+    width: 100%;
+    margin-bottom: 2.6em;
 }
 

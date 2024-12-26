@@ -47,13 +47,11 @@ const App = () => {
               }
             >
               <Routes>
-                {/* Rotas Públicas */}
                 <Route path="/" element={<CatalogPage />} />
                 <Route path="/manga/:id" element={<MangaLandingPage />} />
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/register" element={<RegisterPage />} />
 
-                {/* Rotas Protegidas */}
                 <Route
                   path="/profile/:id"
                   element={
@@ -86,7 +84,6 @@ const App = () => {
                     </ProtectedRoute>
                   }
                 />
-                {/* Rota Fallback */}
                 <Route path="*" element={<CatalogPage />} />
               </Routes>
             </Suspense>

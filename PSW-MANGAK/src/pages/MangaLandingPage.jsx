@@ -5,9 +5,9 @@ import Actions from "../components/Actions";
 import ArtGallery from "../components/ArtGallery";
 import Content from "../components/Content";
 import Description from "../components/Description";
-import Header from "../components/Header";
+import Navbar from "../components/Navbar";
 import TagsSection from "../components/TagsSection";
-import { Box, CircularProgress, Typography } from "@mui/material";
+import { Box, CircularProgress, Typography, Container } from "@mui/material";
 import useAuth from "../contexts/useAuth";
 
 function MangaLandingPage() {
@@ -71,94 +71,80 @@ function MangaLandingPage() {
   };
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "flex-start",
-        minHeight: "100vh",
-        bgcolor: "var(--bg-page-color)",
-      }}
-    >
-      <Box
-        sx={{
-          padding: { xs: "16px", sm: "18px", md: "22px", lg: "32px" },
-          color: "var(--text-color)",
-          bgcolor: "var(--bg-page-color)",
-        }}
-      >
-        <Header />
-
-        <Content
-          manga={{
-            id: manga.id || "ID Desconhecido",
-            image: manga.image || "",
-            title: manga.title || "Título Desconhecido",
-            author: manga.author || "Autor Desconhecido",
-            ratings: manga.ratings || [],
-            status: manga.status || "Status Desconhecido",
-            yearPubli: manga.yearPubli || "????",
-          }}
-          userId={userId}
-          onRate={handleRate}
+    <>
+      <Navbar />
+      <Container maxWidth="xl">
+        <Box
           sx={{
-            marginBottom: "var(--spacing-large)",
-            "& .manga-title": {
-              fontSize: "3rem",
-              fontWeight: "bold",
-            },
-            "& .manga-author": {
-              fontSize: "2.5rem",
-              fontWeight: "500",
-            },
+            padding: { xs: "16px", sm: "18px", md: "22px", lg: "32px" },
+            color: "var(--text-color)",
+            bgcolor: "var(--bg-page-color)",
           }}
-        />
-
-        <Actions
-          sx={{
-            marginBottom: "var(--spacing-large)",
-          }}
-          mangaId={manga.id}
-        />
-
-        {manga.description && (
-          <Description
-            text={manga.description}
+        >
+          <Content
+            manga={{
+              id: manga.id || "ID Desconhecido",
+              image: manga.image || "",
+              title: manga.title || "Título Desconhecido",
+              author: manga.author || "Autor Desconhecido",
+              ratings: manga.ratings || [],
+              status: manga.status || "Status Desconhecido",
+              yearPubli: manga.yearPubli || "????",
+            }}
+            userId={userId}
+            onRate={handleRate}
             sx={{
-              fontSize: "var(--font-size-body)",
+              marginBottom: "var(--spacing-large)",
+              "& .manga-title": {
+                fontSize: "3rem",
+                fontWeight: "bold",
+              },
+              "& .manga-author": {
+                fontSize: "2.5rem",
+                fontWeight: "500",
+              },
+            }}
+          />
+
+          <Actions
+            sx={{
               marginBottom: "var(--spacing-large)",
             }}
+            mangaId={manga.id}
           />
-        )}
 
-        {[
-          { section: "Genres", tags: manga.genres || [] },
-          { section: "Demographic", tags: [manga.demographic || ""] },
-          { section: "Buy", tags: manga.retail || [] },
-        ].map((data, index) => (
-          <TagsSection
-            key={index}
-            data={data}
-            sx={{
-              marginBottom: "var(--spacing-medium)",
-            }}
-          />
-        ))}
+          {manga.description && (
+            <Description
+              text={manga.description}
+              sx={{
+                fontSize: "var(--font-size-body)",
+                marginBottom: "var(--spacing-large)",
+              }}
+            />
+          )}
 
-        {manga.artsList && (
-          <ArtGallery
-            artsList={manga.artsList || []}
-            sx={{
-              display: "flex",
-              flexWrap: "wrap",
-              justifyContent: "center",
-              gap: "var(--spacing-small)",
-              marginTop: "var(--spacing-medium)",
-            }}
-          />
-        )}
-      </Box>
-    </Box>
+          {[
+            { section: "Genres", tags: manga.genres || [] },
+            { section: "Demographic", tags: [manga.demographic || ""] },
+            { section: "Buy", tags: manga.retail || [] },
+          ].map((data, index) => (
+            <TagsSection
+              key={index}
+              data={data}
+              sx={{
+                marginBottom: "var(--spacing-medium)",
+              }}
+            />
+          ))}
+
+          {manga.artsList && (
+            <ArtGallery
+              artsList={manga.artsList || []}
+            />
+          )}
+        </Box>
+      </Container>
+    </>
   );
 }
 

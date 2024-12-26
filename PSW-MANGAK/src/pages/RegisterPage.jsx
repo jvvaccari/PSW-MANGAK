@@ -1,38 +1,11 @@
 import { useState } from "react";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { Typography, Box, Button, Paper, CircularProgress } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import PropTypes from "prop-types"; // Importação de PropTypes
+import PropTypes from "prop-types"; 
 import useAuth from "../contexts/useAuth";
 import backgroundImage from "../assets/img/login-background.jpg";
 import StyledTextField from "../components/StyledTextField";
-
-const theme = createTheme({
-  palette: {
-    primary: {
-      main: "#FF0037",
-    },
-    background: {
-      default: "#000000",
-      paper: "#1E1E1E",
-    },
-    text: {
-      primary: "#FFFFFF",
-      secondary: "#CCCCCC",
-    },
-  },
-  typography: {
-    h5: {
-      fontWeight: 700,
-      fontSize: "1.8rem",
-      color: "#FFFFFF",
-    },
-    body1: {
-      fontSize: "1rem",
-      color: "#CCCCCC",
-    },
-  },
-});
+import Navbar from "../components/Navbar";
 
 export default function RegisterPage() {
   const [email, setEmail] = useState("");
@@ -70,143 +43,102 @@ export default function RegisterPage() {
   };
 
   return (
-    <ThemeProvider theme={theme}>
+    <Box
+      sx={{
+        minHeight: "100vh",
+        display: "flex",
+        flexDirection: "column",
+        bgcolor: "#000000",
+        backgroundImage: `url(${backgroundImage})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+      }}
+    >
+     <Navbar/>
+
       <Box
         sx={{
-          minHeight: "100vh",
+          flex: 1,
           display: "flex",
-          flexDirection: "column",
-          bgcolor: "background.default",
-          backgroundImage: `url(${backgroundImage})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          backgroundRepeat: "no-repeat",
+          justifyContent: "center",
+          alignItems: "center",
         }}
       >
-        {/* Top Navigation Bar */}
-        <Box
+        <Paper
+          elevation={3}
           sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            padding: "3% 5%",
-            bgcolor: "transparent",
-          }}
-        >
-          <Typography
-            component="a"
-            sx={{
-              fontWeight: "bold",
-              color: "#FF0037",
-              fontSize: "6vw",
-              textDecoration: "none",
-              "@media (min-width: 600px)": {
-                fontSize: "1.8rem",
-              },
-            }}
-          >
-            MANGAK
-          </Typography>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => navigate("/login")}
-            sx={{
-              fontWeight: "bold",
-              padding: "2% 5%",
-              fontSize: "3.5vw",
-              borderRadius: "6px",
-              "&:hover": {
-                bgcolor: "#CC002A",
-              },
-              "@media (min-width: 600px)": {
-                padding: "6px 16px",
-                fontSize: "0.875rem",
-              },
-            }}
-          >
-            Login
-          </Button>
-        </Box>
-
-        <Box
-          sx={{
-            flex: 1,
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
             padding: "5%",
+            borderRadius: "8px",
+            bgcolor: "var(--bg-color)",
+            width: "90%",
+            maxWidth: "400px",
+            textAlign: "center",
+            borderTop: "4px solid #FF0037",
+            "@media (min-width: 768px)": {
+              width: "50%",
+              maxWidth: "500px",
+            },
+            "@media (min-width: 1024px)": {
+              width: "40%",
+              maxWidth: "600px",
+            },
           }}
         >
-          <Paper
-            elevation={3}
-            sx={{
-              padding: "5%",
-              borderRadius: "8px",
-              bgcolor: "var(--bg-color)",
-              width: "90%",
-              maxWidth: "400px",
-              textAlign: "center",
-              borderTop: "4px solid #FF0037",
-              "@media (min-width: 768px)": {
-                width: "50%",
-                maxWidth: "500px",
-              },
-              "@media (min-width: 1024px)": {
-                width: "40%",
-                maxWidth: "600px",
-              },
-            }}
-          >
-            <form onSubmit={handleSubmit}>
-              <StyledTextField
-                label="Nome de Usuário"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-              />
-              <StyledTextField
-                label="Email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-              <StyledTextField
-                label="Senha"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-              <StyledTextField
-                label="Confirmar Senha"
-                type="password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-              />
-              {error && (
-                <Typography variant="body2" color="error" sx={{ marginBottom: "16px" }}>
-                  {error}
-                </Typography>
-              )}
-              <Button
-                fullWidth
-                variant="contained"
-                color="primary"
-                type="submit"
-                disabled={loading}
-                sx={{ padding: "3%", fontWeight: "bold", fontSize: "1rem" }}
-              >
-                {loading ? <CircularProgress size={24} sx={{ color: "#fff" }} /> : "Registrar"}
-              </Button>
-            </form>
-
-            
-          </Paper>
-        </Box>
+          <form onSubmit={handleSubmit}>
+            <StyledTextField
+              label="Nome de Usuário"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+            />
+            <StyledTextField
+              label="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <StyledTextField
+              label="Senha"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <StyledTextField
+              label="Confirmar Senha"
+              type="password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+            />
+            {error && (
+              <Typography variant="body2" color="error" sx={{ marginBottom: "16px" }}>
+                {error}
+              </Typography>
+            )}
+            <Button
+              fullWidth
+              variant="contained"
+              disabled={loading}
+              sx={{
+                bgcolor: "#FF0037",
+                color: "#fff",
+                padding: "3%",
+                fontWeight: "bold",
+                fontSize: "4vw",
+                borderRadius: "8px",
+                "&:hover": { bgcolor: "#CC002A" },
+                "@media (min-width: 600px)": {
+                  padding: "10px 0",
+                  fontSize: "1rem",}}}
+                  onclick={handleSubmit}
+            >
+              {loading ? <CircularProgress size={24} sx={{ color: "#fff" }} /> : "Registrar"}
+            </Button>
+          </form>
+        </Paper>
       </Box>
-    </ThemeProvider>
+    </Box>
   );
 }
 
-// Validação de Props
 RegisterPage.propTypes = {
   mangas: PropTypes.arrayOf(
     PropTypes.shape({

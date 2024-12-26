@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import { Box, Typography, Chip, Button } from "@mui/material";
+import { Box, Typography, Button } from "@mui/material";
 import styles from "./TagsSection.module.css";
 
 const TagsSection = ({ data }) => {
@@ -11,7 +11,7 @@ const TagsSection = ({ data }) => {
         {section}
       </Typography>
       <Box className={styles.tagsContainer} sx={{ margin: "6px 0" }}>
-        <Box sx={{ borderTop: "1px solid #444", width: "40%", marginBottom: "24px" }}></Box>
+        <Box sx={{ borderTop: "1px solid #444", width: "46%", marginBottom: "24px" }}></Box>
 
         {section === "Buy"
           ? tags.map((tag, index) => (
@@ -21,20 +21,35 @@ const TagsSection = ({ data }) => {
                 target="_blank"
                 rel="noopener noreferrer"
                 variant="contained"
-                color="secondary"
                 sx={{
+                  fontWeight: 600,
                   margin: "0 1.2em 1.2em 0",
-                  padding: "6px 12px",
-                  backgroundColor: "#1E1E1E",
+                  padding: "8px 16px",
+                  backgroundColor: "#FF0037",
                   color: "#fff",
                   textTransform: "none",
+                  ":hover": {
+                    backgroundColor: "#CC002A",
+                    transform: "scale(1.1)",
+                  }
                 }}
               >
                 {tag.name}
               </Button>
             ))
           : tags.map((tag, index) => (
-              <Chip key={index} label={tag} className={styles.tagChip} />
+              <Button key={index}  rel="noopener noreferrer"
+              variant="contained"
+              sx={{
+                fontWeight: 600,
+                margin: "0 1.2em 1.2em 0",
+                padding: "8px 16px",
+                backgroundColor: "#1e1e1e",
+                color: "#fff",
+                textTransform: "none",
+                cursor: "default"
+              }}
+               >{tag}</Button>
             ))}
       </Box>
     </Box>

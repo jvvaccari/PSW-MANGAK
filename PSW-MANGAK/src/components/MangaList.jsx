@@ -67,7 +67,8 @@ const MangaList = ({ mangas, searchTerm, onMangaClick }) => {
     });
 
     setScrollPositions((prev) => {
-      const isEqual = JSON.stringify(prev) === JSON.stringify(updatedScrollPositions);
+      const isEqual =
+        JSON.stringify(prev) === JSON.stringify(updatedScrollPositions);
       return isEqual ? prev : updatedScrollPositions;
     });
   }, [genresToDisplay]);
@@ -78,7 +79,9 @@ const MangaList = ({ mangas, searchTerm, onMangaClick }) => {
       if (!listRef) return;
 
       const scrollAmount =
-        direction === "left" ? -listRef.offsetWidth / 2 : listRef.offsetWidth / 2;
+        direction === "left"
+          ? -listRef.offsetWidth / 2
+          : listRef.offsetWidth / 2;
 
       listRef.scrollBy({
         left: scrollAmount,
@@ -149,7 +152,12 @@ const MangaList = ({ mangas, searchTerm, onMangaClick }) => {
                 <Box
                   className="desktop-arrow"
                   onClick={() => handleScroll(genre, "left")}
-                  sx={{ ...arrowStyles, left: 0,height: {sm: "210px",md: "240px",lg: "300px"},marginTop: "-24px" }}
+                  sx={{
+                    ...arrowStyles,
+                    left: 0,
+                    height: { sm: "210px", md: "240px", lg: "300px" },
+                    marginTop: "-24px",
+                  }}
                 >
                   <ArrowBackIosNewTwoToneIcon
                     sx={{ color: "white", fontSize: "20px" }}
@@ -183,7 +191,12 @@ const MangaList = ({ mangas, searchTerm, onMangaClick }) => {
                       borderRadius: "8px",
                       scrollSnapAlign: "center",
                       flexShrink: 0,
-                      width: { xs: "120px", sm: "140px", md: "160px", lg: "200px" },
+                      width: {
+                        xs: "120px",
+                        sm: "140px",
+                        md: "160px",
+                        lg: "200px",
+                      },
                       margin: "8px 0",
                     }}
                   >
@@ -210,7 +223,12 @@ const MangaList = ({ mangas, searchTerm, onMangaClick }) => {
                 <Box
                   className="desktop-arrow"
                   onClick={() => handleScroll(genre, "right")}
-                  sx={{ ...arrowStyles, right: 0,height: {sm: "210px",md: "240px",lg: "300px"},marginTop: "-24px" }}
+                  sx={{
+                    ...arrowStyles,
+                    right: 0,
+                    height: { sm: "210px", md: "240px", lg: "300px" },
+                    marginTop: "-24px",
+                  }}
                 >
                   <ArrowForwardIosTwoToneIcon
                     sx={{ color: "white", fontSize: "20px" }}
@@ -221,7 +239,9 @@ const MangaList = ({ mangas, searchTerm, onMangaClick }) => {
           </Box>
         ))
       ) : (
-        <Typography sx={{ color: "#FFFFFF" }}>Nenhum resultado encontrado</Typography>
+        <Typography sx={{ color: "#FFFFFF" }}>
+          Nenhum resultado encontrado
+        </Typography>
       )}
     </Box>
   );

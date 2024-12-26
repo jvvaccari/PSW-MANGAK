@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
-import { Box, Typography, CircularProgress } from "@mui/material";
-import Header from "../components/Header";
+import { Box, Typography, CircularProgress, Container } from "@mui/material";
+import Navbar from "../components/Navbar";
 import MangaList from "../components/MangaList";
 import { fetchFavorites } from "../../services/api";
 import { useNavigate } from "react-router-dom";
 import useAuth from "../contexts/useAuth";
 
 const FavoritesPage = () => {
-  const { user } = useAuth(); // Obtém o usuário logado do contexto
+  const { user } = useAuth();
   const [favorites, setFavorites] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -15,19 +15,18 @@ const FavoritesPage = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const loadFavorites = async () => {
-      if (!user) {
-        setError("Você precisa estar logado para acessar seus favoritos.");
-        setLoading(false);
-        navigate("/login"); // Redireciona para login caso o usuário não esteja logado
-        return;
-      }
+    if (!user) {
+      setError("Você precisa estar logado para acessar seus favoritos.");
+      setLoading(false);
+      navigate("/login");
+      return;
+    }
 
+    const loadFavorites = async () => {
       try {
-        const data = await fetchFavorites(user.id); // Usa o ID do usuário logado
+        const data = await fetchFavorites(user.id);
         setFavorites(data);
-      } catch (err) {
-        console.error("Erro ao carregar favoritos:", err.message);
+      } catch {
         setError("Erro ao carregar seus favoritos.");
       } finally {
         setLoading(false);
@@ -37,9 +36,9 @@ const FavoritesPage = () => {
     loadFavorites();
   }, [user, navigate]);
 
-  const handleMangaClick = (id) => {
-    navigate(`/manga/${id}`);
-  };
+  const filteredFavorites = favorites.filter((manga) =>
+    manga.title.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   if (loading) {
     return (
@@ -65,15 +64,11 @@ const FavoritesPage = () => {
           alignItems: "center",
           height: "100vh",
           textAlign: "center",
-          color: "red",
         }}
       >
         <Typography
           variant="subtitle1"
-          sx={{
-            fontWeight: 700,
-            fontSize: { xs: "1.2em", md: "1.4em", lg: "1.6em" },
-          }}
+          sx={{ fontWeight: 700, fontSize: "1.4em", color: "red" }}
         >
           {error}
         </Typography>
@@ -81,67 +76,67 @@ const FavoritesPage = () => {
     );
   }
 
-  const filteredFavorites = favorites.filter((manga) =>
-    manga.title.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
   return (
-    <Box
-      sx={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "flex-start",
-        minHeight: "100vh",
-        bgcolor: "#000",
-      }}
-    >
-      <Box
-        sx={{
-          width: "100%",
-          maxWidth: "100vw",
-          bgcolor: "#000",
-          padding: "16px",
-          color: "#fff",
-        }}
-      >
-        <Header searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-        {filteredFavorites.length > 0 ? (
-          <>
-            <Typography
-              variant="subtitle1"
-              sx={{
-                marginTop: { xs: "1em", sm: "2em", lg: "3em" },
-                marginBottom: "3em",
-                fontWeight: 700,
-                fontSize: { xs: "1.6em", md: "1.8em", lg: "2em" },
-                borderBottom: "1px solid #fff",
-                paddingBottom: "6px",
-              }}
-            >
-              Seus Mangás Favoritos
-            </Typography>
-            <MangaList
-              mangas={filteredFavorites}
-              searchTerm={searchTerm}
-              onMangaClick={handleMangaClick}
-              horizontalScroll
-            />
-          </>
-        ) : (
-          <Typography
-            variant="subtitle1"
+    <>
+      <Navbar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+
+      <Container maxWidth="xxl">
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "flex-start",
+            minHeight: "100vh",
+            bgcolor: "#000",
+          }}
+        >
+          <Box
             sx={{
-              marginTop: { xs: "0.5em", sm: "0.8em", lg: "2em" },
-              fontWeight: 700,
-              fontSize: { xs: "1.2em", md: "1.4em", lg: "1.6em" },
-              textAlign: "center",
+              width: "100%",
+              maxWidth: "100vw",
+              bgcolor: "#000",
+              padding: "16px",
+              color: "#fff",
             }}
           >
-            Você ainda não tem mangás favoritos!
-          </Typography>
-        )}
-      </Box>
-    </Box>
+            {filteredFavorites.length > 0 ? (
+              <>
+                <Typography
+                  variant="subtitle1"
+                  sx={{
+                    marginTop: "2em",
+                    marginBottom: "3em",
+                    fontWeight: 700,
+                    fontSize: "2em",
+                    borderBottom: "1px solid #fff",
+                  }}
+                >
+                  Seus Mangás Favoritos
+                </Typography>
+                <MangaList
+                  mangas={filteredFavorites}
+                  searchTerm={searchTerm}
+                  onMangaClick={(id) => navigate(`/manga/${id}`)}
+                  horizontalScroll
+                />
+              </>
+            ) : (
+              <Typography
+                variant="subtitle1"
+                sx={{
+                  marginTop: "2em",
+                  fontWeight: 700,
+                  fontSize: "1.6em",
+                  textAlign: "center",
+                }}
+              >
+                Você ainda não tem mangás favoritos!
+              </Typography>
+            )}
+          </Box>
+        </Box>
+      </Container>
+    </>
   );
 };
 

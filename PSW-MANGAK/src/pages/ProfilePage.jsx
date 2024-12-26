@@ -152,7 +152,6 @@ function ProfilePage() {
           bgcolor: "var(--bg-page-color)",
           padding: "16px",
           color: "#fff",
-          maxWidth: "700px",
           width: "100%",
           minHeight: "100vh",
           boxSizing: "border-box",

@@ -1,158 +1,90 @@
 import { useState, useEffect, useCallback } from "react";
 import { fetchAccountById, updateAccount } from "../../services/api";
-import BookmarkAddIcon from "@mui/icons-material/BookmarkAdd";
-import BookmarkAddedIcon from "@mui/icons-material/BookmarkAdded";
-import IosShareIcon from "@mui/icons-material/IosShare";
+import { BookmarkAdd as AddIcon, BookmarkAdded as AddedIcon, IosShare as ShareIcon } from "@mui/icons-material";
 import { Button, Box } from "@mui/material";
 import PropTypes from "prop-types";
 import useAuth from "../contexts/useAuth";
 
 const Actions = ({ mangaId }) => {
-  const { user } = useAuth(); // Obtém o usuário autenticado
+  const { user } = useAuth();
   const [favorite, setFavorite] = useState(false);
 
-  // Verifica se o mangá está nos favoritos
-  const checkIfFavorite = useCallback(async () => {
-    if (!user?.id) {
-      console.warn("Usuário não autenticado.");
-      return;
-    }
+  const fetchAndUpdateFavorite = useCallback(async (add) => {
+    if (!user?.id) return console.warn("Usuário não autenticado.");
 
     try {
-      const fetchedUser = await fetchAccountById(user.id);
-      if (fetchedUser && Array.isArray(fetchedUser.favorites)) {
-        setFavorite(fetchedUser.favorites.includes(mangaId));
-      } else {
-        console.error("Estrutura de favoritos inválida para o usuário.");
-      }
+      const { favorites = [] } = await fetchAccountById(user.id) || {};
+      const updatedFavorites = add
+        ? Array.from(new Set([...favorites, mangaId]))
+        : favorites.filter((id) => id !== mangaId);
+
+      await updateAccount(user.id, { favorites: updatedFavorites });
+      setFavorite(add);
     } catch (err) {
-      console.error("Erro ao verificar favoritos:", err);
+      console.error("Erro ao atualizar favoritos:", err);
     }
   }, [user?.id, mangaId]);
 
   useEffect(() => {
-    checkIfFavorite();
-  }, [checkIfFavorite]);
-
-  const handleAddToFavorites = async () => {
-    if (!user?.id) {
-      console.warn("Usuário não autenticado.");
-      return;
+    if (user?.id) {
+      fetchAccountById(user.id)
+        .then(({ favorites = [] }) => setFavorite(favorites.includes(mangaId)))
+        .catch((err) => console.error("Erro ao verificar favoritos:", err));
     }
-
-    try {
-      const fetchedUser = await fetchAccountById(user.id);
-      if (!fetchedUser || !Array.isArray(fetchedUser.favorites)) {
-        throw new Error("Estrutura de favoritos inválida.");
-      }
-
-      const updatedFavorites = [...new Set([...fetchedUser.favorites, mangaId])];
-      await updateAccount(user.id, { ...fetchedUser, favorites: updatedFavorites });
-      setFavorite(true);
-    } catch (err) {
-      console.error("Erro ao adicionar aos favoritos:", err);
-    }
-  };
-
-  const handleRemoveFromFavorites = async () => {
-    if (!user?.id) {
-      console.warn("Usuário não autenticado.");
-      return;
-    }
-
-    try {
-      const fetchedUser = await fetchAccountById(user.id);
-      if (!fetchedUser || !Array.isArray(fetchedUser.favorites)) {
-        throw new Error("Estrutura de favoritos inválida.");
-      }
-
-      const updatedFavorites = fetchedUser.favorites.filter((id) => id !== mangaId);
-      await updateAccount(user.id, { ...fetchedUser, favorites: updatedFavorites });
-      setFavorite(false);
-    } catch (err) {
-      console.error("Erro ao remover dos favoritos:", err);
-    }
-  };
+  }, [user?.id, mangaId]);
 
   const handleShare = () => {
-    if (navigator.share) {
-      navigator
-        .share({
+    navigator.share
+      ? navigator.share({
           title: "Confira este mangá!",
           text: `Dê uma olhada no mangá que encontrei: ${mangaId}`,
           url: window.location.href,
-        })
-        .catch((err) => console.error("Erro ao compartilhar:", err));
-    } else {
-      alert("Compartilhamento não suportado neste navegador.");
-    }
+        }).catch(console.error)
+      : alert("Compartilhamento não suportado neste navegador.");
   };
 
-  // Definindo estilos compartilhados para os botões
   const buttonStyles = {
     fontSize: "0.8rem",
     padding: "6px 10px",
-    width: "100%",
     maxWidth: "250px",
     display: "flex",
-    justifyContent: "center",
     alignItems: "center",
-    marginBottom: "12px", // Espaçamento entre os botões
-    "&:hover": { backgroundColor: "rgba(200, 0, 0, 0.8)" },
+    justifyContent: "center",
+    marginBottom: "12px",
   };
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        gap: "8px",
-        marginTop: "16px",
-      }}
-    >
-      {!favorite ? (
-        <Button
-          variant="outlined"
-          onClick={handleAddToFavorites}
-          sx={{
-            borderColor: "var(--btn-mangak-color)",
-            color: "var(--btn-mangak-color)",
-            ...buttonStyles,
-            "&:hover": { backgroundColor: "rgba(255, 0, 0, 0.1)" },
-          }}
-        >
-          <BookmarkAddIcon sx={{ fontSize: "1rem", marginRight: "6px" }} />
-          Adicionar
-        </Button>
-      ) : (
-        <Button
-          variant="contained"
-          onClick={handleRemoveFromFavorites}
-          sx={{
-            backgroundColor: "var(--btn-mangak-color)",
-            color: "#fff",
-            ...buttonStyles,
-          }}
-        >
-          <BookmarkAddedIcon sx={{ fontSize: "1rem", marginRight: "6px" }} />
-          Remover
-        </Button>
-      )}
+    <Box sx={{ display: "flex", flexDirection: "column", gap: "8px", marginTop: "16px" }}>
+      <Button
+        variant={favorite ? "contained" : "outlined"}
+        onClick={() => fetchAndUpdateFavorite(!favorite)}
+        sx={{
+          ...buttonStyles,
+          borderColor: "var(--btn-mangak-color)",
+          color: favorite ? "#fff" : "var(--btn-mangak-color)",
+          backgroundColor: favorite ? "var(--btn-mangak-color)" : "transparent",
+          "&:hover": favorite
+            ? { backgroundColor: "rgba(200, 0, 0, 0.8)" }
+            : { backgroundColor: "rgba(255, 0, 0, 0.1)" },
+        }}
+      >
+        {favorite ? <AddedIcon sx={{ fontSize: "1rem", marginRight: "6px" }} /> : <AddIcon sx={{ fontSize: "1rem", marginRight: "6px" }} />}
+        {favorite ? "Remover" : "Adicionar"}
+      </Button>
 
       <Button
         variant="contained"
         onClick={handleShare}
         sx={{
+          ...buttonStyles,
           backgroundColor: "var(--btn-mangak-color)",
           color: "#fff",
-          ...buttonStyles,
         }}
       >
-        <IosShareIcon sx={{ fontSize: "1rem", marginRight: "6px" }} />
+        <ShareIcon sx={{ fontSize: "1rem", marginRight: "6px" }} />
         Compartilhar
       </Button>
 
-      {/* Opcional: Adicionar espaçamento adicional na parte inferior */}
       <Box sx={{ height: "12px" }} />
     </Box>
   );

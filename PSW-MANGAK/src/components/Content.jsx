@@ -7,34 +7,23 @@ import styles from "./Content.module.css";
 const Content = ({ manga, userId, onRate }) => {
   const navigate = useNavigate();
 
-  const calculateAverageRating = (ratings) => {
-    if (!Array.isArray(ratings) || ratings.length === 0) return 0.0;
-    const total = ratings.reduce((acc, item) => acc + (item?.rating || 0), 0);
-    return (total / ratings.length).toFixed(1);
-  };
+  // Funções auxiliares
+  const calculateAverageRating = (ratings = []) =>
+    ratings.length
+      ? (
+          ratings.reduce((acc, item) => acc + (item?.rating || 0), 0) /
+          ratings.length
+        ).toFixed(1)
+      : "0.0";
 
-  const getUserRating = (ratings, userId) => {
-    if (!Array.isArray(ratings) || !userId) return null;
-    const userRating = ratings.find((item) => item?.userId === userId);
-    return userRating ? userRating.rating : null;
-  };
+  const getUserRating = (ratings = []) =>
+    ratings.find((item) => item?.userId === userId)?.rating || null;
 
-  const averageRating = calculateAverageRating(manga.ratings);
-  const userRating = getUserRating(manga.ratings, userId);
-
-  const status = manga.status ? manga.status.toUpperCase() : "INDEFINIDO";
-
-  const getStatusColor = () => {
-    switch (status) {
-      case "EM ANDAMENTO":
-        return "#40FF00";
-      case "EM HIATO":
-        return "#FFE100";
-      case "FINALIZADO":
-        return "#FF0000";
-      default:
-        return "#777";
-    }
+  const statusColors = {
+    "EM ANDAMENTO": "#40FF00",
+    "EM HIATO": "#FFE100",
+    FINALIZADO: "#FF0000",
+    default: "#777",
   };
 
   const handleRatingChange = (event, newRating) => {
@@ -42,7 +31,6 @@ const Content = ({ manga, userId, onRate }) => {
       console.error("Erro: Usuário não autenticado. Não é possível avaliar.");
       return;
     }
-
     if (onRate && newRating) {
       onRate(userId, newRating);
     } else {
@@ -58,6 +46,24 @@ const Content = ({ manga, userId, onRate }) => {
     navigate(`/comments/${manga.id}`);
   };
 
+  const averageRating = calculateAverageRating(manga.ratings);
+  const userRating = getUserRating(manga.ratings);
+  const status = manga.status?.toUpperCase() || "INDEFINIDO";
+  const statusColor = statusColors[status] || statusColors.default;
+
+  const ratingStyles = {
+    "& .MuiRating-iconEmpty": { color: "#777" },
+    "& .MuiRating-iconFilled": { color: "#EC7C01" },
+    "& .MuiRating-iconHover": { color: "#FFA500" },
+    fontSize: { xs: "1em", sm: "1.1em", md: "1.2em", lg: "1.4em" },
+  };
+
+  const imageStyles = {
+    width: "50%",
+    borderRadius: "8px",
+    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
+  };
+
   return (
     <Box className={styles.contentContainer}>
       <Box
@@ -71,20 +77,11 @@ const Content = ({ manga, userId, onRate }) => {
         <Box
           component="img"
           src={manga.image}
-          alt={`Capa do mangá ${manga.title}`}
-          sx={{
-            width: "50%",
-            borderRadius: "8px",
-            boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
-          }}
+          alt={`Capa de ${manga.title}`}
+          sx={imageStyles}
         />
         <Box className={styles.detailsContainer}>
-          <Typography
-            variant="h6"
-            sx={{ fontSize: { xs: "1em", md: "1.2em", lg: "2em" } }}
-          >
-            {manga.title}
-          </Typography>
+          <Typography variant="h3">{manga.title}</Typography>
           <Typography
             variant="body2"
             className={styles.author}
@@ -97,7 +94,7 @@ const Content = ({ manga, userId, onRate }) => {
               display: "flex",
               alignItems: "center",
               gap: "6px",
-              marginTop: { xs: "1em", md: "1.2em", lg: "1.4em" },
+              mt: { xs: 1, md: 1.2 },
             }}
           >
             <Rating
@@ -106,20 +103,9 @@ const Content = ({ manga, userId, onRate }) => {
               precision={0.5}
               size="small"
               onChange={handleRatingChange}
-              sx={{
-                "& .MuiRating-iconEmpty": { color: "#777" },
-                "& .MuiRating-iconFilled": { color: "#EC7C01" },
-                "& .MuiRating-iconHover": { color: "#FFA500" },
-                fontSize: { xs: "1em", sm: "1.1em", md: "1.2em", lg: "1.4em" },
-              }}
+              sx={ratingStyles}
             />
-            <Typography
-              variant="body2"
-              sx={{
-                fontSize: "var(--font-size-body)",
-                color: "var(--text-color)",
-              }}
-            >
+            <Typography variant="body2" sx={{ color: "var(--text-color)" }}>
               {`(${averageRating})`}
             </Typography>
             <Button
@@ -129,22 +115,23 @@ const Content = ({ manga, userId, onRate }) => {
                 display: "flex",
                 alignItems: "center",
                 color: "var(--text-color)",
-                fontSize: { xs: "1em", sm: "1.2em", md: "1.4em" },
                 textTransform: "none",
+                fontSize: { xs: "1em", sm: "1.2em", md: "1.4em" },
               }}
             >
-              <CommentIcon sx={{ marginLeft: "12px" }} />
+              <CommentIcon sx={{ ml: "12px" }} />
             </Button>
           </Box>
         </Box>
       </Box>
-      <Box sx={{ display: "flex", alignItems: "center", marginTop: "0.5em" }}>
+      <Box sx={{ display: "flex", alignItems: "center", mt: "0.5em" }}>
         <span
           className={styles.statusDot}
           style={{
-            color: getStatusColor(),
-            fontSize: "1.4em",
-            marginRight: "0.5em",
+            color: statusColor,
+            fontSize: "1.8em",
+            marginRight: "0.2em",
+            marginTop: "-2px",
           }}
         >
           •
