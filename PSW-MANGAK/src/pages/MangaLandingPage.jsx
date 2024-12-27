@@ -24,7 +24,7 @@ function MangaLandingPage() {
           justifyContent: "center",
           alignItems: "center",
           minHeight: "100vh",
-          bgcolor: "var(--bg-page-colorr)",
+          bgcolor: "var(--bg-page-color)",
         }}
       >
         <CircularProgress />
@@ -66,9 +66,10 @@ function MangaLandingPage() {
     );
   }
 
-  const handleRate = (userId, rating) => {
-    console.log(`Usuário ${userId} avaliou com nota ${rating}`);
-  };
+  const tagsData = [
+    { section: "Genres", tags: manga.genres || [] },
+    { section: "Demographic", tags: [manga.demographic || "Indefinido"] },
+  ];
 
   return (
     <>
@@ -86,24 +87,12 @@ function MangaLandingPage() {
               id: manga.id || "ID Desconhecido",
               image: manga.image || "",
               title: manga.title || "Título Desconhecido",
-              author: manga.author || "Autor Desconhecido",
-              ratings: manga.ratings || [],
+              authorId: manga.authorId || null,
+              averageRating: parseFloat(manga.averageRating || 0), // Convertendo para número
               status: manga.status || "Status Desconhecido",
               yearPubli: manga.yearPubli || "????",
             }}
             userId={userId}
-            onRate={handleRate}
-            sx={{
-              marginBottom: "var(--spacing-large)",
-              "& .manga-title": {
-                fontSize: "3rem",
-                fontWeight: "bold",
-              },
-              "& .manga-author": {
-                fontSize: "2.5rem",
-                fontWeight: "500",
-              },
-            }}
           />
 
           <Actions
@@ -123,11 +112,7 @@ function MangaLandingPage() {
             />
           )}
 
-          {[
-            { section: "Genres", tags: manga.genres || [] },
-            { section: "Demographic", tags: [manga.demographic || ""] },
-            { section: "Buy", tags: manga.retail || [] },
-          ].map((data, index) => (
+          {tagsData.map((data, index) => (
             <TagsSection
               key={index}
               data={data}
@@ -137,11 +122,20 @@ function MangaLandingPage() {
             />
           ))}
 
-          {manga.artsList && (
-            <ArtGallery
-              artsList={manga.artsList || []}
-            />
-          )}
+          <TagsSection
+            data={{
+              section: "Where to Buy",
+              tags: manga.retail.map((item) => ({
+                name: item.name,
+                url: item.url,
+              })),
+            }}
+            sx={{
+              marginBottom: "var(--spacing-medium)",
+            }}
+          />
+
+          {manga.artsList && <ArtGallery artsList={manga.artsList || []} />}
         </Box>
       </Container>
     </>

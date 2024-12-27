@@ -1,7 +1,7 @@
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import { Box, Button, TextField, Typography, IconButton } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
-import { updateManga, createManga, deleteManga } from "../../services/api";
+import { updateManga, createManga, deleteManga, fetchMangas } from "../../services/api";
 import MangaContext from "../contexts/MangaContext";
 import EditIcon from "@mui/icons-material/Edit";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -15,6 +15,19 @@ const AdminPage = () => {
   const [formData, setFormData] = useState({});
   const navigate = useNavigate();
 
+  // Buscar mangás ao carregar a página
+  useEffect(() => {
+    const loadMangas = async () => {
+      try {
+        const data = await fetchMangas();
+        setMangas(data);
+      } catch (error) {
+        console.error("Erro ao carregar mangás:", error);
+      }
+    };
+    loadMangas();
+  }, [setMangas]);
+
   const handleFieldChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
@@ -26,13 +39,13 @@ const AdminPage = () => {
   const handleSaveClick = async () => {
     try {
       if (isCreating) {
-        const newManga = { ...formData, id: `${mangas.length + 1}` };
-        await createManga(newManga);
-        setMangas((prev) => [...prev, newManga]);
+        const newManga = { ...formData, id: `${Date.now()}` };
+        const createdManga = await createManga(newManga);
+        setMangas((prev) => [...prev, createdManga]);
       } else if (editingRow) {
-        await updateManga(editingRow.id, formData);
+        const updatedManga = await updateManga(editingRow.id, formData);
         setMangas((prev) =>
-          prev.map((m) => (m.id === editingRow.id ? { ...formData } : m))
+          prev.map((m) => (m.id === editingRow.id ? updatedManga : m))
         );
       }
       setEditingRow(null);
@@ -95,7 +108,7 @@ const AdminPage = () => {
     { label: "Demografia", field: "demographic" },
     { label: "Gêneros (separados por vírgulas)", field: "genres", isArray: true },
     { label: "Lista de Artes (URLs separadas por vírgulas)", field: "artsList", isArray: true },
-    { label: "Imagem (URLs separadas por vírgulas)", field: "image" },
+    { label: "Imagem", field: "image" },
   ];
 
   return (
@@ -128,7 +141,17 @@ const AdminPage = () => {
       />
 
       {(editingRow || isCreating) && (
-        <Box sx={{ marginTop: "20px", backgroundColor: "#333", padding: "20px", borderRadius: "8px",display: "flex",flexDirection:"column",gap:"2em" }}>
+        <Box
+          sx={{
+            marginTop: "20px",
+            backgroundColor: "#333",
+            padding: "20px",
+            borderRadius: "8px",
+            display: "flex",
+            flexDirection: "column",
+            gap: "2em",
+          }}
+        >
           <Typography variant="h6">
             {isCreating ? "Adicionar Novo Mangá" : "Editar Mangá"}
           </Typography>
@@ -166,7 +189,11 @@ const AdminPage = () => {
             />
           ))}
           <Box sx={{ display: "flex", gap: "10px" }}>
-            <Button onClick={handleSaveClick} variant="contained" sx={{ backgroundColor: "#FF0037" }}>
+            <Button
+              onClick={handleSaveClick}
+              variant="contained"
+              sx={{ backgroundColor: "#FF0037" }}
+            >
               Salvar
             </Button>
             <Button onClick={handleCancelClick} variant="outlined">

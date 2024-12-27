@@ -7,38 +7,52 @@ const TagsSection = ({ data }) => {
 
   return (
     <Box className={styles.container}>
-      <Typography variant="subtitle1" sx={{ fontWeight: "bold",fontSize: {xs:"0.8em",md: "1em",lg: "1.2em"}}}>
+      <Typography
+        variant="subtitle1"
+        sx={{
+          fontWeight: "bold",
+          fontSize: { xs: "0.8em", md: "1em", lg: "1.2em" },
+        }}
+      >
         {section}
       </Typography>
       <Box className={styles.tagsContainer} sx={{ margin: "6px 0" }}>
-        <Box sx={{ borderTop: "1px solid #444", width: "46%", marginBottom: "24px" }}></Box>
+        <Box
+          sx={{
+            borderTop: "1px solid #444",
+            width: "46%",
+            marginBottom: "24px",
+          }}
+        ></Box>
 
-        {section === "Buy"
-          ? tags.map((tag, index) => (
-              <Button
-                key={index}
-                href={tag.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                variant="contained"
-                sx={{
-                  fontWeight: 600,
-                  margin: "0 1.2em 1.2em 0",
-                  padding: "8px 16px",
-                  backgroundColor: "#FF0037",
-                  color: "#fff",
-                  textTransform: "none",
-                  ":hover": {
-                    backgroundColor: "#CC002A",
-                    transform: "scale(1.1)",
-                  }
-                }}
-              >
-                {tag.name}
-              </Button>
-            ))
-          : tags.map((tag, index) => (
-              <Button key={index}  rel="noopener noreferrer"
+        {tags.map((tag, index) =>
+          typeof tag === "object" && tag.name && tag.url ? (
+            // Renderiza botões com links para a seção "retail"
+            <Button
+              key={index}
+              href={tag.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              variant="contained"
+              sx={{
+                fontWeight: 600,
+                margin: "0 1.2em 1.2em 0",
+                padding: "8px 16px",
+                backgroundColor: "#FF0037",
+                color: "#fff",
+                textTransform: "none",
+                ":hover": {
+                  backgroundColor: "#CC002A",
+                  transform: "scale(1.1)",
+                },
+              }}
+            >
+              {tag.name}
+            </Button>
+          ) : (
+            // Renderiza botões sem links para seções como "Genres" e "Demographic"
+            <Button
+              key={index}
               variant="contained"
               sx={{
                 fontWeight: 600,
@@ -47,10 +61,13 @@ const TagsSection = ({ data }) => {
                 backgroundColor: "#1e1e1e",
                 color: "#fff",
                 textTransform: "none",
-                cursor: "default"
+                cursor: "default",
               }}
-               >{tag}</Button>
-            ))}
+            >
+              {tag}
+            </Button>
+          )
+        )}
       </Box>
     </Box>
   );

@@ -13,17 +13,16 @@ const LoginPage = lazy(() => import("./pages/LoginPage"));
 const FavoritesPage = lazy(() => import("./pages/FavoritesPage"));
 const AdminPage = lazy(() => import("./pages/AdminPage"));
 const RegisterPage = lazy(() => import("./pages/RegisterPage"));
-const CommentsPage = lazy(() => import("./pages/CommentsPage"));
+const EvaluationPage = lazy(() => import("./pages/EvaluationPage"));
 
 const App = () => {
   useEffect(() => {
-    // Pré-carregar páginas em segundo plano
     import("./pages/ProfilePage");
     import("./pages/LoginPage");
     import("./pages/FavoritesPage");
     import("./pages/AdminPage");
     import("./pages/RegisterPage");
-    import("./pages/CommentsPage");
+    import("./pages/EvaluationPage");
   }, []);
 
   return (
@@ -77,10 +76,10 @@ const App = () => {
                   }
                 />
                 <Route
-                  path="/comments/:mangaId"
+                  path="/evaluations/:mangaId"
                   element={
                     <ProtectedRoute>
-                      <CommentsPage />
+                      <EvaluationPage />
                     </ProtectedRoute>
                   }
                 />

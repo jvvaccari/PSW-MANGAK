@@ -1,259 +1,194 @@
 import axios from "axios";
 
+// Configuração básica da API
 const API_URL = "http://localhost:5001";
-const BASE_URL = `${API_URL}/accounts`;
-
-const handleError = (error, customMessage) => {
-  console.error(customMessage, error.message || error);
-  throw new Error(customMessage);
-};
-
 const axiosInstance = axios.create({
   baseURL: API_URL,
   timeout: 10000,
-  headers: { 'Content-Type': 'application/json' },
+  headers: { "Content-Type": "application/json" },
 });
 
+export const fetchEvaluationById = async (evaluationId) => {
+  try {
+    validateId(evaluationId, "avaliação");
+    const response = await axiosInstance.get(`/evaluations/${evaluationId}`);
+    return response.data;
+  } catch (error) {
+    handleError(error, `Erro ao buscar avaliação com ID ${evaluationId}`);
+  }
+};
+
+// Função para tratar erros
+const handleError = (error, customMessage = "Erro inesperado") => {
+  const status = error.response?.status || "Sem status";
+  const details = error.response?.data || "Sem detalhes";
+  console.error(`${customMessage}: [${status}] ${details}`);
+  throw new Error(`${customMessage}: ${details}`);
+};
+
+// Função auxiliar para validar IDs
+const validateId = (id, type = "genérico") => {
+  if (!id || typeof id !== "string") {
+    throw new Error(`ID inválido para ${type}. Deve ser uma string válida.`);
+  }
+};
+
+// Função genérica para buscar um recurso por ID
+const fetchById = async (endpoint, id, type) => {
+  try {
+    validateId(id, type);
+    const response = await axiosInstance.get(`/${endpoint}/${id}`);
+    return response.data;
+  } catch (error) {
+    handleError(error, `Erro ao buscar ${type} com ID ${id}`);
+  }
+};
+
+// Função genérica para atualizar um recurso
+const updateById = async (endpoint, id, data, type) => {
+  try {
+    validateId(id, type);
+    const response = await axiosInstance.put(`/${endpoint}/${id}`, data);
+    return response.data;
+  } catch (error) {
+    handleError(error, `Erro ao atualizar ${type} com ID ${id}`);
+  }
+};
+
+// Funções específicas
+
+// Autores
+export const fetchAuthorById = async (authorId) =>
+  fetchById("authors", authorId, "autor");
+
+// Mangás
 export const fetchMangas = async () => {
   try {
     const response = await axiosInstance.get("/mangas");
     return response.data;
   } catch (error) {
-    handleError(error, "Erro ao buscar mangás.");
+    handleError(error, "Erro ao buscar mangás");
   }
 };
+
+export const fetchMangaById = async (id) => fetchById("mangas", id, "mangá");
 
 export const createManga = async (newManga) => {
   try {
     const response = await axiosInstance.post("/mangas", newManga);
     return response.data;
   } catch (error) {
-    handleError(error, "Erro ao criar mangá.");
+    handleError(error, "Erro ao criar mangá");
   }
 };
 
-export const updateManga = async (id, updatedManga) => {
-  try {
-    const response = await axiosInstance.put(`/mangas/${id}`, updatedManga);
-    return response.data;
-  } catch (error) {
-    handleError(error, "Erro ao atualizar o mangá.");
-  }
-};
+export const updateManga = async (id, updatedManga) =>
+  updateById("mangas", id, updatedManga, "mangá");
 
 export const deleteManga = async (id) => {
   try {
+    validateId(id, "mangá");
     const response = await axiosInstance.delete(`/mangas/${id}`);
     return response.data;
   } catch (error) {
-    handleError(error, "Erro ao excluir o mangá.");
+    handleError(error, `Erro ao excluir mangá com ID ${id}`);
   }
 };
 
-export const fetchMangaById = async (id) => {
-  try {
-    if (!id) throw new Error("ID do mangá inválido.");
-    const response = await axiosInstance.get(`/mangas/${id}`);
-    return response.data;
-  } catch (error) {
-    handleError(error, `Erro ao buscar o mangá com ID ${id}.`);
-  }
-};
+// Contas
+export const fetchAccountById = async (id) =>
+  fetchById("accounts", id, "conta");
 
-export const updateRating = async (userId, mangaId, rating) => {
-  try {
-    const userResponse = await axiosInstance.get(`/accounts/${userId}`);
-    const user = userResponse.data;
-
-    const updatedRatings = { ...user.ratings, [mangaId]: rating };
-    await axiosInstance.put(`/accounts/${userId}`, { ...user, ratings: updatedRatings });
-
-    const mangaResponse = await axiosInstance.get(`/mangas/${mangaId}`);
-    const manga = mangaResponse.data;
-
-    const allRatings = Object.values(updatedRatings).filter((value) => value !== undefined);
-    const averageRating =
-      allRatings.reduce((sum, value) => sum + value, 0) / allRatings.length;
-
-    await axiosInstance.put(`/mangas/${mangaId}`, { ...manga, rating: averageRating });
-
-    return { success: true };
-  } catch (error) {
-    handleError(error, "Erro ao atualizar avaliação.");
-  }
-};
-
-export const fetchAccountById = async (id) => {
-  try {
-    if (!id) throw new Error("ID do usuário inválido.");
-    const response = await axiosInstance.get(`${BASE_URL}/${id}`);
-    if (!response.data) throw new Error("Conta não encontrada.");
-    return response.data;
-  } catch (error) {
-    handleError(error, "Erro ao buscar conta do usuário.");
-  }
-};
-
-export const fetchFavorites = async (userId) => {
-  try {
-    if (!userId) throw new Error("ID do usuário inválido.");
-    const account = await fetchAccountById(userId);
-    if (!account || !Array.isArray(account.favorites)) {
-      throw new Error("Favoritos não encontrados ou formato incorreto.");
-    }
-
-    const favoriteMangas = await Promise.all(
-      account.favorites.map(async (mangaId) => {
-        try {
-          return await fetchMangaById(mangaId);
-        } catch (error) {
-          handleError(error, "Erro ao favoritar mangá.");
-        }
-      })
-    );
-
-    return favoriteMangas.filter(Boolean);
-  } catch (error) {
-    handleError(error, "Erro ao buscar favoritos do usuário.");
-  }
-};
-
-export const addFavorite = async (userId, mangaId) => {
-  return await updateFavorites(userId, mangaId, "add");
-};
-
-export const removeFavorite = async (userId, mangaId) => {
-  return await updateFavorites(userId, mangaId, "remove");
-};
-
-const updateFavorites = async (userId, mangaId, action) => {
-  try {
-    if (!mangaId) throw new Error("ID do mangá inválido.");
-    const user = await fetchAccountById(userId);
-
-    const updatedFavorites =
-      action === "add"
-        ? [...new Set([...user.favorites, mangaId.toString()])]
-        : user.favorites.filter((id) => id !== mangaId.toString());
-
-    const updatedUser = { ...user, favorites: updatedFavorites };
-    return await updateAccount(userId, updatedUser);
-  } catch (error) {
-    handleError(error, `Erro ao ${action === "add" ? "adicionar" : "remover"} favorito.`);
-  }
-};
-
-export const updateAccount = async (id, data) => {
-  try {
-    const response = await axiosInstance.put(`${BASE_URL}/${id}`, data);
-    return response.data;
-  } catch (error) {
-    handleError(error, "Erro ao atualizar conta do usuário.");
-  }
-};
+export const updateAccount = async (id, data) =>
+  updateById("accounts", id, data, "conta");
 
 export const deleteAccount = async (id) => {
   try {
-    const response = await axiosInstance.delete(`${BASE_URL}/${id}`);
+    validateId(id, "conta");
+    const response = await axiosInstance.delete(`/accounts/${id}`);
     return response.data;
   } catch (error) {
-    handleError(error, "Erro ao excluir conta do usuário.");
+    handleError(error, `Erro ao excluir conta com ID ${id}`);
   }
 };
 
-export const fetchComments = async (mangaId) => {
+// Favoritos
+export const fetchFavorites = async (userId) => {
   try {
-    if (!mangaId) throw new Error("ID do mangá inválido.");
-    const manga = await fetchMangaById(mangaId);
-    return manga.comments || [];
+    validateId(userId, "usuário");
+    const account = await fetchAccountById(userId);
+    const favorites = account.favorites || [];
+    return await Promise.all(favorites.map((mangaId) => fetchMangaById(mangaId)));
   } catch (error) {
-    handleError(error, "Erro ao buscar comentários.");
+    handleError(error, "Erro ao buscar favoritos");
   }
 };
 
-export const postComment = async (mangaId, commentData) => {
+export const updateFavorites = async (userId, mangaId, action) => {
   try {
-    if (!mangaId) throw new Error("ID do mangá inválido.");
-    const manga = await fetchMangaById(mangaId);
-    const newComment = {
-      id: `c${Date.now()}`,
-      ...commentData,
-      reactions: { likes: 0, dislikes: 0 },
-    };
-    const updatedManga = {
-      ...manga,
-      comments: [...(manga.comments || []), newComment],
-    };
-    await axiosInstance.put(`/mangas/${mangaId}`, updatedManga);
-    return newComment;
-  } catch (error) {
-    handleError(error, "Erro ao postar comentário.");
-  }
-};
+    validateId(userId, "usuário");
+    validateId(mangaId, "mangá");
+    const account = await fetchAccountById(userId);
 
-export const updateCommentReaction = async (mangaId, commentId, reactionType) => {
-  try {
-    const manga = await fetchMangaById(mangaId);
-    const updatedComments = manga.comments.map((comment) => {
-      if (comment.id === commentId) {
-        const reactions = comment.reactions || { likes: 0, dislikes: 0 };
-        
-        if (reactionType === "like") {
-          reactions.likes += 1;
-        } else if (reactionType === "dislike") {
-          reactions.dislikes += 1;
-        }
-        return { ...comment, reactions };
-      }
-      return comment;
+    const updatedFavorites =
+      action === "add"
+        ? [...new Set([...account.favorites, mangaId])]
+        : account.favorites.filter((id) => id !== mangaId);
+
+    return await updateAccount(userId, {
+      ...account,
+      favorites: updatedFavorites,
     });
-    const updatedManga = { ...manga, comments: updatedComments };
-    await axiosInstance.put(`/mangas/${mangaId}`, updatedManga);
-    return updatedComments.find((comment) => comment.id === commentId);
   } catch (error) {
-    handleError(error, `Erro ao ${reactionType === "like" ? "curtir" : "descurtir"} comentário.`);
+    handleError(error, `Erro ao ${action === "add" ? "adicionar" : "remover"} favorito`);
   }
 };
 
-export const updateComment = async (mangaId, commentId, newText) => {
+export const fetchEvaluations = async (mangaId) => {
   try {
-    if (!mangaId || !commentId) throw new Error("ID do mangá ou comentário inválido.");
-    const manga = await fetchMangaById(mangaId);
-    const updatedComments = manga.comments.map((comment) => {
-      if (comment.id === commentId) {
-        return { ...comment, text: newText };
-      }
-      return comment;
-    });
-    const updatedManga = { ...manga, comments: updatedComments };
-    await axiosInstance.put(`/mangas/${mangaId}`, updatedManga);
-    return updatedComments.find((comment) => comment.id === commentId);
-  } catch (error) {
-    handleError(error, "Erro ao atualizar comentário.");
-  }
-};
-
-export const deleteComment = async (mangaId, commentId) => {
-  try {
-    if (!mangaId || !commentId) throw new Error("ID do mangá ou comentário inválido.");
-    const manga = await fetchMangaById(mangaId);
-    const updatedComments = manga.comments.filter((comment) => comment.id !== commentId);
-    const updatedManga = { ...manga, comments: updatedComments };
-    await axiosInstance.put(`/mangas/${mangaId}`, updatedManga);
-    return updatedComments;
-  } catch (error) {
-    handleError(error, "Erro ao deletar comentário.");
-  }
-};
-
-export const fetchUserById = async (userId) => {
-  try {
-    if (!userId) throw new Error("ID do usuário inválido.");
-    const response = await axiosInstance.get(`/accounts/${userId}`);
-    if (!response.data) throw new Error("Usuário não encontrado.");
+    const response = await axios.get(`http://localhost:5001/evaluations?mangaId=${mangaId}`);
+    if (response.status !== 200 || !response.data) {
+      throw new Error("Erro ao buscar avaliações");
+    }
     return response.data;
   } catch (error) {
-    handleError(error, `Erro ao buscar o usuário com ID ${userId}.`);
+    console.error("Erro no fetchEvaluations:", error.message);
+    return [];
   }
 };
 
+
+export const postEvaluation = async (mangaId, evaluationData) => {
+  try {
+    validateId(mangaId, "mangá");
+    const response = await axiosInstance.post(`/evaluations`, {
+      ...evaluationData,
+      mangaId,
+    });
+    return response.data;
+  } catch (error) {
+    handleError(error, "Erro ao postar avaliação");
+  }
+};
+
+export const updateEvaluation = async (evaluationId, updatedData) => {
+  try {
+    const response = await axiosInstance.put(`/evaluations/${evaluationId}`, updatedData);
+    console.log("Resposta do backend ao atualizar:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Erro ao atualizar avaliação:", error.message);
+    throw error;
+  }
+};
+
+
+export const deleteEvaluation = async (evaluationId) => {
+  try {
+    validateId(evaluationId, "avaliação");
+    const response = await axiosInstance.delete(`/evaluations/${evaluationId}`);
+    return response.data;
+  } catch (error) {
+    handleError(error, `Erro ao excluir avaliação com ID ${evaluationId}`);
+  }
+};

@@ -52,11 +52,13 @@ function ProfilePage() {
   useEffect(() => {
     const loadUser = async () => {
       try {
-        if (!user?.id) {
+        if (!user || !user.id) {
+          console.warn("Usuário não autenticado ou ID ausente.");
           navigate("/login");
           return;
         }
-
+  
+        setLoading(true); // Garante que o carregamento seja iniciado
         const data = await fetchAccountById(user.id);
         if (data) {
           setFormData(data);
@@ -65,15 +67,17 @@ function ProfilePage() {
         }
       } catch (err) {
         console.error("Erro ao carregar os dados do usuário:", err.message);
-        setError("Usuário não encontrado.");
+        setError("Erro ao carregar os dados. Faça login novamente.");
+        logout();
         navigate("/login");
       } finally {
-        setLoading(false);
+        setLoading(false); // Garante que o carregamento seja encerrado
       }
     };
-
+  
     loadUser();
-  }, [user, navigate]);
+  }, [user, navigate, logout]);
+  
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;

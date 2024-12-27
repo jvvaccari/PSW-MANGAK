@@ -1,23 +1,29 @@
 import PropTypes from "prop-types";
-import { Box, Typography, Rating, Button } from "@mui/material";
+import { useState, useEffect } from "react";
+import { Box, Typography, Rating } from "@mui/material";
 import CommentIcon from "@mui/icons-material/Comment";
 import { useNavigate } from "react-router-dom";
+import { fetchAuthorById } from "../../services/api";
 import styles from "./Content.module.css";
 
-const Content = ({ manga, userId, onRate }) => {
+const Content = ({ manga, userId }) => {
   const navigate = useNavigate();
+  const [authorName, setAuthorName] = useState("Carregando autor...");
 
-  // Funções auxiliares
-  const calculateAverageRating = (ratings = []) =>
-    ratings.length
-      ? (
-          ratings.reduce((acc, item) => acc + (item?.rating || 0), 0) /
-          ratings.length
-        ).toFixed(1)
-      : "0.0";
-
-  const getUserRating = (ratings = []) =>
-    ratings.find((item) => item?.userId === userId)?.rating || null;
+  // Buscar autor com base no authorId
+  useEffect(() => {
+    if (manga.authorId) {
+      fetchAuthorById(manga.authorId)
+        .then((author) => {
+          setAuthorName(author?.name || "Autor desconhecido");
+        })
+        .catch(() => {
+          setAuthorName("Erro ao carregar autor");
+        });
+    } else {
+      setAuthorName("Autor desconhecido");
+    }
+  }, [manga.authorId]);
 
   const statusColors = {
     "EM ANDAMENTO": "#40FF00",
@@ -26,42 +32,35 @@ const Content = ({ manga, userId, onRate }) => {
     default: "#777",
   };
 
-  const handleRatingChange = (event, newRating) => {
-    if (!userId) {
-      console.error("Erro: Usuário não autenticado. Não é possível avaliar.");
-      return;
-    }
-    if (onRate && newRating) {
-      onRate(userId, newRating);
-    } else {
-      console.warn("Erro ao enviar avaliação: Callback `onRate` não definido.");
-    }
-  };
-
   const handleViewComments = () => {
     if (!userId) {
       console.warn("Usuário não autenticado.");
       return;
     }
-    navigate(`/comments/${manga.id}`);
+    navigate(`/evaluations/${manga.id}`);
   };
 
-  const averageRating = calculateAverageRating(manga.ratings);
-  const userRating = getUserRating(manga.ratings);
   const status = manga.status?.toUpperCase() || "INDEFINIDO";
   const statusColor = statusColors[status] || statusColors.default;
 
   const ratingStyles = {
     "& .MuiRating-iconEmpty": { color: "#777" },
     "& .MuiRating-iconFilled": { color: "#EC7C01" },
-    "& .MuiRating-iconHover": { color: "#FFA500" },
     fontSize: { xs: "1em", sm: "1.1em", md: "1.2em", lg: "1.4em" },
+  };
+
+  const clickableStyles = {
+    cursor: "pointer",
+    ":hover": {
+      color: "#FF0000", // Cor vermelha no hover
+    },
   };
 
   const imageStyles = {
     width: "50%",
     borderRadius: "8px",
     boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
+    objectFit: "cover",
   };
 
   return (
@@ -69,9 +68,9 @@ const Content = ({ manga, userId, onRate }) => {
       <Box
         sx={{
           display: "flex",
-          flexDirection: "row",
-          gap: { xs: "1em", md: "1.4em", lg: "1.8em" },
-          marginTop: { xs: "1.2em", md: "1.4em", lg: "1.8em" },
+          flexDirection: { xs: "column", md: "row" },
+          gap: { xs: "1em", md: "1.4em" },
+          mt: { xs: "1.2em", md: "1.8em" },
         }}
       >
         <Box
@@ -87,7 +86,7 @@ const Content = ({ manga, userId, onRate }) => {
             className={styles.author}
             sx={{ fontSize: { xs: "0.8em", md: "1em", lg: "1.4em" } }}
           >
-            {manga.author}
+            {authorName}
           </Typography>
           <Box
             sx={{
@@ -98,29 +97,25 @@ const Content = ({ manga, userId, onRate }) => {
             }}
           >
             <Rating
-              name="rating-controlled"
-              value={userRating || 0}
-              precision={0.5}
-              size="small"
-              onChange={handleRatingChange}
+              name="average-rating"
+              value={parseFloat(manga.averageRating || 0)}
+              precision={0.1}
+              readOnly
               sx={ratingStyles}
             />
             <Typography variant="body2" sx={{ color: "var(--text-color)" }}>
-              {`(${averageRating})`}
+              {`(${manga.averageRating || "0.0"})`}
             </Typography>
-            <Button
-              variant="text"
-              onClick={handleViewComments}
+            <Box
               sx={{
                 display: "flex",
                 alignItems: "center",
-                color: "var(--text-color)",
-                textTransform: "none",
-                fontSize: { xs: "1em", sm: "1.2em", md: "1.4em" },
+                ...clickableStyles,
               }}
+              onClick={handleViewComments}
             >
-              <CommentIcon sx={{ ml: "12px" }} />
-            </Button>
+              <CommentIcon sx={{marginLeft: 1.4}}/>
+            </Box>
           </Box>
         </Box>
       </Box>
@@ -149,7 +144,8 @@ Content.propTypes = {
     id: PropTypes.string.isRequired,
     image: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
-    author: PropTypes.string.isRequired,
+    authorId: PropTypes.string,
+    averageRating: PropTypes.number, // Agora utilizando averageRating diretamente
     ratings: PropTypes.arrayOf(
       PropTypes.shape({
         userId: PropTypes.string.isRequired,
@@ -160,7 +156,6 @@ Content.propTypes = {
     status: PropTypes.string,
   }).isRequired,
   userId: PropTypes.string,
-  onRate: PropTypes.func,
 };
 
 export default Content;
