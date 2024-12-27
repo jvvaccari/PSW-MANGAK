@@ -4,15 +4,15 @@ import { Box, Typography, Rating } from "@mui/material";
 import CommentIcon from "@mui/icons-material/Comment";
 import { useNavigate } from "react-router-dom";
 import { fetchAuthorById, fetchEvaluations } from "../../services/api";
+import useAuth from "../contexts/useAuth"; // Importar o hook de autenticação
 import styles from "./Content.module.css";
 
-const Content = ({ manga, userId }) => {
+const Content = ({ manga }) => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [authorName, setAuthorName] = useState("Carregando autor...");
   const [averageRating, setAverageRating] = useState(0.0);
-  const [ratingsCount, setRatingsCount] = useState(0);
 
-  // Buscar autor com base no authorId
   useEffect(() => {
     if (manga.authorId) {
       fetchAuthorById(manga.authorId)
@@ -27,22 +27,18 @@ const Content = ({ manga, userId }) => {
     }
   }, [manga.authorId]);
 
-  // Buscar e calcular média das avaliações
   useEffect(() => {
     if (manga.id) {
       fetchEvaluations(manga.id)
-      .then((evaluations) => {
-        if (evaluations.length > 0) {
-          const totalRatings = evaluations.reduce((acc, evaluation) => acc + evaluation.rating, 0);
-          const average = totalRatings / evaluations.length;
-          setAverageRating(parseFloat(average.toFixed(1)));
-          setRatingsCount(evaluations.length);
-        }
-      })
-      
+        .then((evaluations) => {
+          if (evaluations.length > 0) {
+            const totalRatings = evaluations.reduce((acc, evaluation) => acc + evaluation.rating, 0);
+            const average = totalRatings / evaluations.length;
+            setAverageRating(parseFloat(average.toFixed(1)));
+          }
+        })
         .catch(() => {
           setAverageRating(0.0);
-          setRatingsCount(0);
         });
     }
   }, [manga.id]);
@@ -55,11 +51,12 @@ const Content = ({ manga, userId }) => {
   };
 
   const handleViewComments = () => {
-    if (!userId) {
+    if (!user?.id) {
       console.warn("Usuário não autenticado.");
       return;
     }
-    navigate(`/evaluations/${manga.id}/${userId}`);
+    console.log(user.id);
+    navigate(`/evaluations/${manga.id}/${user.id}`); // Use o ID do usuário autenticado
   };
 
   const status = manga.status?.toUpperCase() || "INDEFINIDO";
@@ -176,7 +173,6 @@ Content.propTypes = {
     yearPubli: PropTypes.string,
     status: PropTypes.string,
   }).isRequired,
-  userId: PropTypes.string,
 };
 
 export default Content;

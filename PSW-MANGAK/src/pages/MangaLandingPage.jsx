@@ -88,7 +88,7 @@ function MangaLandingPage() {
               image: manga.image || "",
               title: manga.title || "Título Desconhecido",
               authorId: manga.authorId || null,
-              averageRating: parseFloat(manga.averageRating || 0), // Convertendo para número
+              averageRating: parseFloat(manga.averageRating || 0),
               status: manga.status || "Status Desconhecido",
               yearPubli: manga.yearPubli || "????",
             }}
