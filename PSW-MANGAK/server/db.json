@@ -100,15 +100,23 @@
       "favorites": [
         "1"
       ]
+    },
+    {
+      "id": "1735281507553",
+      "username": "joao",
+      "email": "joao@gmail.com",
+      "password": "123",
+      "favorites": []
     }
   ],
   "evaluations": [
     {
+      "id": "37ab",
       "mangaId": "1",
-      "rating": 2.5,
-      "comment": "ccccc",
-      "timestamp": "2024-12-27T06:31:23.805Z",
-      "id": "f42e"
+      "userId": "1",
+      "rating": 5,
+      "comment": "acsada",
+      "timestamp": "2024-12-27T07:05:37.114Z"
     }
   ]
 }

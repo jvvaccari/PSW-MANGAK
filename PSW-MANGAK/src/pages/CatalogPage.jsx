@@ -1,18 +1,50 @@
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import MangaList from "../components/MangaList";
 import { Box, Typography, CircularProgress, Container } from "@mui/material";
 import MangaContext from "../contexts/MangaContext";
+import { fetchAuthorById } from "../../services/api";
 
 function CatalogPage() {
   const { mangas, loading, error } = useContext(MangaContext);
   const [searchTerm, setSearchTerm] = useState("");
+  const [mangasWithAuthors, setMangasWithAuthors] = useState([]);
   const navigate = useNavigate();
 
   const handleMangaClick = (id) => {
     navigate(`/manga/${id}`);
   };
+
+  useEffect(() => {
+    const fetchAuthors = async () => {
+      try {
+        const updatedMangas = await Promise.all(
+          mangas.map(async (manga) => {
+            const author = manga.authorId
+              ? await fetchAuthorById(manga.authorId)
+              : null;
+
+            return {
+              ...manga,
+              author: author ? author.name : "Autor desconhecido",
+            };
+          })
+        );
+        setMangasWithAuthors(updatedMangas);
+      } catch (error) {
+        console.error("Erro ao buscar autores:", error.message);
+        setMangasWithAuthors(mangas.map((manga) => ({
+          ...manga,
+          author: "Erro ao carregar autor",
+        })));
+      }
+    };
+
+    if (mangas?.length > 0) {
+      fetchAuthors();
+    }
+  }, [mangas]);
 
   if (loading) {
     return (
@@ -33,7 +65,7 @@ function CatalogPage() {
     return <Typography>{error}</Typography>;
   }
 
-  const filteredMangas = mangas.filter((manga) => {
+  const filteredMangas = mangasWithAuthors.filter((manga) => {
     const search = searchTerm.toLowerCase();
 
     return (
@@ -67,14 +99,12 @@ function CatalogPage() {
             }}
           >
             {filteredMangas?.length > 0 ? (
-              <>
-                <MangaList
-                  mangas={filteredMangas}
-                  searchTerm={searchTerm}
-                  onMangaClick={handleMangaClick}
-                  horizontalScroll
-                />
-              </>
+              <MangaList
+                mangas={filteredMangas}
+                searchTerm={searchTerm}
+                onMangaClick={handleMangaClick}
+                horizontalScroll
+              />
             ) : (
               <Typography
                 variant="subtitle1"

@@ -1,12 +1,28 @@
-import { useState, useEffect, useContext } from "react";
-import { Box, Typography, TextField, Container, Button, Rating, Avatar } from "@mui/material";
+import { useState, useEffect } from "react";
+import {
+  Box,
+  Typography,
+  TextField,
+  Container,
+  Button,
+  Rating,
+  Avatar,
+  CircularProgress,
+  Alert,
+} from "@mui/material";
 import Navbar from "../components/Navbar";
 import { useParams } from "react-router-dom";
-import { updateEvaluation, deleteEvaluation, fetchEvaluations } from "../../services/api";
-import UserContext from "../contexts/UserContext"; // Para acessar o userId
+import {
+  updateEvaluation,
+  deleteEvaluation,
+  fetchEvaluations,
+} from "../../services/api";
 
 export default function EvaluationPage() {
-  const { mangaId } = useParams();
+  const { mangaId, userId } = useParams();
+  console.log("Manga ID:", mangaId);
+  console.log("User ID:", userId);
+
   const [manga, setManga] = useState(null);
   const [author, setAuthor] = useState("");
   const [comments, setComments] = useState([]);
@@ -14,77 +30,87 @@ export default function EvaluationPage() {
   const [newRating, setNewRating] = useState(0);
   const [averageRating, setAverageRating] = useState(0.0);
   const [loading, setLoading] = useState(true);
-  const { userId } = useContext(UserContext); // Obtendo o userId do contexto
-  const [editingId, setEditingId] = useState(null); // ID do comentário sendo editado
+  const [error, setError] = useState("");
+  const [editingId, setEditingId] = useState(null);
+  const [submitting, setSubmitting] = useState(false);
 
-  // Buscar dados do mangá e avaliações
   useEffect(() => {
     const fetchMangaAndEvaluations = async () => {
+      setLoading(true);
+      setError("");
       try {
-        const mangaResponse = await fetch(`http://localhost:5001/mangas/${mangaId}`);
+        const mangaResponse = await fetch(
+          `http://localhost:5001/mangas/${mangaId}`
+        );
         if (!mangaResponse.ok) throw new Error("Erro ao buscar o mangá.");
         const mangaData = await mangaResponse.json();
         setManga(mangaData);
 
-        const authorResponse = await fetch(`http://localhost:5001/authors/${mangaData.authorId}`);
-        const authorData = authorResponse.ok ? await authorResponse.json() : { name: "Autor desconhecido" };
+        const authorResponse = await fetch(
+          `http://localhost:5001/authors/${mangaData.authorId}`
+        );
+        const authorData = authorResponse.ok
+          ? await authorResponse.json()
+          : { name: "Autor desconhecido" };
         setAuthor(authorData.name);
 
         const evaluations = await fetchEvaluations(mangaId);
         setComments(evaluations);
 
-        const average = evaluations.length > 0
-          ? (evaluations.reduce((acc, evaluation) => acc + evaluation.rating, 0) / evaluations.length).toFixed(1)
-          : 0.0;
+        const average =
+          evaluations.length > 0
+            ? (
+                evaluations.reduce(
+                  (acc, evaluation) => acc + evaluation.rating,
+                  0
+                ) / evaluations.length
+              ).toFixed(1)
+            : 0.0;
         setAverageRating(average);
-      } catch (error) {
-        console.error("Erro ao buscar mangá ou avaliações:", error.message);
+      } catch (err) {
+        console.error("Erro ao buscar mangá ou avaliações:", err.message);
+        setError("Erro ao carregar os dados. Tente novamente mais tarde.");
       } finally {
         setLoading(false);
       }
     };
+
     fetchMangaAndEvaluations();
   }, [mangaId]);
 
-  // Salvar ou atualizar comentário
   const handleSaveComment = async () => {
     if (!newComment.trim() || newRating === 0) {
-      alert("Preencha todos os campos antes de salvar.");
+      setError("Preencha todos os campos antes de salvar.");
       return;
     }
 
-    if (editingId) {
-      // Atualizar comentário existente
-      const updatedEvaluation = {
-        mangaId,
-        rating: newRating,
-        comment: newComment,
-        timestamp: new Date().toISOString(),
-      };
+    setSubmitting(true);
+    setError("");
 
-      try {
+    try {
+      if (editingId) {
+        const updatedEvaluation = {
+          mangaId,
+          userId,
+          rating: newRating,
+          comment: newComment,
+          timestamp: new Date().toISOString(),
+        };
         const updatedData = await updateEvaluation(editingId, updatedEvaluation);
         setComments((prevComments) =>
           prevComments.map((comment) =>
             comment.id === editingId ? { ...comment, ...updatedData } : comment
           )
         );
-        setEditingId(null); // Finaliza o modo de edição
-      } catch (error) {
-        console.error("Erro ao editar avaliação:", error.message);
-        alert("Erro ao editar avaliação.");
-      }
-    } else {
-      // Adicionar novo comentário
-      const newEntry = {
-        mangaId,
-        userId,
-        rating: newRating,
-        comment: newComment,
-        timestamp: new Date().toISOString(),
-      };
-
-      try {
+        setEditingId(null);
+      } else {
+        const newEntry = {
+          mangaId,
+          userId,
+          rating: newRating,
+          comment: newComment,
+          timestamp: new Date().toISOString(),
+        };
         const response = await fetch("http://localhost:5001/evaluations", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -94,68 +120,114 @@ export default function EvaluationPage() {
         if (!response.ok) throw new Error("Erro ao adicionar avaliação.");
         const createdEvaluation = await response.json();
         setComments([createdEvaluation, ...comments]);
-      } catch (error) {
-        console.error("Erro ao adicionar avaliação:", error.message);
-        alert("Erro ao adicionar avaliação.");
       }
+    } catch (err) {
+      console.error("Erro ao salvar avaliação:", err.message);
+      setError("Erro ao salvar avaliação. Tente novamente.");
+    } finally {
+      setNewComment("");
+      setNewRating(0);
+      setSubmitting(false);
     }
-
-    // Reseta os campos
-    setNewComment("");
-    setNewRating(0);
   };
 
-  // Entrar no modo de edição
   const handleEdit = (evaluation) => {
     setEditingId(evaluation.id);
     setNewComment(evaluation.comment);
     setNewRating(evaluation.rating);
   };
 
-  // Excluir avaliação
   const handleDeleteEvaluation = async (evaluationId) => {
     const evaluation = comments.find((comment) => comment.id === evaluationId);
 
     if (evaluation.userId !== userId) {
-      alert("Você não pode excluir avaliações de outros usuários.");
+      setError("Você não pode excluir avaliações de outros usuários.");
       return;
     }
 
     try {
       await deleteEvaluation(evaluationId);
       setComments(comments.filter((comment) => comment.id !== evaluationId));
-    } catch (error) {
-      console.error("Erro ao excluir avaliação:", error.message);
+    } catch (err) {
+      console.error("Erro ao excluir avaliação:", err.message);
+      setError("Erro ao excluir avaliação. Tente novamente.");
     }
   };
 
   if (loading) {
-    return <div style={{ color: "white", textAlign: "center", padding: "20px" }}>Carregando...</div>;
+    return (
+      <Box sx={{ color: "white", textAlign: "center", padding: "20px" }}>
+        <CircularProgress />
+      </Box>
+    );
   }
 
   if (!manga) {
-    return <div style={{ color: "white", textAlign: "center", padding: "20px" }}>Mangá não encontrado.</div>;
+    return (
+      <Box sx={{ color: "white", textAlign: "center", padding: "20px" }}>
+        Mangá não encontrado.
+      </Box>
+    );
   }
 
   return (
     <>
       <Navbar />
-      <Container sx={{ mt: 4, color: "#fff", backgroundColor: "#000", padding: "1em" }}>
+      <Container
+        sx={{ mt: 4, color: "#fff", backgroundColor: "#000", padding: "1em" }}
+      >
         <Box sx={{ mb: 4 }}>
           <Typography variant="h4" sx={{ color: "#fff", fontWeight: "bold" }}>
             {manga.title}
           </Typography>
-          <Typography variant="h6" sx={{ color: "#ccc" }}>{author}</Typography>
+          <Typography variant="h6" sx={{ color: "#ccc" }}>
+            {author}
+          </Typography>
         </Box>
 
-        <Box sx={{ display: "flex", alignItems: "center", mb: 2, gap: 2 }}>
-          <Typography variant="h5" sx={{ color: "#EC7C01" }}>{averageRating}</Typography>
-          <Rating name="read-only" value={parseFloat(averageRating)} precision={0.1} readOnly sx={{ color: "#EC7C01" }} />
-          <Typography variant="body2" sx={{ color: "#ccc" }}>({comments.length} avaliações)</Typography>
+        {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
+
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            mb: 2,
+            gap: 2,
+          }}
+        >
+          <Typography variant="h5" sx={{ color: "#EC7C01" }}>
+            {averageRating}
+          </Typography>
+          <Rating
+            name="read-only"
+            value={parseFloat(averageRating)}
+            precision={0.1}
+            readOnly
+            sx={{ color: "#EC7C01" }}
+          />
+          <Typography variant="body2" sx={{ color: "#ccc" }}>
+            ({comments.length} avaliações)
+          </Typography>
         </Box>
 
-        <Box sx={{ mb: 4, p: 3, backgroundColor: "var(--bg-color)", borderRadius: "8px", boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)" }}>
-          <Typography variant="h6" sx={{ color: "#fff", mb: 2, fontWeight: "bold", textAlign: "center" }}>
+        <Box
+          sx={{
+            mb: 4,
+            p: 3,
+            backgroundColor: "var(--bg-color)",
+            borderRadius: "8px",
+            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+          }}
+        >
+          <Typography
+            variant="h6"
+            sx={{
+              color: "#fff",
+              mb: 2,
+              fontWeight: "bold",
+              textAlign: "center",
+            }}
+          >
             {editingId ? "Editar Avaliação" : "Avalie e comente"}
           </Typography>
           <Rating
@@ -164,7 +236,11 @@ export default function EvaluationPage() {
             precision={0.5}
             size="large"
             onChange={(event, newValue) => setNewRating(newValue)}
-            sx={{ "& .MuiRating-iconEmpty": { color: "#EC7C01" }, "& .MuiRating-iconFilled": { color: "#EC7C01" }, fontSize: "2rem" }}
+            sx={{
+              "& .MuiRating-iconEmpty": { color: "#EC7C01" },
+              "& .MuiRating-iconFilled": { color: "#EC7C01" },
+              fontSize: "2rem",
+            }}
           />
           <TextField
             label="Escreva um comentário"
@@ -196,24 +272,51 @@ export default function EvaluationPage() {
               fontWeight: "bold",
               "&:hover": { backgroundColor: "#CC002A" },
             }}
-            disabled={!newComment || !newRating}
+            disabled={!newComment || !newRating || submitting}
           >
-            {editingId ? "Salvar" : "Enviar"}
+            {submitting ? (
+              <CircularProgress size={24} sx={{ color: "#fff" }} />
+            ) : editingId ? "Salvar" : "Enviar"}
           </Button>
         </Box>
 
         <Box>
           {comments.map((comment) => (
-            <Box key={comment.id} sx={{ mb: 3, borderBottom: "1px solid #444", pb: 2, color: "#fff" }}>
-              <Box sx={{ display: "flex", alignItems: "center", mb: 1, gap: 2 }}>
-                <Avatar alt={`Usuário ${comment.userId}`} src={comment.avatar || ""} />
+            <Box
+              key={comment.id}
+              sx={{
+                mb: 3,
+                borderBottom: "1px solid #444",
+                pb: 2,
+                color: "#fff",
+              }}
+            >
+              <Box
+                sx={{ display: "flex", alignItems: "center", mb: 1, gap: 2 }}
+              >
+                <Avatar
+                  alt={`Usuário ${comment.userId || "Desconhecido"}`}
+                  src={comment.avatar || ""}
+                />
                 <Box>
-                  <Typography variant="subtitle1" sx={{ color: "#fff" }}>Usuário {comment.userId}</Typography>
-                  <Typography variant="caption" sx={{ color: "#fff" }}>{new Date(comment.timestamp).toLocaleString()}</Typography>
+                  <Typography variant="subtitle1" sx={{ color: "#fff" }}>
+                    Usuário {comment.userId || "Desconhecido"}
+                  </Typography>
+                  <Typography variant="caption" sx={{ color: "#fff" }}>
+                    {new Date(comment.timestamp).toLocaleString()}
+                  </Typography>
                 </Box>
               </Box>
-              <Rating name={`rating-${comment.id}`} value={comment.rating} precision={0.5} readOnly sx={{ color: "#EC7C01" }} />
-              <Typography variant="body2" sx={{ mt: 1, color: "#ccc" }}>{comment.comment}</Typography>
+              <Rating
+                name={`rating-${comment.id}`}
+                value={comment.rating}
+                precision={0.5}
+                readOnly
+                sx={{ color: "#EC7C01" }}
+              />
+              <Typography variant="body2" sx={{ mt: 1, color: "#ccc" }}>
+                {comment.comment}
+              </Typography>
 
               {comment.userId === userId && (
                 <Box sx={{ display: "flex", gap: 2, mt: 1 }}>
@@ -222,10 +325,7 @@ export default function EvaluationPage() {
                     sx={{
                       color: "#FF0037",
                       borderColor: "#FF0037",
-                      "&:hover": {
-                        backgroundColor: "#FF0037",
-                        color: "#fff",
-                      },
+                      "&:hover": { backgroundColor: "#FF0037", color: "#fff" },
                     }}
                     onClick={() => handleEdit(comment)}
                   >
@@ -236,10 +336,7 @@ export default function EvaluationPage() {
                     sx={{
                       color: "#FF0037",
                       borderColor: "#FF0037",
-                      "&:hover": {
-                        backgroundColor: "#FF0037",
-                        color: "#fff",
-                      },
+                      "&:hover": { backgroundColor: "#FF0037", color: "#fff" },
                     }}
                     onClick={() => handleDeleteEvaluation(comment.id)}
                   >

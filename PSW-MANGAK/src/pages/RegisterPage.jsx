@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Typography, Box, Button, Paper, CircularProgress } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import PropTypes from "prop-types"; 
 import useAuth from "../contexts/useAuth";
 import backgroundImage from "../assets/img/login-background.jpg";
 import StyledTextField from "../components/StyledTextField";
@@ -55,7 +54,7 @@ export default function RegisterPage() {
         backgroundRepeat: "no-repeat",
       }}
     >
-     <Navbar/>
+      <Navbar />
 
       <Box
         sx={{
@@ -90,32 +89,45 @@ export default function RegisterPage() {
               label="Nome de Usuário"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
+              fullWidth
+              required
             />
             <StyledTextField
               label="Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              fullWidth
+              required
             />
             <StyledTextField
               label="Senha"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              fullWidth
+              required
             />
             <StyledTextField
               label="Confirmar Senha"
               type="password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
+              fullWidth
+              required
             />
             {error && (
-              <Typography variant="body2" color="error" sx={{ marginBottom: "16px" }}>
+              <Typography
+                variant="body2"
+                color="error"
+                sx={{ marginBottom: "16px" }}
+              >
                 {error}
               </Typography>
             )}
             <Button
               fullWidth
               variant="contained"
+              type="submit"
               disabled={loading}
               sx={{
                 bgcolor: "#FF0037",
@@ -127,10 +139,15 @@ export default function RegisterPage() {
                 "&:hover": { bgcolor: "#CC002A" },
                 "@media (min-width: 600px)": {
                   padding: "10px 0",
-                  fontSize: "1rem",}}}
-                  onclick={handleSubmit}
+                  fontSize: "1rem",
+                },
+              }}
             >
-              {loading ? <CircularProgress size={24} sx={{ color: "#fff" }} /> : "Registrar"}
+              {loading ? (
+                <CircularProgress size={24} sx={{ color: "#fff" }} />
+              ) : (
+                "Registrar"
+              )}
             </Button>
           </form>
         </Paper>
@@ -138,13 +155,3 @@ export default function RegisterPage() {
     </Box>
   );
 }
-
-RegisterPage.propTypes = {
-  mangas: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-      title: PropTypes.string.isRequired,
-      author: PropTypes.string.isRequired,
-    })
-  ).isRequired,
-};

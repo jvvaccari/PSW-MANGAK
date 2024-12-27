@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import { Suspense, lazy, useEffect } from "react";
+import { Suspense, lazy } from "react";
 import { AuthProvider } from "./contexts/AuthContext";
 import { MangaProvider } from "./contexts/MangaContext";
 import { UserProvider } from "./contexts/UserContext";
@@ -16,15 +16,6 @@ const RegisterPage = lazy(() => import("./pages/RegisterPage"));
 const EvaluationPage = lazy(() => import("./pages/EvaluationPage"));
 
 const App = () => {
-  useEffect(() => {
-    import("./pages/ProfilePage");
-    import("./pages/LoginPage");
-    import("./pages/FavoritesPage");
-    import("./pages/AdminPage");
-    import("./pages/RegisterPage");
-    import("./pages/EvaluationPage");
-  }, []);
-
   return (
     <AuthProvider>
       <UserProvider>
@@ -38,7 +29,7 @@ const App = () => {
                     justifyContent: "center",
                     alignItems: "center",
                     minHeight: "100vh",
-                    bgcolor: "var(--bg-page-colorr)",
+                    bgcolor: "var(--bg-page-color)",
                   }}
                 >
                   <CircularProgress />
@@ -76,13 +67,14 @@ const App = () => {
                   }
                 />
                 <Route
-                  path="/evaluations/:mangaId"
-                  element={
-                    <ProtectedRoute>
-                      <EvaluationPage />
-                    </ProtectedRoute>
-                  }
-                />
+  path="/evaluations/:mangaId/:userId"
+  element={
+    <ProtectedRoute>
+      <EvaluationPage />
+    </ProtectedRoute>
+  }
+/>
+
                 <Route path="*" element={<CatalogPage />} />
               </Routes>
             </Suspense>

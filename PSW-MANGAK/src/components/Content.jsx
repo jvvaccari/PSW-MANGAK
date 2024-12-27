@@ -9,6 +9,7 @@ import styles from "./Content.module.css";
 const Content = ({ manga, userId }) => {
   const navigate = useNavigate();
   const [authorName, setAuthorName] = useState("Carregando autor...");
+  const [averageRating, setAverageRating] = useState(0.0);
 
   // Buscar autor com base no authorId
   useEffect(() => {
@@ -25,6 +26,17 @@ const Content = ({ manga, userId }) => {
     }
   }, [manga.authorId]);
 
+  // Calcular média das avaliações
+  useEffect(() => {
+    if (manga.ratings && manga.ratings.length > 0) {
+      const totalRatings = manga.ratings.reduce((acc, rating) => acc + rating.rating, 0);
+      const average = (totalRatings / manga.ratings.length).toFixed(1);
+      setAverageRating(parseFloat(average));
+    } else {
+      setAverageRating(0.0);
+    }
+  }, [manga.ratings]);
+
   const statusColors = {
     "EM ANDAMENTO": "#40FF00",
     "EM HIATO": "#FFE100",
@@ -37,7 +49,7 @@ const Content = ({ manga, userId }) => {
       console.warn("Usuário não autenticado.");
       return;
     }
-    navigate(`/evaluations/${manga.id}`);
+    navigate(`/evaluations/${manga.id}/${userId}`);
   };
 
   const status = manga.status?.toUpperCase() || "INDEFINIDO";
@@ -98,13 +110,13 @@ const Content = ({ manga, userId }) => {
           >
             <Rating
               name="average-rating"
-              value={parseFloat(manga.averageRating || 0)}
+              value={averageRating}
               precision={0.1}
               readOnly
               sx={ratingStyles}
             />
             <Typography variant="body2" sx={{ color: "var(--text-color)" }}>
-              {`(${manga.averageRating || "0.0"})`}
+              {`(${averageRating})`}
             </Typography>
             <Box
               sx={{
@@ -114,7 +126,7 @@ const Content = ({ manga, userId }) => {
               }}
               onClick={handleViewComments}
             >
-              <CommentIcon sx={{marginLeft: 1.4}}/>
+              <CommentIcon sx={{ marginLeft: 1.4 }} />
             </Box>
           </Box>
         </Box>
@@ -145,7 +157,7 @@ Content.propTypes = {
     image: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
     authorId: PropTypes.string,
-    averageRating: PropTypes.number, // Agora utilizando averageRating diretamente
+    averageRating: PropTypes.number,
     ratings: PropTypes.arrayOf(
       PropTypes.shape({
         userId: PropTypes.string.isRequired,
