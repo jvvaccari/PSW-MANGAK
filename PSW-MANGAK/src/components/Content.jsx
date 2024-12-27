@@ -3,13 +3,14 @@ import { useState, useEffect } from "react";
 import { Box, Typography, Rating } from "@mui/material";
 import CommentIcon from "@mui/icons-material/Comment";
 import { useNavigate } from "react-router-dom";
-import { fetchAuthorById } from "../../services/api";
+import { fetchAuthorById, fetchEvaluations } from "../../services/api";
 import styles from "./Content.module.css";
 
 const Content = ({ manga, userId }) => {
   const navigate = useNavigate();
   const [authorName, setAuthorName] = useState("Carregando autor...");
   const [averageRating, setAverageRating] = useState(0.0);
+  const [ratingsCount, setRatingsCount] = useState(0);
 
   // Buscar autor com base no authorId
   useEffect(() => {
@@ -26,16 +27,25 @@ const Content = ({ manga, userId }) => {
     }
   }, [manga.authorId]);
 
-  // Calcular média das avaliações
+  // Buscar e calcular média das avaliações
   useEffect(() => {
-    if (manga.ratings && manga.ratings.length > 0) {
-      const totalRatings = manga.ratings.reduce((acc, rating) => acc + rating.rating, 0);
-      const average = (totalRatings / manga.ratings.length).toFixed(1);
-      setAverageRating(parseFloat(average));
-    } else {
-      setAverageRating(0.0);
+    if (manga.id) {
+      fetchEvaluations(manga.id)
+      .then((evaluations) => {
+        if (evaluations.length > 0) {
+          const totalRatings = evaluations.reduce((acc, evaluation) => acc + evaluation.rating, 0);
+          const average = totalRatings / evaluations.length;
+          setAverageRating(parseFloat(average.toFixed(1)));
+          setRatingsCount(evaluations.length);
+        }
+      })
+      
+        .catch(() => {
+          setAverageRating(0.0);
+          setRatingsCount(0);
+        });
     }
-  }, [manga.ratings]);
+  }, [manga.id]);
 
   const statusColors = {
     "EM ANDAMENTO": "#40FF00",
@@ -64,7 +74,7 @@ const Content = ({ manga, userId }) => {
   const clickableStyles = {
     cursor: "pointer",
     ":hover": {
-      color: "#FF0000", // Cor vermelha no hover
+      color: "#FF0000",
     },
   };
 
@@ -104,7 +114,7 @@ const Content = ({ manga, userId }) => {
             sx={{
               display: "flex",
               alignItems: "center",
-              gap: "6px",
+              gap: "10px",
               mt: { xs: 1, md: 1.2 },
             }}
           >
@@ -157,7 +167,6 @@ Content.propTypes = {
     image: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
     authorId: PropTypes.string,
-    averageRating: PropTypes.number,
     ratings: PropTypes.arrayOf(
       PropTypes.shape({
         userId: PropTypes.string.isRequired,

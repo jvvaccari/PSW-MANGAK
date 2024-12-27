@@ -15,7 +15,7 @@ const FavoritesPage = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!user) {
+    if (!user || !user.id) {
       setError("Você precisa estar logado para acessar seus favoritos.");
       setLoading(false);
       navigate("/login");
@@ -25,9 +25,16 @@ const FavoritesPage = () => {
     const loadFavorites = async () => {
       try {
         const data = await fetchFavorites(user.id);
+
+        if (!data || data.length === 0) {
+          setError("Nenhum favorito encontrado.");
+          return;
+        }
+
         setFavorites(data);
-      } catch {
-        setError("Erro ao carregar seus favoritos.");
+      } catch (err) {
+        console.error("Erro ao carregar favoritos:", err.message);
+        setError("Erro ao carregar seus favoritos. Verifique sua conexão de rede.");
       } finally {
         setLoading(false);
       }
@@ -37,7 +44,7 @@ const FavoritesPage = () => {
   }, [user, navigate]);
 
   const filteredFavorites = favorites.filter((manga) =>
-    manga.title.toLowerCase().includes(searchTerm.toLowerCase())
+    manga.title?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   if (loading) {
@@ -68,7 +75,11 @@ const FavoritesPage = () => {
       >
         <Typography
           variant="subtitle1"
-          sx={{ fontWeight: 700, fontSize: "1.4em", color: "red" }}
+          sx={{
+            fontWeight: 700,
+            fontSize: "1.4em",
+            color: error.includes("rede") ? "orange" : "red",
+          }}
         >
           {error}
         </Typography>
@@ -118,6 +129,7 @@ const FavoritesPage = () => {
                   searchTerm={searchTerm}
                   onMangaClick={(id) => navigate(`/manga/${id}`)}
                   horizontalScroll
+                  sx={{ marginTop: "16px" }}
                 />
               </>
             ) : (

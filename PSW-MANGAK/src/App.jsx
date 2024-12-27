@@ -67,13 +67,13 @@ const App = () => {
                   }
                 />
                 <Route
-  path="/evaluations/:mangaId/:userId"
-  element={
-    <ProtectedRoute>
-      <EvaluationPage />
-    </ProtectedRoute>
-  }
-/>
+                  path="/evaluations/:mangaId/:userId"
+                  element={
+                    <ProtectedRoute>
+                      <EvaluationPage />
+                    </ProtectedRoute>
+                  }
+                />
 
                 <Route path="*" element={<CatalogPage />} />
               </Routes>

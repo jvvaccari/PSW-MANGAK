@@ -11,19 +11,28 @@ const Actions = ({ mangaId }) => {
 
   const fetchAndUpdateFavorite = useCallback(async (add) => {
     if (!user?.id) return console.warn("Usuário não autenticado.");
-
+  
     try {
-      const { favorites = [] } = await fetchAccountById(user.id) || {};
+      const account = await fetchAccountById(user.id);
+  
+      if (!account) throw new Error("Usuário não encontrado");
+  
       const updatedFavorites = add
-        ? Array.from(new Set([...favorites, mangaId]))
-        : favorites.filter((id) => id !== mangaId);
-
-      await updateAccount(user.id, { favorites: updatedFavorites });
+        ? Array.from(new Set([...account.favorites, mangaId]))
+        : account.favorites.filter((id) => id !== mangaId);
+  
+      const updatedAccount = {
+        ...account, // Inclui todas as propriedades existentes
+        favorites: updatedFavorites, // Atualiza apenas os favoritos
+      };
+  
+      await updateAccount(user.id, updatedAccount);
       setFavorite(add);
     } catch (err) {
       console.error("Erro ao atualizar favoritos:", err);
     }
   }, [user?.id, mangaId]);
+  
 
   useEffect(() => {
     if (user?.id) {

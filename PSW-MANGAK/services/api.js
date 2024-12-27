@@ -1,6 +1,5 @@
 import axios from "axios";
 
-// Configuração básica da API
 const API_URL = "http://localhost:5001";
 const axiosInstance = axios.create({
   baseURL: API_URL,
@@ -18,7 +17,6 @@ export const fetchEvaluationById = async (evaluationId) => {
   }
 };
 
-// Função para tratar erros
 const handleError = (error, customMessage = "Erro inesperado") => {
   const status = error.response?.status || "Sem status";
   const details = error.response?.data || "Sem detalhes";
@@ -26,14 +24,12 @@ const handleError = (error, customMessage = "Erro inesperado") => {
   throw new Error(`${customMessage}: ${details}`);
 };
 
-// Função auxiliar para validar IDs
 const validateId = (id, type = "genérico") => {
   if (!id || typeof id !== "string") {
     throw new Error(`ID inválido para ${type}. Deve ser uma string válida.`);
   }
 };
 
-// Função genérica para buscar um recurso por ID
 const fetchById = async (endpoint, id, type) => {
   try {
     validateId(id, type);
@@ -44,7 +40,6 @@ const fetchById = async (endpoint, id, type) => {
   }
 };
 
-// Função genérica para atualizar um recurso
 const updateById = async (endpoint, id, data, type) => {
   try {
     validateId(id, type);
@@ -55,13 +50,9 @@ const updateById = async (endpoint, id, data, type) => {
   }
 };
 
-// Funções específicas
-
-// Autores
 export const fetchAuthorById = async (authorId) =>
   fetchById("authors", authorId, "autor");
 
-// Mangás
 export const fetchMangas = async () => {
   try {
     const response = await axiosInstance.get("/mangas");
@@ -95,7 +86,6 @@ export const deleteManga = async (id) => {
   }
 };
 
-// Contas
 export const fetchAccountById = async (id) =>
   fetchById("accounts", id, "conta");
 
@@ -112,7 +102,6 @@ export const deleteAccount = async (id) => {
   }
 };
 
-// Favoritos
 export const fetchFavorites = async (userId) => {
   try {
     validateId(userId, "usuário");
@@ -128,25 +117,41 @@ export const updateFavorites = async (userId, mangaId, action) => {
   try {
     validateId(userId, "usuário");
     validateId(mangaId, "mangá");
+
+    // Buscar os dados completos do usuário
     const account = await fetchAccountById(userId);
 
+    if (!account || typeof account !== "object") {
+      throw new Error("Usuário não encontrado ou dados inválidos");
+    }
+
+    // Atualizar a lista de favoritos
     const updatedFavorites =
       action === "add"
-        ? [...new Set([...account.favorites, mangaId])]
-        : account.favorites.filter((id) => id !== mangaId);
+        ? [...new Set([...account.favorites, mangaId])] // Adicionar favoritos únicos
+        : account.favorites.filter((id) => id !== mangaId); // Remover o favorito
 
-    return await updateAccount(userId, {
-      ...account,
-      favorites: updatedFavorites,
-    });
+    // Criar um objeto atualizado para preservar todos os dados existentes
+    const updatedAccount = {
+      ...account, // Preserva todas as propriedades do usuário
+      favorites: updatedFavorites, // Atualiza apenas os favoritos
+    };
+
+    // Atualizar a conta com os dados mesclados
+    return await updateAccount(userId, updatedAccount);
   } catch (error) {
-    handleError(error, `Erro ao ${action === "add" ? "adicionar" : "remover"} favorito`);
+    handleError(
+      error,
+      `Erro ao ${action === "add" ? "adicionar" : "remover"} favorito`
+    );
   }
 };
 
 export const fetchEvaluations = async (mangaId) => {
   try {
-    const response = await axios.get(`http://localhost:5001/evaluations?mangaId=${mangaId}`);
+    const response = await axios.get(
+      `http://localhost:5001/evaluations?mangaId=${mangaId}`
+    );
     if (response.status !== 200 || !response.data) {
       throw new Error("Erro ao buscar avaliações");
     }
@@ -156,7 +161,6 @@ export const fetchEvaluations = async (mangaId) => {
     return [];
   }
 };
-
 
 export const postEvaluation = async (mangaId, evaluationData) => {
   try {
@@ -173,7 +177,10 @@ export const postEvaluation = async (mangaId, evaluationData) => {
 
 export const updateEvaluation = async (evaluationId, updatedData) => {
   try {
-    const response = await axiosInstance.put(`/evaluations/${evaluationId}`, updatedData);
+    const response = await axiosInstance.put(
+      `/evaluations/${evaluationId}`,
+      updatedData
+    );
     console.log("Resposta do backend ao atualizar:", response.data);
     return response.data;
   } catch (error) {
@@ -181,7 +188,6 @@ export const updateEvaluation = async (evaluationId, updatedData) => {
     throw error;
   }
 };
-
 
 export const deleteEvaluation = async (evaluationId) => {
   try {

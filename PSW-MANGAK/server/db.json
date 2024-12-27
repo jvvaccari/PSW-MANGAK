@@ -19,11 +19,11 @@
         "https://wallpapers.com/images/hd/itadori-hand-jujutsu-kaisen-iphone-483xqcsa46culk5s.jpg",
         "https://i.pinimg.com/736x/fa/8b/5a/fa8b5ae4ac6f2398b4e0cccdfcf80983.jpg",
         "https://wallpapers.com/images/hd/sleeping-itadori-and-sukuna-reflection-jujutsu-kaisen-phone-iq0fzvcstqnjguj6.jpg",
-        "https://wallpaper4k.top/wp-content/uploads/2024/02/Fundo-de-Tela-Jujutsu-Kaisen-4k-para-Celular-Samsung-473x1024.jpg",
+        "https://get.wallhere.com/photo/Jujutsu-Kaisen-anime-tv-series-1965741.jpg",
         "https://wallpapers.com/images/hd/sukuna-markings-yuji-itadori-jujutsu-kaisen-phone-jcnto771g11t36s8.jpg",
         "https://pbs.twimg.com/media/E12nRHkXIAMjmRO?format=jpg&name=large",
         "https://wallpapers.com/images/hd/minimalist-yuji-itadori-fanart-jujutsu-kaisen-phone-04anu0a01q2hjzoh.jpg",
-        "https://wallpaper4k.top/wp-content/uploads/2024/02/Papel-de-Parede-4k-Jujutsu-Kaisen-Smartphone-473x1024.jpg"
+        "https://wallpaper.forfun.com/fetch/e4/e4d2ad2eb97288526e86fc0e1015eae2.jpeg?h=900&r=0.5"
       ],
       "retail": [
         {
@@ -87,7 +87,7 @@
       "id": "adm",
       "username": "adm",
       "email": "adm@gmail.com",
-      "password": "flasco123",
+      "password": "123",
       "role": "admin",
       "favorites": []
     },
@@ -100,23 +100,16 @@
       "favorites": [
         "1"
       ]
-    },
-    {
-      "id": "1735281507553",
-      "username": "joao",
-      "email": "joao@gmail.com",
-      "password": "123",
-      "favorites": []
     }
   ],
   "evaluations": [
     {
-      "id": "37ab",
+      "id": "06b5",
       "mangaId": "1",
-      "userId": "1",
-      "rating": 5,
-      "comment": "acsada",
-      "timestamp": "2024-12-27T07:05:37.114Z"
+      "userId": "1735281507553",
+      "rating": 4.5,
+      "comment": "Adorei! Estão de parabéns!",
+      "timestamp": "2024-12-27T15:02:43.924Z"
     }
   ]
 }
