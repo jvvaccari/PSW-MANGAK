@@ -4,8 +4,9 @@ import { Box, Typography, Rating } from "@mui/material";
 import CommentIcon from "@mui/icons-material/Comment";
 import { useNavigate } from "react-router-dom";
 import { fetchAuthorById, fetchEvaluations } from "../../services/api";
-import useAuth from "../contexts/useAuth"; // Importar o hook de autenticação
+import useAuth from "../contexts/useAuth";
 import styles from "./Content.module.css";
+import { Link } from "react-router-dom";
 
 const Content = ({ manga }) => {
   const navigate = useNavigate();
@@ -32,7 +33,10 @@ const Content = ({ manga }) => {
       fetchEvaluations(manga.id)
         .then((evaluations) => {
           if (evaluations.length > 0) {
-            const totalRatings = evaluations.reduce((acc, evaluation) => acc + evaluation.rating, 0);
+            const totalRatings = evaluations.reduce(
+              (acc, evaluation) => acc + evaluation.rating,
+              0
+            );
             const average = totalRatings / evaluations.length;
             setAverageRating(parseFloat(average.toFixed(1)));
           }
@@ -56,7 +60,7 @@ const Content = ({ manga }) => {
       return;
     }
     console.log(user.id);
-    navigate(`/evaluations/${manga.id}/${user.id}`); // Use o ID do usuário autenticado
+    navigate(`/evaluations/${manga.id}/${user.id}`);
   };
 
   const status = manga.status?.toUpperCase() || "INDEFINIDO";
@@ -103,9 +107,17 @@ const Content = ({ manga }) => {
           <Typography
             variant="body2"
             className={styles.author}
-            sx={{ fontSize: { xs: "0.8em", md: "1em", lg: "1.4em" } }}
+            sx={{
+              fontSize: { xs: "0.8em", md: "1em", lg: "1.4em" },
+              ...clickableStyles,
+            }}
           >
-            {authorName}
+            <Link
+              to={`/author/${manga.authorId}`}
+              style={{ textDecoration: "none", color: "inherit" }} 
+            >
+              {authorName}
+            </Link>
           </Typography>
           <Box
             sx={{

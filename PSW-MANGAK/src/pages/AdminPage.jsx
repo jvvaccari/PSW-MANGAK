@@ -1,7 +1,12 @@
 import { useContext, useState, useEffect } from "react";
 import { Box, Button, TextField, Typography, IconButton } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
-import { updateManga, createManga, deleteManga, fetchMangas } from "../../services/api";
+import {
+  updateManga,
+  createManga,
+  deleteManga,
+  fetchMangas,
+} from "../../services/api";
 import MangaContext from "../contexts/MangaContext";
 import EditIcon from "@mui/icons-material/Edit";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -33,7 +38,10 @@ const AdminPage = () => {
   };
 
   const handleArrayFieldChange = (field, value) => {
-    setFormData((prev) => ({ ...prev, [field]: value.split(",").map((v) => v.trim()) }));
+    setFormData((prev) => ({
+      ...prev,
+      [field]: value.split(",").map((v) => v.trim()),
+    }));
   };
 
   const handleSaveClick = async () => {
@@ -58,7 +66,11 @@ const AdminPage = () => {
 
   const handleEditClick = (row) => {
     setEditingRow(row);
-    setFormData({ ...row, genres: row.genres?.join(", "), artsList: row.artsList?.join(", ") });
+    setFormData({
+      ...row,
+      genres: row.genres?.join(", "),
+      artsList: row.artsList?.join(", "),
+    });
   };
 
   const handleDeleteClick = async (id) => {
@@ -106,13 +118,28 @@ const AdminPage = () => {
     { label: "Ano de Publicação", field: "yearPubli" },
     { label: "Status", field: "status" },
     { label: "Demografia", field: "demographic" },
-    { label: "Gêneros (separados por vírgulas)", field: "genres", isArray: true },
-    { label: "Lista de Artes (URLs separadas por vírgulas)", field: "artsList", isArray: true },
+    {
+      label: "Gêneros (separados por vírgulas)",
+      field: "genres",
+      isArray: true,
+    },
+    {
+      label: "Lista de Artes (URLs separadas por vírgulas)",
+      field: "artsList",
+      isArray: true,
+    },
     { label: "Imagem", field: "image" },
   ];
 
   return (
-    <Box sx={{ padding: "20px", backgroundColor: "#1E1E1E", minHeight: "100vh", color: "#FFF" }}>
+    <Box
+      sx={{
+        padding: "20px",
+        backgroundColor: "#1E1E1E",
+        minHeight: "100vh",
+        color: "#FFF",
+      }}
+    >
       <Box sx={{ display: "flex", alignItems: "center", marginBottom: "20px" }}>
         <IconButton onClick={() => navigate(-1)} sx={{ color: "#FFF" }}>
           <ArrowBackIcon />
@@ -196,7 +223,18 @@ const AdminPage = () => {
             >
               Salvar
             </Button>
-            <Button onClick={handleCancelClick} variant="outlined">
+            <Button
+              onClick={handleCancelClick}
+              variant="outlined"
+              sx={{
+                color: "#FF0037",
+                borderColor: "#FF0037",
+                "&:hover": {
+                  backgroundColor: "#FF003780",
+                  color: "#FFF",
+                },
+              }}
+            >
               Cancelar
             </Button>
           </Box>

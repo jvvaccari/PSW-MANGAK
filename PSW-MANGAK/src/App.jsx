@@ -14,6 +14,7 @@ const FavoritesPage = lazy(() => import("./pages/FavoritesPage"));
 const AdminPage = lazy(() => import("./pages/AdminPage"));
 const RegisterPage = lazy(() => import("./pages/RegisterPage"));
 const EvaluationPage = lazy(() => import("./pages/EvaluationPage"));
+const AuthorDetails = lazy(() => import("./pages/AuthorPage") )
 
 const App = () => {
   return (
@@ -74,6 +75,8 @@ const App = () => {
                     </ProtectedRoute>
                   }
                 />
+                <Route path="/author/:authorId" element={<AuthorDetails />} />
+
 
                 <Route path="*" element={<CatalogPage />} />
               </Routes>

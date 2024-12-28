@@ -34,6 +34,71 @@ export default function EvaluationPage() {
   const [editingId, setEditingId] = useState(null);
   const [submitting, setSubmitting] = useState(false);
 
+  const fetchAccountById = async (id) => {
+    try {
+      const response = await fetch(`http://localhost:5001/accounts/${id}`);
+      if (!response.ok) throw new Error("Erro ao buscar usuário.");
+      return await response.json();
+    } catch (error) {
+      console.error(`Erro ao buscar o usuário com ID ${id}:`, error.message);
+      return { username: "Usuário desconhecido" };
+    }
+  };
+
+  useEffect(() => {
+    const fetchMangaAndEvaluations = async () => {
+      setLoading(true);
+      setError("");
+
+      try {
+        const mangaResponse = await fetch(
+          `http://localhost:5001/mangas/${mangaId}`
+        );
+        if (!mangaResponse.ok) throw new Error("Erro ao buscar o mangá.");
+        const mangaData = await mangaResponse.json();
+        setManga(mangaData);
+
+        const authorResponse = await fetch(
+          `http://localhost:5001/authors/${mangaData.authorId}`
+        );
+        const authorData = authorResponse.ok
+          ? await authorResponse.json()
+          : { name: "Autor desconhecido" };
+        setAuthor(authorData.name);
+
+        const evaluations = await fetchEvaluations(mangaId);
+
+        // Busca usernames associados às avaliações
+        const evaluationsWithUsernames = await Promise.all(
+          evaluations.map(async (evaluation) => {
+            const user = await fetchAccountById(evaluation.userId);
+            return { ...evaluation, username: user.username };
+          })
+        );
+
+        setComments(evaluationsWithUsernames);
+
+        const average =
+          evaluations.length > 0
+            ? (
+                evaluations.reduce(
+                  (acc, evaluation) => acc + evaluation.rating,
+                  0
+                ) / evaluations.length
+              ).toFixed(1)
+            : 0.0;
+        setAverageRating(average);
+      } catch (err) {
+        console.error("Erro ao buscar mangá ou avaliações:", err.message);
+        setError("Erro ao carregar os dados. Tente novamente mais tarde.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMangaAndEvaluations();
+  }, [mangaId]);
+
   useEffect(() => {
     const fetchMangaAndEvaluations = async () => {
       setLoading(true);
@@ -96,7 +161,10 @@ export default function EvaluationPage() {
           comment: newComment,
           timestamp: new Date().toISOString(),
         };
-        const updatedData = await updateEvaluation(editingId, updatedEvaluation);
+        const updatedData = await updateEvaluation(
+          editingId,
+          updatedEvaluation
+        );
         setComments((prevComments) =>
           prevComments.map((comment) =>
             comment.id === editingId ? { ...comment, ...updatedData } : comment
@@ -176,7 +244,7 @@ export default function EvaluationPage() {
       <Container
         sx={{ mt: 4, color: "#fff", backgroundColor: "#000", padding: "1em" }}
       >
-        <Box sx={{ mb: 4 }}>
+        <Box sx={{ mb: 12 }}>
           <Typography variant="h4" sx={{ color: "#fff", fontWeight: "bold" }}>
             {manga.title}
           </Typography>
@@ -185,7 +253,11 @@ export default function EvaluationPage() {
           </Typography>
         </Box>
 
-        {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
+        {error && (
+          <Alert severity="error" sx={{ mb: 2 }}>
+            {error}
+          </Alert>
+        )}
 
         <Box
           sx={{
@@ -276,7 +348,11 @@ export default function EvaluationPage() {
           >
             {submitting ? (
               <CircularProgress size={24} sx={{ color: "#fff" }} />
-            ) : editingId ? "Salvar" : "Enviar"}
+            ) : editingId ? (
+              "Salvar"
+            ) : (
+              "Enviar"
+            )}
           </Button>
         </Box>
 
@@ -295,13 +371,16 @@ export default function EvaluationPage() {
                 sx={{ display: "flex", alignItems: "center", mb: 1, gap: 2 }}
               >
                 <Avatar
-                  alt={`Usuário ${comment.userId || "Desconhecido"}`}
+                  alt={`Avatar de ${comment.username || "Desconhecido"}`}
                   src={comment.avatar || ""}
                 />
                 <Box>
                   <Typography variant="subtitle1" sx={{ color: "#fff" }}>
-                    Usuário {comment.userId || "Desconhecido"}
+                    {comment.username && typeof comment.userId === "string"
+                      ? `${comment.username} #${comment.userId}`
+                      : "Usuário desconhecido"}
                   </Typography>
+
                   <Typography variant="caption" sx={{ color: "#fff" }}>
                     {new Date(comment.timestamp).toLocaleString()}
                   </Typography>

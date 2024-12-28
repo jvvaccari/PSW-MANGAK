@@ -49,6 +49,7 @@
     {
       "id": "1",
       "name": "Gege Akutami",
+      "authorPhoto": "https://gyaanstore.com/cdn/shop/files/gege_akutami_500x.png?v=1715426801",
       "pseudonym": "Gege Akutami",
       "birthDate": "1992-02-26",
       "birthPlace": "Iwate, Japão",
@@ -61,11 +62,7 @@
       "notableWorks": [
         "Jujutsu Kaisen"
       ],
-      "biography": "Gege Akutami nasceu na prefeitura de Iwate...",
-      "influences": [
-        "Tite Kubo",
-        "Hunter × Hunter"
-      ]
+      "biography": "Gege Akutami nasceu na prefeitura de Iwate, Japão, em 1992. Desde jovem, demonstrou grande interesse pelo universo dos mangás, inspirado por obras como Bleach, de Tite Kubo, e Hunter x Hunter, de Yoshihiro Togashi. Essa paixão o levou a experimentar a criação de suas próprias histórias durante o ensino médio, desenvolvendo personagens que refletiam suas influências e sua criatividade única. Após concluir os estudos, Akutami se mudou para Tóquio para buscar oportunidades na indústria dos mangás. Ele começou como assistente de outros mangakás, onde refinou seu estilo artístico e aprendeu a estruturar narrativas mais complexas. Seu talento chamou a atenção de editores da Weekly Shōnen Jump, levando à estreia de suas primeiras obras curtas.Em 2018, Gege Akutami lançou Jujutsu Kaisen como uma série serializada na Weekly Shōnen Jump. A história rapidamente conquistou leitores por sua combinação de batalhas emocionantes, personagens carismáticos e um enredo sombrio, mas cativante. O sucesso do mangá levou à adaptação para anime em 2020, consolidando Akutami como uma das maiores revelações da nova geração de mangakás.Apesar de sua fama, Gege Akutami mantém uma vida pessoal discreta, preferindo focar em seu trabalho e raramente aparecendo em eventos públicos. Ele é conhecido por sua humildade e pelo humor irreverente que exibe em suas notas aos leitores. Em entrevistas, Akutami expressa gratidão pelo apoio dos fãs e menciona que busca sempre explorar novas formas de contar histórias dentro do universo de Jujutsu Kaisen e além.Quando não está desenhando, Gege Akutami gosta de assistir filmes de terror, explorar novos mangás e se inspirar em elementos do folclore japonês, que desempenham um papel fundamental em suas obras. Seu legado como criador de Jujutsu Kaisen já está garantido como uma das contribuições mais marcantes para o mundo dos mangás contemporâneos."
     }
   ],
   "ratings": [
@@ -100,16 +97,34 @@
       "favorites": [
         "1"
       ]
+    },
+    {
+      "id": "2",
+      "username": "Edgar",
+      "email": "edgar@gmail.com",
+      "password": "123",
+      "role": "user",
+      "favorites": [
+        "1"
+      ]
     }
   ],
   "evaluations": [
     {
-      "id": "b58d",
       "mangaId": "1",
       "userId": "1",
+      "rating": 4.5,
+      "comment": "Amei a obra!",
+      "timestamp": "2024-12-28T18:25:15.554Z",
+      "id": "f42d"
+    },
+    {
+      "id": "c734",
+      "mangaId": "1",
+      "userId": "2",
       "rating": 5,
-      "comment": "meu comentario é que a obra é inclivel\n",
-      "timestamp": "2024-12-27T16:02:57.316Z"
+      "comment": "Gostei muito da obra!",
+      "timestamp": "2024-12-28T18:26:25.406Z"
     }
   ]
 }
