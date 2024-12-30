@@ -28,7 +28,6 @@ const MangaCard = ({ manga, onClick }) => {
   );
 };
 
-// Adicionar validação de `props` com PropTypes
 MangaCard.propTypes = {
   manga: PropTypes.shape({
     id: PropTypes.string.isRequired,

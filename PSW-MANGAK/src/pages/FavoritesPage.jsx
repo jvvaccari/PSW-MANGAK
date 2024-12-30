@@ -1,62 +1,68 @@
 import { useEffect, useState } from "react";
-import { Box, Typography, CircularProgress, Container } from "@mui/material";
-import Navbar from "../components/Navbar";
-import MangaList from "../components/MangaList";
-import { fetchFavorites } from "../../services/api";
 import { useNavigate } from "react-router-dom";
+import { Box, Typography, Button, Grid, IconButton, Modal, TextField,CircularProgress,AppBar,Toolbar } from "@mui/material";
+import { fetchFavoriteLists, createFavoriteList } from "../../services/api"; // Função para criar lista
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import AddIcon from "@mui/icons-material/Add"; // Ícone para adicionar
 import useAuth from "../contexts/useAuth";
 
 const FavoritesPage = () => {
   const { user } = useAuth();
-  const [favorites, setFavorites] = useState([]);
+  const navigate = useNavigate();
+  const [lists, setLists] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [searchTerm, setSearchTerm] = useState("");
-  const navigate = useNavigate();
+  const [openModal, setOpenModal] = useState(false); // Estado para abrir/fechar o modal
+  const [listName, setListName] = useState(""); // Estado para o nome da nova lista
 
   useEffect(() => {
-    if (!user || !user.id) {
-      setError("Você precisa estar logado para acessar seus favoritos.");
+    if (!user?.id) {
+      console.error("Usuário não autenticado ou ID inválido.");
       setLoading(false);
-      navigate("/login");
       return;
     }
 
-    const loadFavorites = async () => {
+    const loadLists = async () => {
       try {
-        const data = await fetchFavorites(user.id);
-
-        if (!data || data.length === 0) {
-          setError("Nenhum favorito encontrado.");
-          return;
-        }
-
-        setFavorites(data);
+        const data = await fetchFavoriteLists(user.id);
+        console.log("Dados recebidos:", data);
+        setLists(data || []);
       } catch (err) {
-        console.error("Erro ao carregar favoritos:", err.message);
-        setError("Erro ao carregar seus favoritos. Verifique sua conexão de rede.");
+        console.error("Erro ao carregar listas:", err.message);
+        setError("Erro ao carregar listas.");
       } finally {
         setLoading(false);
       }
     };
 
-    loadFavorites();
-  }, [user, navigate]);
+    loadLists();
+  }, [user]);
 
-  const filteredFavorites = favorites.filter((manga) =>
-    manga.title?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const handleCreateList = async () => {
+    if (!listName.trim()) {
+      setError("O nome da lista é obrigatório.");
+      return;
+    }
+    try {
+      const newList = await createFavoriteList({ name: listName, userId: user.id,mangas: [] });
+      setLists([...lists, newList]); // Atualiza a lista com a nova lista criada
+      setListName(""); // Limpa o nome da lista após criar
+      setOpenModal(false); // Fecha o modal
+    } catch (err) {
+      console.error("Erro ao criar lista:", err.message);
+      setError("Erro ao criar lista.");
+    }
+  };
+
+  const handleModalClose = () => {
+    setOpenModal(false);
+    setListName(""); // Limpa o campo do nome ao fechar o modal
+    setError(null); // Reseta erros
+  };
 
   if (loading) {
     return (
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "100vh",
-        }}
-      >
+      <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh", backgroundColor: "#121212" }}>
         <CircularProgress sx={{ color: "#fff" }} />
       </Box>
     );
@@ -64,91 +70,108 @@ const FavoritesPage = () => {
 
   if (error) {
     return (
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "100vh",
-          textAlign: "center",
-        }}
-      >
-        <Typography
-          variant="subtitle1"
-          sx={{
-            fontWeight: 700,
-            fontSize: "1.4em",
-            color: error.includes("rede") ? "orange" : "red",
-          }}
-        >
-          {error}
-        </Typography>
-      </Box>
+      <Typography sx={{ color: "red", textAlign: "center", marginTop: "20px" }}>
+        {error}
+      </Typography>
     );
   }
 
   return (
-    <>
-      <Navbar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+    <Box sx={{ backgroundColor: "#121212", minHeight: "100vh" }}>
+      {/* Barra de Navegação */}
+      <AppBar position="static" sx={{ backgroundColor: "#121212" }}>
+        <Toolbar>
+          <IconButton edge="start" color="inherit" onClick={() => navigate(-1)}>
+            <ArrowBackIcon />
+          </IconButton>
+          <Typography variant="h6" sx={{ flexGrow: 1, textAlign: "center", fontWeight: "bold" }}>
+            Suas Listas de Favoritos
+          </Typography>
+        </Toolbar>
+      </AppBar>
 
-      <Container maxWidth="xxl">
+      {/* Conteúdo da Página */}
+      <Box sx={{ padding: "16px", backgroundColor: "#121212", minHeight: "calc(100vh - 64px)" }}>
+        {/* Botão para abrir o Modal de Criar Lista */}
+        <Box sx={{ textAlign: "center", marginBottom: "16px" }}>
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={<AddIcon />}
+            onClick={() => setOpenModal(true)}
+            sx={{ backgroundColor: "#ff9800", color: "#fff", "&:hover": { backgroundColor: "#e68900" } }}
+          >
+            Criar Nova Lista
+          </Button>
+        </Box>
+
+        <Grid container spacing={3} justifyContent="center">
+          {lists.map((list) => (
+            <Grid item xs={12} sm={6} md={4} key={list.id}>
+              <Box
+                sx={{
+                  backgroundColor: "#1c1c1c",
+                  color: "#fff",
+                  padding: "16px",
+                  borderRadius: "8px",
+                  cursor: "pointer",
+                  textAlign: "center",
+                  boxShadow: "0 4px 10px rgba(0, 0, 0, 0.3)",
+                  transition: "transform 0.3s, box-shadow 0.3s",
+                  "&:hover": { backgroundColor: "#333", transform: "scale(1.05)" },
+                }}
+                onClick={() => navigate(`/favorites/lists/${list.id}`)}
+              >
+                <Typography variant="h6" sx={{ fontWeight: "bold", marginBottom: "8px" }}>
+                  {list.name}
+                </Typography>
+                <Typography variant="body2" sx={{ color: "#B0B0B0" }}>
+                  {list.mangas?.length ? `${list.mangas.length} Mangás` : "Sem Mangás"}
+                </Typography>
+              </Box>
+            </Grid>
+          ))}
+        </Grid>
+      </Box>
+
+      {/* Modal para Criar Nova Lista */}
+      <Modal open={openModal} onClose={handleModalClose}>
         <Box
           sx={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "flex-start",
-            minHeight: "100vh",
-            bgcolor: "#000",
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            bgcolor: "background.paper",
+            boxShadow: 24,
+            p: 4,
+            width: "300px",
+            textAlign: "center",
           }}
         >
-          <Box
-            sx={{
-              width: "100%",
-              maxWidth: "100vw",
-              bgcolor: "#000",
-              padding: "16px",
-              color: "#fff",
-            }}
+          <Typography variant="h6" sx={{ marginBottom: "16px" }}>
+            Criar Nova Lista de Favoritos
+          </Typography>
+          <TextField
+            label="Nome da Lista"
+            variant="outlined"
+            fullWidth
+            value={listName}
+            onChange={(e) => setListName(e.target.value)}
+            sx={{ marginBottom: "16px" }}
+          />
+          {error && <Typography sx={{ color: "red" }}>{error}</Typography>}
+          <Button
+            variant="contained"
+            sx={{ backgroundColor: "#ff9800", color: "#fff", "&:hover": { backgroundColor: "#e68900" } }}
+            onClick={handleCreateList}
+            fullWidth
           >
-            {filteredFavorites.length > 0 ? (
-              <>
-                <Typography
-                  variant="subtitle1"
-                  sx={{
-                    marginTop: "2em",
-                    marginBottom: "3em",
-                    fontWeight: 700,
-                    fontSize: "2em",
-                    borderBottom: "1px solid #fff",
-                  }}
-                >
-                  Seus Mangás Favoritos
-                </Typography>
-                <MangaList
-                  mangas={filteredFavorites}
-                  searchTerm={searchTerm}
-                  onMangaClick={(id) => navigate(`/manga/${id}`)}
-                  horizontalScroll
-                  sx={{ marginTop: "16px" }}
-                />
-              </>
-            ) : (
-              <Typography
-                variant="subtitle1"
-                sx={{
-                  marginTop: "2em",
-                  fontWeight: 700,
-                  fontSize: "1.6em",
-                  textAlign: "center",
-                }}
-              >
-                Você ainda não tem mangás favoritos!
-              </Typography>
-            )}
-          </Box>
+            Criar Lista
+          </Button>
         </Box>
-      </Container>
-    </>
+      </Modal>
+    </Box>
   );
 };
 

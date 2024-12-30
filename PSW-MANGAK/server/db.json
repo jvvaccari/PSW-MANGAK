@@ -185,55 +185,37 @@
       "role": "user",
       "favorites": [
         "1",
+        "3",
         "2"
       ]
     }
   ],
   "favoriteLists": [
     {
-      "id": "list1",
-      "userId": "1",
-      "name": "Para Ler com a Namorada",
-      "mangas": [
-        {
-          "id": "1",
-          "title": "Jujutsu Kaisen",
-          "image": "https://upload.wikimedia.org/wikipedia/pt/4/4b/Jujutsu_Kaisen_Cover.png",
-          "author": "Gege Akutami",
-          "genres": [
-            "Ação",
-            "Sobrenatural"
-          ]
-        }
-      ]
-    },
-    {
-      "id": "list2",
-      "userId": "1",
-      "name": "Sobre Romance",
-      "mangas": []
-    },
-    {
       "id": "list3",
       "userId": "2",
       "name": "Favoritos do Edgar",
       "mangas": [
-        {
-          "id": "1",
-          "title": "Jujutsu Kaisen",
-          "image": "https://upload.wikimedia.org/wikipedia/pt/4/4b/Jujutsu_Kaisen_Cover.png",
-          "author": "Gege Akutami",
-          "genres": [
-            "Ação",
-            "Sobrenatural"
-          ]
-        }
+        "1"
       ]
     },
     {
-      "id": "0b07",
-      "name": "Shonens",
-      "userId": "2"
+      "id": "b1f8",
+      "name": "Nova Lista",
+      "userId": "2",
+      "mangas": [
+        "1",
+        "3",
+        "2"
+      ]
+    },
+    {
+      "id": "339c",
+      "name": "outra lista",
+      "userId": "2",
+      "mangas": [
+        "2"
+      ]
     }
   ],
   "evaluations": [

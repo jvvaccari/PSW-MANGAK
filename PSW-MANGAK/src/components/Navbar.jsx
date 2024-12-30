@@ -4,9 +4,8 @@ import {
   Avatar,
   InputBase,
   Typography,
-  Button,
+  AppBar,
 } from "@mui/material";
-import CancelIcon from "@mui/icons-material/Cancel";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import SearchIcon from "@mui/icons-material/Search";
 import FavoriteIcon from "@mui/icons-material/Favorite";
@@ -22,61 +21,10 @@ const Navbar = ({ searchTerm = "", setSearchTerm = () => {} }) => {
   const { user } = useAuth();
   const [showSearch, setShowSearch] = useState(false);
 
-  const isLoginPage = location.pathname === "/login";
-  const isRegisterPage = location.pathname === "/register";
-
-  if (isLoginPage || isRegisterPage) {
-    return (
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          padding: "3% 5%",
-          bgcolor: "transparent",
-        }}
-      >
-        <Typography
-          component="a"
-          sx={{
-            fontWeight: "bold",
-            color: "#FF0037",
-            fontSize: "6vw",
-            textDecoration: "none",
-            "@media (min-width: 600px)": {
-              fontSize: "1.8rem",
-            },
-          }}
-        >
-          MANGAK
-        </Typography>
-        <Button
-          variant="contained"
-          onClick={() => navigate(isRegisterPage ? "/login" : "/register")}
-          sx={{
-            fontWeight: "bold",
-            padding: "2% 5%",
-            fontSize: "3.5vw",
-            borderRadius: "6px",
-            backgroundColor: "#FF0037",
-            "&:hover": {
-              backgroundColor: "#CC002A",
-            },
-            "@media (min-width: 600px)": {
-              padding: "6px 16px",
-              fontSize: "0.875rem",
-            },
-          }}
-        >
-          {isRegisterPage ? "Login" : "Cadastrar"}
-        </Button>
-      </Box>
-    );
-  }
-
   const isCatalogPage = location.pathname === "/";
   const isProfilePage = location.pathname.startsWith("/profile");
   const isFavoritesPage = location.pathname.startsWith("/favorites");
+  const isMangaLandingPage = location.pathname.startsWith("/manga");
 
   const handleBackClick = () => navigate(-1);
   const handleSearchClick = () => setShowSearch(true);
@@ -101,12 +49,21 @@ const Navbar = ({ searchTerm = "", setSearchTerm = () => {} }) => {
       )}
       {!isFavoritesPage && (
         <IconButton
-          onClick={() =>
+          aria-label={
             user?.role === "admin"
-              ? navigate("/admin-dashboard")
-              : navigate("/favorites")
+              ? "Abrir painel administrativo"
+              : "Abrir favoritos"
           }
-          sx={{ color: "#FF0037" }}
+          onClick={() => {
+            if (user?.role === "admin") {
+              navigate("/admin-dashboard"); // Painel administrativo
+            } else if (user?.id) {
+              navigate("/favorites/lists"); // Página de favoritos
+            } else {
+              navigate("/login"); // Redireciona para login
+            }
+          }}
+          sx={{ color: user?.role === "admin" ? "#FFFFFF" : "#FF0037" }}
         >
           {user?.role === "admin" ? (
             <EditIcon sx={{ width: "30px", height: "30px" }} />
@@ -128,21 +85,25 @@ const Navbar = ({ searchTerm = "", setSearchTerm = () => {} }) => {
   );
 
   return (
-    <Box
+    <AppBar
       sx={{
         display: "flex",
         justifyContent: showSearch ? "center" : "space-between",
         alignItems: "center",
         backgroundColor: "#000",
         padding: "16px",
-        marginBottom: "4em",
+        flexDirection: "row",
+        position: "sticky",  // Mantém a Navbar visível enquanto rola a página
+        top: 0,
+        left: 0,
+        width: "100%",
       }}
     >
       {!showSearch && (
         <Box sx={{ display: "flex", alignItems: "center" }}>
-          {isProfilePage ? (
+          {isProfilePage || isMangaLandingPage ? (
             <IconButton onClick={handleBackClick} sx={{ color: "#fff" }}>
-              {isProfilePage ? <CancelIcon /> : <ArrowBackIcon />}
+              <ArrowBackIcon />
             </IconButton>
           ) : (
             <Typography
@@ -183,7 +144,7 @@ const Navbar = ({ searchTerm = "", setSearchTerm = () => {} }) => {
       ) : (
         renderNavbarButtons()
       )}
-    </Box>
+    </AppBar>
   );
 };
 

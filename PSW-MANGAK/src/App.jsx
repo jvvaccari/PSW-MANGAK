@@ -64,7 +64,7 @@ const App = () => {
                 />
 
                 <Route
-                  path="/favorites/list/:id"
+                  path="/favorites/lists/:id"
                   element={
                     <ProtectedRoute>
                       <FavoriteListDetails />
