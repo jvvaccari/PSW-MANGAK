@@ -198,3 +198,103 @@ export const deleteEvaluation = async (evaluationId) => {
     handleError(error, `Erro ao excluir avaliação com ID ${evaluationId}`);
   }
 };
+
+// Função para buscar todos os autores
+export const fetchAuthors = async () => {
+  try {
+    const response = await axiosInstance.get("/authors");
+    return response.data;
+  } catch (error) {
+    handleError(error, "Erro ao buscar autores");
+  }
+};
+
+// Função para criar um novo autor
+export const createAuthor = async (newAuthor) => {
+  try {
+    const response = await axiosInstance.post("/authors", newAuthor);
+    return response.data;
+  } catch (error) {
+    handleError(error, "Erro ao criar autor");
+  }
+};
+
+// Função para atualizar um autor por ID
+export const updateAuthor = async (id, updatedAuthor) => 
+  updateById("authors", id, updatedAuthor, "autor");
+
+// Função para deletar um autor por ID
+export const deleteAuthor = async (id) => {
+  try {
+    validateId(id, "autor");
+    const response = await axiosInstance.delete(`/authors/${id}`);
+    return response.data;
+  } catch (error) {
+    handleError(error, `Erro ao excluir autor com ID ${id}`);
+  }
+};
+
+export const fetchFavoriteLists = async (userId) => {
+  try {
+    const response = await axiosInstance.get(`/favoriteLists?userId=${userId}`);
+    return response.data; // Retorna todas as listas do usuário
+  } catch (error) {
+    handleError(error, "Erro ao buscar listas de favoritos");
+  }
+};
+
+export const createFavoriteList = async (listData) => {
+  try {
+    const response = await axiosInstance.post(`/favoriteLists`, listData);
+    return response.data; // Retorna a lista criada
+  } catch (error) {
+    handleError(error, "Erro ao criar lista");
+  }
+};
+
+export const deleteFavoriteList = async (listId) => {
+  try {
+    const response = await axiosInstance.delete(`/favoriteLists/${listId}`);
+    return response.data; // Confirmação da exclusão
+  } catch (error) {
+    handleError(error, "Erro ao deletar lista");
+  }
+};
+
+export const addMangaToList = async (listId, manga) => {
+  try {
+    const list = await fetchById("favoriteLists", listId, "lista");
+    const updatedMangas = [...list.mangas, manga];
+    const response = await axiosInstance.put(`/favoriteLists/${listId}`, {
+      ...list,
+      mangas: updatedMangas,
+    });
+    return response.data; // Retorna a lista atualizada
+  } catch (error) {
+    handleError(error, "Erro ao adicionar mangá à lista");
+  }
+};
+
+export const removeMangaFromList = async (listId, mangaId) => {
+  try {
+    const list = await fetchById("favoriteLists", listId, "lista");
+    const updatedMangas = list.mangas.filter((manga) => manga.id !== mangaId);
+    const response = await axiosInstance.put(`/favoriteLists/${listId}`, {
+      ...list,
+      mangas: updatedMangas,
+    });
+    return response.data; // Retorna a lista atualizada
+  } catch (error) {
+    handleError(error, "Erro ao remover mangá da lista");
+  }
+};
+export const fetchFavoriteListById = async (listId) => {
+  try {
+    const response = await axiosInstance.get(`/favoriteLists/${listId}`);
+    return response.data;
+  } catch (error) {
+    handleError(error, `Erro ao buscar lista de favoritos com ID ${listId}`);
+  }
+};
+
+

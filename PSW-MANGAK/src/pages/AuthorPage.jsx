@@ -64,19 +64,18 @@ export default function AuthorDetails() {
     <>
       <Navbar />
       <Container sx={{ mt: 4, color: "#fff", backgroundColor: "#000", padding: "2em", borderRadius: "8px" }}>
-        {/* Foto e Nome */}
+
         <Box sx={{ display: "flex", alignItems: "center", gap: 4, mb: 4 }}>
           <Avatar
             alt={author.name}
             src={author.authorPhoto}
             sx={{ width: 150, height: 150 }}
           />
-          <Typography variant="h3" sx={{ fontWeight: "bold", color: "#EC7C01" }}>
+          <Typography variant="h3" sx={{ fontWeight: "bold", color: "#FF0037" }}>
             {author.name}
           </Typography>
         </Box>
 
-        {/* Informações Básicas */}
         <Box sx={{ mb: 4 }}>
           <Typography variant="h5" sx={{ color: "#fff", fontWeight: "bold", mb: 1 }}>
             Informações Básicas
@@ -98,7 +97,6 @@ export default function AuthorDetails() {
           </Typography>
         </Box>
 
-        {/* Ocupações */}
         <Box sx={{ mb: 4 }}>
           <Typography variant="h5" sx={{ color: "#fff", fontWeight: "bold", mb: 1 }}>
             Ocupações
@@ -114,7 +112,6 @@ export default function AuthorDetails() {
           </ul>
         </Box>
 
-        {/* Obras Notáveis */}
         <Box sx={{ mb: 4 }}>
           <Typography variant="h5" sx={{ color: "#fff", fontWeight: "bold", mb: 1 }}>
             Obras Notáveis
@@ -130,7 +127,6 @@ export default function AuthorDetails() {
           </ul>
         </Box>
 
-        {/* Biografia */}
         <Box>
           <Typography variant="h5" sx={{ color: "#fff", fontWeight: "bold", mb: 1 }}>
             Biografia

@@ -1,37 +1,41 @@
-import { useContext, useState, useEffect } from "react";
-import { Box, Button, TextField, Typography, IconButton } from "@mui/material";
-import { DataGrid } from "@mui/x-data-grid";
+import { useState, useEffect } from "react";
 import {
-  updateManga,
-  createManga,
-  deleteManga,
-  fetchMangas,
-} from "../../services/api";
-import MangaContext from "../contexts/MangaContext";
+  Box,
+  Button,
+  TextField,
+  Typography,
+  IconButton,
+} from "@mui/material";
+import { DataGrid } from "@mui/x-data-grid";
 import EditIcon from "@mui/icons-material/Edit";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import DeleteIcon from "@mui/icons-material/Delete";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import {
+  fetchAuthors,
+  createAuthor,
+  updateAuthor,
+  deleteAuthor,
+} from "../../services/api";
 import { useNavigate } from "react-router-dom";
 
-const AdminPage = () => {
-  const { mangas, setMangas } = useContext(MangaContext);
+const AuthorAdminPage = () => {
+  const [authors, setAuthors] = useState([]);
   const [editingRow, setEditingRow] = useState(null);
   const [isCreating, setIsCreating] = useState(false);
   const [formData, setFormData] = useState({});
   const navigate = useNavigate();
 
-  // Buscar mangás ao carregar a página
   useEffect(() => {
-    const loadMangas = async () => {
+    const loadAuthors = async () => {
       try {
-        const data = await fetchMangas();
-        setMangas(data);
+        const data = await fetchAuthors();
+        setAuthors(data);
       } catch (error) {
-        console.error("Erro ao carregar mangás:", error);
+        console.error("Erro ao carregar autores:", error);
       }
     };
-    loadMangas();
-  }, [setMangas]);
+    loadAuthors();
+  }, []);
 
   const handleFieldChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -44,41 +48,51 @@ const AdminPage = () => {
     }));
   };
 
+  const validateForm = () => {
+    const requiredFields = ["name", "pseudonym", "birthDate", "biography"];
+    for (let field of requiredFields) {
+      if (!formData[field] || formData[field].trim() === "") {
+        return false;
+      }
+    }
+    return true;
+  };
+
   const handleSaveClick = async () => {
+    if (!validateForm()) {
+      alert("Preencha todos os campos obrigatórios!");
+      return;
+    }
     try {
       if (isCreating) {
-        const newManga = { ...formData, id: `${Date.now()}` };
-        const createdManga = await createManga(newManga);
-        setMangas((prev) => [...prev, createdManga]);
+        const newAuthor = { ...formData, id: `${Date.now()}` };
+        const createdAuthor = await createAuthor(newAuthor);
+        setAuthors((prev) => [...prev, createdAuthor]);
       } else if (editingRow) {
-        const updatedManga = await updateManga(editingRow.id, formData);
-        setMangas((prev) =>
-          prev.map((m) => (m.id === editingRow.id ? updatedManga : m))
+        const updatedAuthor = await updateAuthor(editingRow.id, formData);
+        setAuthors((prev) =>
+          prev.map((a) => (a.id === editingRow.id ? updatedAuthor : a))
         );
       }
       setEditingRow(null);
       setIsCreating(false);
       setFormData({});
     } catch (error) {
-      console.error("Erro ao salvar mangá:", error);
+      console.error("Erro ao salvar autor:", error);
     }
   };
 
   const handleEditClick = (row) => {
     setEditingRow(row);
-    setFormData({
-      ...row,
-      genres: row.genres?.join(", "),
-      artsList: row.artsList?.join(", "),
-    });
+    setFormData({ ...row });
   };
 
   const handleDeleteClick = async (id) => {
     try {
-      await deleteManga(id);
-      setMangas((prev) => prev.filter((manga) => manga.id !== id));
+      await deleteAuthor(id);
+      setAuthors((prev) => prev.filter((author) => author.id !== id));
     } catch (error) {
-      console.error("Erro ao excluir mangá:", error);
+      console.error("Erro ao excluir autor:", error);
     }
   };
 
@@ -90,45 +104,83 @@ const AdminPage = () => {
 
   const columns = [
     { field: "id", headerName: "ID", width: 70 },
-    { field: "title", headerName: "Título", width: 200 },
-    { field: "author", headerName: "Autor", width: 150 },
-    { field: "yearPubli", headerName: "Ano", width: 100 },
-    { field: "status", headerName: "Status", width: 150 },
+    { field: "name", headerName: "Nome", width: 200 },
+    { field: "pseudonym", headerName: "Pseudônimo", width: 200 },
+    { field: "birthDate", headerName: "Data de Nascimento", width: 150 },
+    { field: "birthPlace", headerName: "Local de Nascimento", width: 200 },
+    { field: "nationality", headerName: "Nacionalidade", width: 150 },
+    { field: "ethnicity", headerName: "Etnia", width: 150 },
+    {
+      field: "occupations",
+      headerName: "Ocupações",
+      width: 200,
+      renderCell: (params) => params.value?.join(", "),
+    },
+    {
+      field: "notableWorks",
+      headerName: "Trabalhos Notáveis",
+      width: 200,
+      renderCell: (params) => params.value?.join(", "),
+    },
+    {
+      field: "authorPhoto",
+      headerName: "Foto",
+      width: 100,
+      renderCell: (params) => (
+        <img
+          src={params.value}
+          alt="Foto do Autor"
+          style={{ width: "50px", height: "50px", borderRadius: "4px" }}
+        />
+      ),
+    },
+    {
+      field: "biography",
+      headerName: "Biografia",
+      width: 300,
+      renderCell: (params) => (
+        <div style={{ overflow: "hidden", textOverflow: "ellipsis" }}>
+          {params.value}
+        </div>
+      ),
+    },
     {
       field: "actions",
       headerName: "Ações",
-      width: 200,
+      width: 150,
       renderCell: (params) => (
         <>
           <IconButton onClick={() => handleEditClick(params.row)}>
-            <EditIcon />
+            <EditIcon sx={{ color: "#FFC107" }} />
           </IconButton>
           <IconButton onClick={() => handleDeleteClick(params.row.id)}>
-            <DeleteIcon />
+            <DeleteIcon sx={{ color: "#FF0037" }} />
           </IconButton>
         </>
       ),
     },
   ];
+  
 
   const formFields = [
-    { label: "Título", field: "title" },
-    { label: "Autor", field: "author" },
-    { label: "Descrição", field: "description" },
-    { label: "Ano de Publicação", field: "yearPubli" },
-    { label: "Status", field: "status" },
-    { label: "Demografia", field: "demographic" },
+    { label: "Nome", field: "name" },
+    { label: "Pseudônimo", field: "pseudonym" },
+    { label: "Data de Nascimento", field: "birthDate" },
+    { label: "Lugar de Nascimento", field: "birthPlace" },
+    { label: "Nacionalidade", field: "nationality" },
+    { label: "Etnia", field: "ethnicity" },
     {
-      label: "Gêneros (separados por vírgulas)",
-      field: "genres",
+      label: "Ocupações (separadas por vírgulas)",
+      field: "occupations",
       isArray: true,
     },
     {
-      label: "Lista de Artes (URLs separadas por vírgulas)",
-      field: "artsList",
+      label: "Trabalhos Notáveis (separados por vírgulas)",
+      field: "notableWorks",
       isArray: true,
     },
-    { label: "Imagem", field: "image" },
+    { label: "Biografia", field: "biography" },
+    { label: "Foto (URL)", field: "authorPhoto" },
   ];
 
   return (
@@ -145,7 +197,7 @@ const AdminPage = () => {
           <ArrowBackIcon />
         </IconButton>
         <Typography variant="h4" sx={{ marginLeft: "10px" }}>
-          Administração de Mangás
+          Administração de Autores
         </Typography>
       </Box>
 
@@ -157,15 +209,29 @@ const AdminPage = () => {
         variant="contained"
         sx={{ backgroundColor: "#FF0037", marginBottom: "20px" }}
       >
-        Adicionar Novo Mangá
+        Adicionar Novo Autor
       </Button>
 
       <DataGrid
-        rows={mangas}
-        columns={columns}
-        pageSize={5}
-        sx={{ height: 400, backgroundColor: "#2C2C2C", color: "#FFF" }}
-      />
+  rows={authors}
+  columns={columns}
+  pageSize={5}
+  sx={{
+    height: 400,
+    backgroundColor: "#2C2C2C",
+    color: "#FFF",
+    "& .MuiDataGrid-columnHeaders": {
+      backgroundColor: "#333", // Cor de fundo do header
+      color: "#FFF", // Cor do texto do header
+      fontSize: "16px", // Tamanho do texto
+      fontWeight: "bold", // Texto em negrito
+    },
+    "& .MuiDataGrid-cell": {
+      color: "#FFF",
+    },
+  }}
+/>
+
 
       {(editingRow || isCreating) && (
         <Box
@@ -180,7 +246,7 @@ const AdminPage = () => {
           }}
         >
           <Typography variant="h6">
-            {isCreating ? "Adicionar Novo Mangá" : "Editar Mangá"}
+            {isCreating ? "Adicionar Novo Autor" : "Editar Autor"}
           </Typography>
           {formFields.map(({ label, field, isArray }) => (
             <TextField
@@ -244,4 +310,4 @@ const AdminPage = () => {
   );
 };
 
-export default AdminPage;
+export default AuthorAdminPage;

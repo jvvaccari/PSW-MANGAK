@@ -43,6 +43,63 @@
           "url": "https://shopee.com.br/search?keyword=mang%C3%A1%20jujutsu+kaisen"
         }
       ]
+    },
+    {
+      "id": "2",
+      "title": "One Piece",
+      "image": "https://upload.wikimedia.org/wikipedia/pt/f/ff/One_Piece_vol._01.jpg",
+      "authorId": "2",
+      "description": "As aventuras de Monkey D. Luffy para encontrar o tesouro One Piece.",
+      "yearPubli": "2021",
+      "status": "Em andamento",
+      "demographic": "Shonen",
+      "genres": [
+        "Aventura",
+        "Comédia",
+        "Fantasia"
+      ],
+      "artsList": [
+        "https://i.pinimg.com/736x/5b/d3/ef/5bd3efd46d99308fbff9c3bf2dd41b12.jpg",
+        "https://i.pinimg.com/736x/12/c3/f7/12c3f71abfa5ff6320ebef7260cedee3.jpg"
+      ],
+      "retail": [
+        {
+          "name": "Panini",
+          "url": "https://panini.com.br/planet-manga/one-piece"
+        },
+        {
+          "name": "Amazon",
+          "url": "https://www.amazon.com.br/s?k=one+piece&i=stripbooks"
+        }
+      ]
+    },
+    {
+      "id": "3",
+      "title": "Kaguya-sama: Love is War",
+      "image": "https://upload.wikimedia.org/wikipedia/pt/5/5a/Capa_do_d%C3%A9cimo_volume_do_mang%C3%A1_Kaguya-sama.jpg",
+      "authorId": "3",
+      "description": "Dois gênios apaixonados competem para fazer o outro confessar primeiro.",
+      "yearPubli": "2021",
+      "status": "FINALIZADO",
+      "demographic": "Seinen",
+      "genres": [
+        "Romance",
+        "Comédia",
+        "Psicológico"
+      ],
+      "artsList": [
+        "https://wallpapers.com/images/hd/kaguya-sama-love-is-war-character-poster-r6ydgixrhrpy9c7z.jpg"
+      ],
+      "retail": [
+        {
+          "name": "Panini",
+          "url": "https://panini.com.br/catalogsearch/result/?q=Kaguya-Sama+Love+Is+War"
+        },
+        {
+          "name": "Amazon",
+          "url": "https://www.amazon.com.br/s?k=kaguya+sama+love+is+war"
+        }
+      ]
     }
   ],
   "authors": [
@@ -62,21 +119,43 @@
       "notableWorks": [
         "Jujutsu Kaisen"
       ],
-      "biography": "Gege Akutami nasceu na prefeitura de Iwate, Japão, em 1992. Desde jovem, demonstrou grande interesse pelo universo dos mangás, inspirado por obras como Bleach, de Tite Kubo, e Hunter x Hunter, de Yoshihiro Togashi. Essa paixão o levou a experimentar a criação de suas próprias histórias durante o ensino médio, desenvolvendo personagens que refletiam suas influências e sua criatividade única. Após concluir os estudos, Akutami se mudou para Tóquio para buscar oportunidades na indústria dos mangás. Ele começou como assistente de outros mangakás, onde refinou seu estilo artístico e aprendeu a estruturar narrativas mais complexas. Seu talento chamou a atenção de editores da Weekly Shōnen Jump, levando à estreia de suas primeiras obras curtas.Em 2018, Gege Akutami lançou Jujutsu Kaisen como uma série serializada na Weekly Shōnen Jump. A história rapidamente conquistou leitores por sua combinação de batalhas emocionantes, personagens carismáticos e um enredo sombrio, mas cativante. O sucesso do mangá levou à adaptação para anime em 2020, consolidando Akutami como uma das maiores revelações da nova geração de mangakás.Apesar de sua fama, Gege Akutami mantém uma vida pessoal discreta, preferindo focar em seu trabalho e raramente aparecendo em eventos públicos. Ele é conhecido por sua humildade e pelo humor irreverente que exibe em suas notas aos leitores. Em entrevistas, Akutami expressa gratidão pelo apoio dos fãs e menciona que busca sempre explorar novas formas de contar histórias dentro do universo de Jujutsu Kaisen e além.Quando não está desenhando, Gege Akutami gosta de assistir filmes de terror, explorar novos mangás e se inspirar em elementos do folclore japonês, que desempenham um papel fundamental em suas obras. Seu legado como criador de Jujutsu Kaisen já está garantido como uma das contribuições mais marcantes para o mundo dos mangás contemporâneos."
-    }
-  ],
-  "ratings": [
-    {
-      "id": "1",
-      "mangaId": "1",
-      "userId": "2",
-      "rating": 5
+      "biography": "Gege Akutami nasceu na prefeitura de Iwate, Japão, em 1992. Desde jovem, demonstrou grande interesse pelo universo dos mangás, inspirado por obras como Bleach, de Tite Kubo, e Hunter x Hunter, de Yoshihiro Togashi. Essa paixão o levou a experimentar a criação de suas próprias histórias durante o ensino médio, desenvolvendo personagens que refletiam suas influências e sua criatividade única. Após concluir os estudos, Akutami se mudou para Tóquio para buscar oportunidades na indústria dos mangás. Ele começou como assistente de outros mangakás, onde refinou seu estilo artístico e aprendeu a estruturar narrativas mais complexas. Seu talento chamou a atenção de editores da Weekly Shōnen Jump, levando à estreia de suas primeiras obras curtas.Em 2018, Gege Akutami lançou Jujutsu Kaisen como uma série serializada na Weekly Shōnen Jump. A história rapidamente conquistou leitores por sua combinação de batalhas emocionantes, personagens carismáticos e um enredo sombrio, mas cativante. O sucesso do mangá levou à adaptação para anime em 2020, consolidando Akutami como uma das maiores revelações da nova geração de mangakás.Apesar de sua fama, Gege Akutami mantém uma vida pessoal discreta, preferindo focar em seu trabalho e raramente aparecendo em eventos públicos. Ele é conhecido por sua humildade e pelo humor irreverente que exibe em suas notas aos leitores. Em entrevistas, Akutami expressa gratidão pelo apoio dos fãs e menciona que busca sempre explorar novas formas de contar histórias dentro do universo de Jujutsu Kaisen e além.Quando não está desenhando, Gege Akutami gosta de assistir filmes de terror, explorar novos mangás e se inspirar em elementos do folclore japonês, que desempenham um papel fundamental em suas obras."
     },
     {
       "id": "2",
-      "mangaId": "1",
-      "userId": "1",
-      "rating": 2.5
+      "name": "Eiichiro Oda",
+      "authorPhoto": "https://upload.wikimedia.org/wikipedia/commons/9/9d/Eiichiro_Oda.png",
+      "pseudonym": "Oda",
+      "birthDate": "1975-01-01",
+      "birthPlace": "Kumamoto, Japão",
+      "nationality": "japonês",
+      "ethnicity": "amarela",
+      "occupations": [
+        "Mangaká",
+        "Artista"
+      ],
+      "notableWorks": [
+        "One Piece"
+      ],
+      "biography": "Eiichiro Oda nasceu em Kumamoto, Japão, em 1975. Ele começou sua carreira na indústria de mangás muito jovem, inspirado por Akira Toriyama, criador de Dragon Ball. Oda estreou com 'Wanted!', uma coleção de histórias curtas, e logo lançou 'One Piece' em 1997. Este mangá se tornou um dos mais vendidos de todos os tempos, conhecido por sua narrativa épica e construção de mundo impressionante. Ele continua trabalhando na série, enquanto mantém uma vida pessoal privada."
+    },
+    {
+      "id": "3",
+      "name": "Aka Akasaka",
+      "authorPhoto": "https://upload.wikimedia.org/wikipedia/commons/a/a5/Aka_Akasaka.png",
+      "pseudonym": "Aka Akasaka",
+      "birthDate": "1988-08-29",
+      "birthPlace": "Niigata, Japão",
+      "nationality": "japonês",
+      "ethnicity": "amarela",
+      "occupations": [
+        "Mangaká",
+        "Artista"
+      ],
+      "notableWorks": [
+        "Kaguya-sama: Love is War"
+      ],
+      "biography": "Aka Akasaka nasceu na cidade de Niigata, Japão, em 1988. Ele começou sua carreira como assistente de outros mangakás antes de lançar 'Kaguya-sama: Love is War' em 2015. A série ganhou imenso reconhecimento por sua combinação de romance, comédia e tensão psicológica. Akasaka é conhecido por seu estilo detalhado e seu foco em personagens complexos. Fora do trabalho, ele gosta de assistir filmes clássicos e explorar novas formas de narrativa."
     }
   ],
   "accounts": [
@@ -105,8 +184,56 @@
       "password": "123",
       "role": "user",
       "favorites": [
-        "1"
+        "1",
+        "2"
       ]
+    }
+  ],
+  "favoriteLists": [
+    {
+      "id": "list1",
+      "userId": "1",
+      "name": "Para Ler com a Namorada",
+      "mangas": [
+        {
+          "id": "1",
+          "title": "Jujutsu Kaisen",
+          "image": "https://upload.wikimedia.org/wikipedia/pt/4/4b/Jujutsu_Kaisen_Cover.png",
+          "author": "Gege Akutami",
+          "genres": [
+            "Ação",
+            "Sobrenatural"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "list2",
+      "userId": "1",
+      "name": "Sobre Romance",
+      "mangas": []
+    },
+    {
+      "id": "list3",
+      "userId": "2",
+      "name": "Favoritos do Edgar",
+      "mangas": [
+        {
+          "id": "1",
+          "title": "Jujutsu Kaisen",
+          "image": "https://upload.wikimedia.org/wikipedia/pt/4/4b/Jujutsu_Kaisen_Cover.png",
+          "author": "Gege Akutami",
+          "genres": [
+            "Ação",
+            "Sobrenatural"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "0b07",
+      "name": "Shonens",
+      "userId": "2"
     }
   ],
   "evaluations": [

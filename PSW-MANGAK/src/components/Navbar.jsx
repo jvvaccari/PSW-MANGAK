@@ -60,7 +60,7 @@ const Navbar = ({ searchTerm = "", setSearchTerm = () => {} }) => {
             borderRadius: "6px",
             backgroundColor: "#FF0037",
             "&:hover": {
-              backgroundColor: "#CC002A", 
+              backgroundColor: "#CC002A",
             },
             "@media (min-width: 600px)": {
               padding: "6px 16px",
@@ -102,9 +102,9 @@ const Navbar = ({ searchTerm = "", setSearchTerm = () => {} }) => {
       {!isFavoritesPage && (
         <IconButton
           onClick={() =>
-            handleProtectedRoute(
-              user?.role === "admin" ? "/admin-panel" : "/favorites"
-            )
+            user?.role === "admin"
+              ? navigate("/admin-dashboard")
+              : navigate("/favorites")
           }
           sx={{ color: "#FF0037" }}
         >
@@ -135,7 +135,7 @@ const Navbar = ({ searchTerm = "", setSearchTerm = () => {} }) => {
         alignItems: "center",
         backgroundColor: "#000",
         padding: "16px",
-        marginBottom: "4em"
+        marginBottom: "4em",
       }}
     >
       {!showSearch && (
@@ -177,7 +177,7 @@ const Navbar = ({ searchTerm = "", setSearchTerm = () => {} }) => {
             backgroundColor: "#1E1E1E",
             color: "#fff",
             borderRadius: "4px",
-            padding: "8px"
+            padding: "8px",
           }}
         />
       ) : (

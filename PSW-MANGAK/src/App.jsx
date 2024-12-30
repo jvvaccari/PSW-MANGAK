@@ -11,10 +11,13 @@ import MangaLandingPage from "./pages/MangaLandingPage";
 const ProfilePage = lazy(() => import("./pages/ProfilePage"));
 const LoginPage = lazy(() => import("./pages/LoginPage"));
 const FavoritesPage = lazy(() => import("./pages/FavoritesPage"));
-const AdminPage = lazy(() => import("./pages/AdminPage"));
+const MangaAdminPage = lazy(() => import("./pages/MangaAdminPage"));
 const RegisterPage = lazy(() => import("./pages/RegisterPage"));
 const EvaluationPage = lazy(() => import("./pages/EvaluationPage"));
-const AuthorDetails = lazy(() => import("./pages/AuthorPage") )
+const AuthorDetails = lazy(() => import("./pages/AuthorPage"));
+const AdminDashboardPage = lazy(() => import("./pages/AdminDashboardPage"));
+const AuthorAdminPage = lazy(() => import("./pages/AuthorAdminPage"));
+const FavoriteListDetails = lazy(() => import("./pages/FavoriteListDetails"));
 
 const App = () => {
   return (
@@ -59,11 +62,21 @@ const App = () => {
                     </ProtectedRoute>
                   }
                 />
+
                 <Route
-                  path="/admin-panel/:id"
+                  path="/favorites/list/:id"
+                  element={
+                    <ProtectedRoute>
+                      <FavoriteListDetails />
+                    </ProtectedRoute>
+                  }
+                />
+
+                <Route
+                  path="/admin-manga/:id"
                   element={
                     <ProtectedRoute role="admin">
-                      <AdminPage />
+                      <MangaAdminPage />
                     </ProtectedRoute>
                   }
                 />
@@ -76,8 +89,23 @@ const App = () => {
                   }
                 />
                 <Route path="/author/:authorId" element={<AuthorDetails />} />
+                <Route
+                  path="/admin-dashboard"
+                  element={
+                    <ProtectedRoute role="admin">
+                      <AdminDashboardPage />
+                    </ProtectedRoute>
+                  }
+                />
 
-
+                <Route
+                  path="/admin-author"
+                  element={
+                    <ProtectedRoute role="admin">
+                      <AuthorAdminPage />
+                    </ProtectedRoute>
+                  }
+                />
                 <Route path="*" element={<CatalogPage />} />
               </Routes>
             </Suspense>
