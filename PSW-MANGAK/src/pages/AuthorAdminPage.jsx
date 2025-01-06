@@ -222,7 +222,7 @@ const AuthorAdminPage = () => {
     color: "#FFF",
     "& .MuiDataGrid-columnHeaders": {
       backgroundColor: "#333", // Cor de fundo do header
-      color: "#FFF", // Cor do texto do header
+      color: "#000000", // Cor do texto do header
       fontSize: "16px", // Tamanho do texto
       fontWeight: "bold", // Texto em negrito
     },

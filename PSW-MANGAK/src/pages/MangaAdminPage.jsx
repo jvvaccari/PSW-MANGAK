@@ -164,7 +164,20 @@ const MangaAdminPage = () => {
         rows={mangas}
         columns={columns}
         pageSize={5}
-        sx={{ height: 400, backgroundColor: "#2C2C2C", color: "#FFF" }}
+        sx={{
+    height: 400,
+    backgroundColor: "#2C2C2C",
+    color: "#FFF",
+    "& .MuiDataGrid-columnHeaders": {
+      backgroundColor: "#333", // Cor de fundo do header
+      color: "#000000", // Cor do texto do header
+      fontSize: "16px", // Tamanho do texto
+      fontWeight: "bold", // Texto em negrito
+    },
+    "& .MuiDataGrid-cell": {
+      color: "#FFF",
+    },
+  }}
       />
 
       {(editingRow || isCreating) && (
