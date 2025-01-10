@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "server": "json-server --watch db.json --port 5001"
+    "server": "json-server --watch db.json --port 5501"
   },
   "keywords": [],
   "author": "",

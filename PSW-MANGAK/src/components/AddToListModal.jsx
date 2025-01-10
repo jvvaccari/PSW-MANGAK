@@ -1,14 +1,14 @@
 import { useState, useEffect } from "react";
 import { Button, Modal, Box, Typography, FormControl, Select, MenuItem } from "@mui/material";
 import PropTypes from "prop-types";
-import { fetchFavoriteLists, addMangaToList, removeMangaFromList, createFavoriteList } from "../../services/api";
-import { Warning } from "@mui/icons-material"; // Adicionando ícone de alerta para feedback visual
+import { fetchFavoriteLists, addMangaToList, createFavoriteList } from "../../services/api";
+import { Warning } from "@mui/icons-material"; 
 
-const AddToListModal = ({ open, onClose, mangaId, userId, action }) => {
+const AddToListModal = ({ open, onClose, mangaId, userId }) => { 
   const [favoriteLists, setFavoriteLists] = useState([]);
   const [selectedList, setSelectedList] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null); // Para mostrar erros ao usuário
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     if (open && userId) {
@@ -18,63 +18,43 @@ const AddToListModal = ({ open, onClose, mangaId, userId, action }) => {
           setFavoriteLists(lists || []);
           setLoading(false);
         })
-        .catch((error) => {
-          console.error("Erro ao carregar listas de favoritos:", error);
+        .catch((err) => {
+          console.error("Erro ao carregar listas de favoritos:", err);
           setError("Erro ao carregar as listas. Tente novamente.");
           setLoading(false);
         });
     }
   }, [open, userId]);
 
-  const handleAddToList = () => {
+  const handleAddToList = async () => {
     if (!selectedList) {
       setError("Por favor, selecione uma lista.");
       return;
     }
-  
-    setError(null); // Limpa o erro
-  
-    if (action === "add") {
-      console.log("Adicionando mangaId:", mangaId, "na lista:", selectedList);
-  
-      // Verifique se a lista existe, caso contrário, crie uma nova
+
+    setError(null);
+
+    try {
       if (selectedList === "nova") {
+
         const newListData = {
-          name: "Nova Lista",  // Ou use um nome dinâmico se necessário
-          userId: userId,
-          mangas: [mangaId], // Inclua o manga diretamente
+          name: `Nova Lista - ${new Date().toLocaleDateString()}`,
+          userId,
+          mangas: [mangaId],
         };
-  
-        createFavoriteList(newListData)  // Função de criação de lista
-          .then((newList) => {
-            console.log("Nova lista criada:", newList);
-            onClose(); // Feche o modal
-          })
-          .catch((error) => {
-            console.error("Erro ao criar a nova lista:", error);
-            setError("Erro ao criar a nova lista. Tente novamente.");
-          });
+
+        await createFavoriteList(newListData);
+        console.log("Nova lista criada com sucesso.");
       } else {
-        // Caso a lista já exista, adicione o manga a ela
-        addMangaToList(selectedList, mangaId)  // Função para adicionar manga à lista existente
-          .then(() => {
-            onClose();  // Feche o modal
-          })
-          .catch((error) => {
-            console.error("Erro ao adicionar mangá à lista:", error);
-            setError("Erro ao adicionar o mangá à lista. Tente novamente.");
-          });
+
+        await addMangaToList(selectedList, mangaId);
+        console.log("Mangá adicionado à lista com sucesso.");
       }
-    } else if (action === "remove") {
-      // Remover manga
-      removeMangaFromList(selectedList, mangaId)
-        .then(() => {
-          onClose();
-        })
-        .catch((error) => {
-          console.error("Erro ao remover mangá da lista:", error);
-          setError("Erro ao remover o mangá da lista. Tente novamente.");
-        });
+
+      onClose();
+    } catch (err) {
+      console.error("Erro ao adicionar o mangá à lista:", err);
+      setError("Erro ao adicionar o mangá à lista. Tente novamente.");
     }
   };
 
@@ -91,12 +71,13 @@ const AddToListModal = ({ open, onClose, mangaId, userId, action }) => {
           p: 4,
           width: "300px",
           textAlign: "center",
+          borderRadius: "8px",
         }}
       >
         <Typography variant="h6" component="h2" sx={{ marginBottom: "16px" }}>
-          {action === "add" ? "Selecionar Lista para Adicionar" : "Selecionar Lista para Remover"}
+          Adicionar
         </Typography>
-        
+
         {error && (
           <Box sx={{ color: "red", display: "flex", alignItems: "center", marginBottom: "16px" }}>
             <Warning sx={{ marginRight: "8px" }} />
@@ -122,19 +103,24 @@ const AddToListModal = ({ open, onClose, mangaId, userId, action }) => {
                   {list.name}
                 </MenuItem>
               ))}
-              {/* Adicionando uma opção para nova lista */}
-              <MenuItem value="nova">Nova Lista</MenuItem>
             </Select>
           </FormControl>
         )}
 
         <Button
           variant="contained"
-          sx={{ marginTop: "16px" }}
+          sx={{
+            marginTop: "16px",
+            backgroundColor: "var(--btn-mangak-color)",
+            color: "#fff",
+            "&:hover": {
+              backgroundColor: "#404040",
+            },
+          }}
           onClick={handleAddToList}
           disabled={loading || !selectedList}
         >
-          {action === "add" ? "Adicionar à Lista" : "Remover da Lista"}
+          Adicionar
         </Button>
       </Box>
     </Modal>
@@ -146,7 +132,6 @@ AddToListModal.propTypes = {
   onClose: PropTypes.func.isRequired,
   mangaId: PropTypes.string.isRequired,
   userId: PropTypes.string,
-  action: PropTypes.oneOf(["add", "remove"]).isRequired,
 };
 
 export default AddToListModal;

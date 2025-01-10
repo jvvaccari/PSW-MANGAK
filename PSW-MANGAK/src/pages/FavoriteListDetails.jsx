@@ -1,10 +1,20 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { fetchFavoriteListById, fetchMangasByIds } from "../../services/api"; 
-import { Box, Typography, Card, CardMedia, CardContent, CircularProgress, Grid, AppBar, Toolbar } from "@mui/material";
+import { useParams, useNavigate } from "react-router-dom";
+import {
+  Box,
+  Typography,
+  Card,
+  CardMedia,
+  CardContent,
+  CircularProgress,
+  Grid,
+  AppBar,
+  Toolbar,
+  IconButton,
+} from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import IconButton from "@mui/material/IconButton";
-import { useNavigate } from "react-router-dom";
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
+import { fetchFavoriteListById, fetchMangasByIds, removeMangaFromFavoriteList } from "../../services/api";
 
 const FavoriteListDetails = () => {
   const { id } = useParams();
@@ -17,7 +27,7 @@ const FavoriteListDetails = () => {
     const loadList = async () => {
       try {
         const data = await fetchFavoriteListById(id);
-        if (data && data.mangas && data.mangas.length > 0) {
+        if (data?.mangas?.length > 0) {
           const mangas = await fetchMangasByIds(data.mangas);
           setList({ ...data, mangas });
         } else {
@@ -34,49 +44,59 @@ const FavoriteListDetails = () => {
     loadList();
   }, [id]);
 
-  const handleMangaClick = (mangaId) => {
-    navigate(`/manga/${mangaId}`);
-  };
+  const handleMangaClick = (mangaId) => navigate(`/manga/${mangaId}`);
 
-  if (loading) {
+  const handleRemoveManga = async (mangaId) => {
+    try {
+      // Tente remover o manga da lista no banco de dados
+      const success = await removeMangaFromFavoriteList(id, mangaId);
+  
+      if (success) {
+        // Atualiza a lista de mangas local, após remoção bem-sucedida
+        setList((prevState) => ({
+          ...prevState,
+          mangas: prevState.mangas.filter((manga) => manga.id !== mangaId),
+        }));
+      } else {
+        throw new Error("Erro ao remover manga do banco de dados");
+      }
+    } catch (error) {
+      setError("Erro ao remover o mangá.");
+      console.error("Erro ao remover manga:", error);
+    }
+  };
+  
+
+  if (loading)
     return (
       <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh", backgroundColor: "#121212" }}>
-        <CircularProgress sx={{ color: "#fff" }} />
+        <CircularProgress sx={{ color: "#FF0037" }} />
       </Box>
     );
-  }
 
-  if (error) {
+  if (error)
     return (
-      <Typography sx={{ color: "#fff", textAlign: "center", marginTop: "20px" }}>
+      <Typography sx={{ color: "#FF0037", textAlign: "center", marginTop: "20px" }}>
         {error}
       </Typography>
     );
-  }
-
-  if (!list) {
-    return (
-      <Typography sx={{ color: "#fff", textAlign: "center", marginTop: "20px" }}>
-        Carregando...
-      </Typography>
-    );
-  }
 
   return (
     <Box sx={{ backgroundColor: "#121212", minHeight: "100vh" }}>
-      <AppBar position="sticky" sx={{ backgroundColor: "#121212" }}>
+      <AppBar position="sticky" sx={{ backgroundColor: "#121212", boxShadow: "none" }}>
         <Toolbar>
           <IconButton edge="start" color="inherit" onClick={() => navigate(-1)}>
             <ArrowBackIcon />
           </IconButton>
           <Typography variant="h6" sx={{ flexGrow: 1, textAlign: "center", fontWeight: "bold" }}>
-            {list.name}
+            {list?.name || "Lista de Favoritos"}
           </Typography>
         </Toolbar>
       </AppBar>
-      <Box sx={{ padding: "16px", marginTop: "16px" }}>
-        <Grid container spacing={2} justifyContent="center">
-          {list.mangas && list.mangas.length > 0 ? (
+
+      <Box sx={{ padding: { xs: "16px", sm: "24px" } }}>
+        <Grid container spacing={3} justifyContent="center">
+          {list?.mangas?.length > 0 ? (
             list.mangas.map((manga) => (
               <Grid item xs={12} sm={6} md={4} lg={3} key={manga.id}>
                 <Card
@@ -88,39 +108,56 @@ const FavoriteListDetails = () => {
                     overflow: "hidden",
                     boxShadow: "0 4px 10px rgba(0, 0, 0, 0.3)",
                     transition: "transform 0.3s, box-shadow 0.3s",
+                    position: "relative",
                     "&:hover": {
                       transform: "scale(1.05)",
                       boxShadow: "0 8px 16px rgba(0, 0, 0, 0.5)",
                     },
-                    height: "100%", // Garantir altura consistente
-                    maxWidth: "260px", // Limita a largura do card
-                    margin: "0 auto", // Garante que o card fique centralizado
                   }}
                   onClick={() => handleMangaClick(manga.id)}
                 >
+                  <IconButton 
+                    sx={{
+                      position: "absolute",
+                      right: 5,
+                      top: 5,
+                      color: "#FF0037", 
+                      boxShadow: "0 8px 16px rgba(0.2, 0.2, 0.2, 1)",
+                      borderRadius: "120px",
+                      padding: "2px", 
+                    }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleRemoveManga(manga.id); 
+                    }}
+                  >
+                    <DeleteForeverIcon />
+                  </IconButton>
+
                   <CardMedia
                     component="img"
                     image={manga.image}
                     alt={`Capa do mangá ${manga.title}`}
                     sx={{
                       width: "100%",
-                      height: "200px", // Ajustando a altura para uniformidade
+                      height: "200px",
                       objectFit: "cover",
                     }}
                   />
-                  <CardContent sx={{ textAlign: "center", padding: "12px" }}>
-                    <Typography variant="h6" component="div" sx={{ fontWeight: "bold", marginBottom: "8px" }}>
+
+                  <CardContent sx={{ textAlign: "center", padding: "16px" }}>
+                    <Typography variant="h6" sx={{ fontWeight: "bold", marginBottom: "8px" }}>
                       {manga.title}
                     </Typography>
                     <Typography variant="body2" sx={{ color: "#B0B0B0" }}>
-                      {manga.genres ? manga.genres.join(", ") : "Gêneros não disponíveis"}
+                      {manga.genres?.length > 0 ? manga.genres.join(", ") : "Gêneros não disponíveis"}
                     </Typography>
                   </CardContent>
                 </Card>
               </Grid>
             ))
           ) : (
-            <Typography sx={{ color: "#fff", textAlign: "center" }}>
+            <Typography variant="h6" sx={{ color: "#fff", textAlign: "center", marginTop: "16px" }}>
               Nenhum mangá na lista.
             </Typography>
           )}

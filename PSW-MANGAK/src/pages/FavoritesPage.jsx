@@ -1,9 +1,20 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Box, Typography, Button, Grid, IconButton, Modal, TextField,CircularProgress,AppBar,Toolbar } from "@mui/material";
-import { fetchFavoriteLists, createFavoriteList } from "../../services/api"; // Função para criar lista
+import {
+  Box,
+  Typography,
+  Button,
+  Grid,
+  IconButton,
+  Modal,
+  TextField,
+  CircularProgress,
+  AppBar,
+  Toolbar,
+} from "@mui/material";
+import { fetchFavoriteLists, createFavoriteList } from "../../services/api";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import AddIcon from "@mui/icons-material/Add"; // Ícone para adicionar
+import AddIcon from "@mui/icons-material/Add";
 import useAuth from "../contexts/useAuth";
 
 const FavoritesPage = () => {
@@ -12,12 +23,11 @@ const FavoritesPage = () => {
   const [lists, setLists] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [openModal, setOpenModal] = useState(false); // Estado para abrir/fechar o modal
-  const [listName, setListName] = useState(""); // Estado para o nome da nova lista
+  const [openModal, setOpenModal] = useState(false);
+  const [listName, setListName] = useState("");
 
   useEffect(() => {
     if (!user?.id) {
-      console.error("Usuário não autenticado ou ID inválido.");
       setLoading(false);
       return;
     }
@@ -25,10 +35,8 @@ const FavoritesPage = () => {
     const loadLists = async () => {
       try {
         const data = await fetchFavoriteLists(user.id);
-        console.log("Dados recebidos:", data);
         setLists(data || []);
-      } catch (err) {
-        console.error("Erro ao carregar listas:", err.message);
+      } catch {
         setError("Erro ao carregar listas.");
       } finally {
         setLoading(false);
@@ -44,20 +52,19 @@ const FavoritesPage = () => {
       return;
     }
     try {
-      const newList = await createFavoriteList({ name: listName, userId: user.id,mangas: [] });
-      setLists([...lists, newList]); // Atualiza a lista com a nova lista criada
-      setListName(""); // Limpa o nome da lista após criar
-      setOpenModal(false); // Fecha o modal
-    } catch (err) {
-      console.error("Erro ao criar lista:", err.message);
+      const newList = await createFavoriteList({ name: listName, userId: user.id, mangas: [] });
+      setLists([...lists, newList]);
+      setListName("");
+      setOpenModal(false);
+    } catch {
       setError("Erro ao criar lista.");
     }
   };
 
   const handleModalClose = () => {
     setOpenModal(false);
-    setListName(""); // Limpa o campo do nome ao fechar o modal
-    setError(null); // Reseta erros
+    setListName("");
+    setError(null);
   };
 
   if (loading) {
@@ -68,17 +75,8 @@ const FavoritesPage = () => {
     );
   }
 
-  if (error) {
-    return (
-      <Typography sx={{ color: "red", textAlign: "center", marginTop: "20px" }}>
-        {error}
-      </Typography>
-    );
-  }
-
   return (
     <Box sx={{ backgroundColor: "#121212", minHeight: "100vh" }}>
-      {/* Barra de Navegação */}
       <AppBar position="static" sx={{ backgroundColor: "#121212" }}>
         <Toolbar>
           <IconButton edge="start" color="inherit" onClick={() => navigate(-1)}>
@@ -90,16 +88,17 @@ const FavoritesPage = () => {
         </Toolbar>
       </AppBar>
 
-      {/* Conteúdo da Página */}
       <Box sx={{ padding: "16px", backgroundColor: "#121212", minHeight: "calc(100vh - 64px)" }}>
-        {/* Botão para abrir o Modal de Criar Lista */}
         <Box sx={{ textAlign: "center", marginBottom: "16px" }}>
           <Button
             variant="contained"
-            color="primary"
             startIcon={<AddIcon />}
             onClick={() => setOpenModal(true)}
-            sx={{ backgroundColor: "#ff9800", color: "#fff", "&:hover": { backgroundColor: "#e68900" } }}
+            sx={{
+              backgroundColor: "#FF0037",
+              color: "#fff",
+              "&:hover": { backgroundColor: "#cc0030" },
+            }}
           >
             Criar Nova Lista
           </Button>
@@ -134,7 +133,6 @@ const FavoritesPage = () => {
         </Grid>
       </Box>
 
-      {/* Modal para Criar Nova Lista */}
       <Modal open={openModal} onClose={handleModalClose}>
         <Box
           sx={{
@@ -163,7 +161,11 @@ const FavoritesPage = () => {
           {error && <Typography sx={{ color: "red" }}>{error}</Typography>}
           <Button
             variant="contained"
-            sx={{ backgroundColor: "#ff9800", color: "#fff", "&:hover": { backgroundColor: "#e68900" } }}
+            sx={{
+              backgroundColor: "#FF0037",
+              color: "#fff",
+              "&:hover": { backgroundColor: "#cc0030" },
+            }}
             onClick={handleCreateList}
             fullWidth
           >

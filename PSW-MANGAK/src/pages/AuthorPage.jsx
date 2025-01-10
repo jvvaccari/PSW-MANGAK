@@ -21,7 +21,7 @@ export default function AuthorDetails() {
       setLoading(true);
       setError("");
       try {
-        const response = await fetch(`http://localhost:5001/authors/${authorId}`);
+        const response = await fetch(`http://localhost:5501/authors/${authorId}`);
         if (!response.ok) throw new Error("Erro ao buscar informações do autor.");
         const data = await response.json();
         setAuthor(data);

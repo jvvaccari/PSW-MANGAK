@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import axios from "axios";
 import { Box, CircularProgress } from "@mui/material";
 
-const BASE_URL = "http://localhost:5001/accounts";
+const BASE_URL = "http://localhost:5501/accounts";
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {

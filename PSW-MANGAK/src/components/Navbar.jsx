@@ -22,10 +22,6 @@ const Navbar = ({ searchTerm = "", setSearchTerm = () => {} }) => {
   const [showSearch, setShowSearch] = useState(false);
 
   const isCatalogPage = location.pathname === "/";
-  const isProfilePage = location.pathname.startsWith("/profile");
-  const isFavoritesPage = location.pathname.startsWith("/favorites");
-  const isMangaLandingPage = location.pathname.startsWith("/manga");
-
   const handleBackClick = () => navigate(-1);
   const handleSearchClick = () => setShowSearch(true);
   const handleBlur = () => setShowSearch(false);
@@ -47,31 +43,29 @@ const Navbar = ({ searchTerm = "", setSearchTerm = () => {} }) => {
           <SearchIcon sx={{ width: "30px", height: "30px" }} />
         </IconButton>
       )}
-      {!isFavoritesPage && (
-        <IconButton
-          aria-label={
-            user?.role === "admin"
-              ? "Abrir painel administrativo"
-              : "Abrir favoritos"
+      <IconButton
+        aria-label={
+          user?.role === "admin"
+            ? "Abrir painel administrativo"
+            : "Abrir favoritos"
+        }
+        onClick={() => {
+          if (user?.role === "admin") {
+            navigate("/admin-dashboard");
+          } else if (user?.id) {
+            navigate("/favorites/lists");
+          } else {
+            navigate("/login");
           }
-          onClick={() => {
-            if (user?.role === "admin") {
-              navigate("/admin-dashboard"); // Painel administrativo
-            } else if (user?.id) {
-              navigate("/favorites/lists"); // Página de favoritos
-            } else {
-              navigate("/login"); // Redireciona para login
-            }
-          }}
-          sx={{ color: user?.role === "admin" ? "#FFFFFF" : "#FF0037" }}
-        >
-          {user?.role === "admin" ? (
-            <EditIcon sx={{ width: "30px", height: "30px" }} />
-          ) : (
-            <FavoriteIcon sx={{ width: "30px", height: "30px" }} />
-          )}
-        </IconButton>
-      )}
+        }}
+        sx={{ color: user?.role === "admin" ? "#FFFFFF" : "#FF0037" }}
+      >
+        {user?.role === "admin" ? (
+          <EditIcon sx={{ width: "30px", height: "30px" }} />
+        ) : (
+          <FavoriteIcon sx={{ width: "30px", height: "30px" }} />
+        )}
+      </IconButton>
       <Avatar
         onClick={() => handleProtectedRoute("/profile")}
         sx={{
@@ -93,19 +87,13 @@ const Navbar = ({ searchTerm = "", setSearchTerm = () => {} }) => {
         backgroundColor: "#000",
         padding: "16px",
         flexDirection: "row",
-        position: "sticky",  // Mantém a Navbar visível enquanto rola a página
-        top: 0,
-        left: 0,
+        position: "relative",
         width: "100%",
       }}
     >
       {!showSearch && (
         <Box sx={{ display: "flex", alignItems: "center" }}>
-          {isProfilePage || isMangaLandingPage ? (
-            <IconButton onClick={handleBackClick} sx={{ color: "#fff" }}>
-              <ArrowBackIcon />
-            </IconButton>
-          ) : (
+          {isCatalogPage ? (
             <Typography
               variant="h6"
               component="a"
@@ -122,6 +110,10 @@ const Navbar = ({ searchTerm = "", setSearchTerm = () => {} }) => {
             >
               MANGAK
             </Typography>
+          ) : (
+            <IconButton onClick={handleBackClick} sx={{ color: "#fff" }}>
+              <ArrowBackIcon />
+            </IconButton>
           )}
         </Box>
       )}
@@ -148,9 +140,10 @@ const Navbar = ({ searchTerm = "", setSearchTerm = () => {} }) => {
   );
 };
 
+export default Navbar;
+
+
 Navbar.propTypes = {
   searchTerm: PropTypes.string,
   setSearchTerm: PropTypes.func,
 };
-
-export default Navbar;

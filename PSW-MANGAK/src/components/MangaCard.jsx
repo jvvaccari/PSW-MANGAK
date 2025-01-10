@@ -1,4 +1,4 @@
-import PropTypes from "prop-types"; // Importar PropTypes
+import PropTypes from "prop-types";
 import { Card, CardMedia, CardContent, Typography } from "@mui/material";
 
 const MangaCard = ({ manga, onClick }) => {

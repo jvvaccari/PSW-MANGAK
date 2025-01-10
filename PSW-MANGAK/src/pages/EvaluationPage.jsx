@@ -36,7 +36,7 @@ export default function EvaluationPage() {
 
   const fetchAccountById = async (id) => {
     try {
-      const response = await fetch(`http://localhost:5001/accounts/${id}`);
+      const response = await fetch(`http://localhost:5501/accounts/${id}`);
       if (!response.ok) throw new Error("Erro ao buscar usuário.");
       return await response.json();
     } catch (error) {
@@ -52,14 +52,14 @@ export default function EvaluationPage() {
 
       try {
         const mangaResponse = await fetch(
-          `http://localhost:5001/mangas/${mangaId}`
+          `http://localhost:5501/mangas/${mangaId}`
         );
         if (!mangaResponse.ok) throw new Error("Erro ao buscar o mangá.");
         const mangaData = await mangaResponse.json();
         setManga(mangaData);
 
         const authorResponse = await fetch(
-          `http://localhost:5001/authors/${mangaData.authorId}`
+          `http://localhost:5501/authors/${mangaData.authorId}`
         );
         const authorData = authorResponse.ok
           ? await authorResponse.json()
@@ -105,14 +105,14 @@ export default function EvaluationPage() {
       setError("");
       try {
         const mangaResponse = await fetch(
-          `http://localhost:5001/mangas/${mangaId}`
+          `http://localhost:5501/mangas/${mangaId}`
         );
         if (!mangaResponse.ok) throw new Error("Erro ao buscar o mangá.");
         const mangaData = await mangaResponse.json();
         setManga(mangaData);
 
         const authorResponse = await fetch(
-          `http://localhost:5001/authors/${mangaData.authorId}`
+          `http://localhost:5501/authors/${mangaData.authorId}`
         );
         const authorData = authorResponse.ok
           ? await authorResponse.json()
@@ -179,7 +179,7 @@ export default function EvaluationPage() {
           comment: newComment,
           timestamp: new Date().toISOString(),
         };
-        const response = await fetch("http://localhost:5001/evaluations", {
+        const response = await fetch("http://localhost:5501/evaluations", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(newEntry),
