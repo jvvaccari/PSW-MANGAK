@@ -1,8 +1,18 @@
-import { useState } from "react";
-import { Typography, Box, TextField, Button, Paper, CircularProgress, InputAdornment, IconButton } from "@mui/material";
+import { useState, useEffect } from "react";
+import {
+  Typography,
+  Box,
+  TextField,
+  Button,
+  Paper,
+  CircularProgress,
+  InputAdornment,
+  IconButton,
+} from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
-import useAuth from "../contexts/useAuth";
+import { useDispatch, useSelector } from "react-redux";
+import { loginUser } from "../redux/authSlice";
 import backgroundImage from "../assets/img/login-background.jpg";
 import Navbar from "../components/Navbar";
 
@@ -10,24 +20,33 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
+
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const { user, loading, error } = useSelector((state) => state.auth);
+
+  // Redireciona se o login for bem-sucedido (usuario encontrado)
+  useEffect(() => {
+    if (user) {
+      navigate("/"); // Redireciona para a página inicial ou dashboard
+    }
+  }, [user, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!email || !password) return setError("Por favor, preencha todos os campos.");
-
-    setLoading(true);
-    setError(null);
+  
+    if (!email || !password) {
+      alert("Por favor, preencha todos os campos.");
+      return;
+    }
+  
     try {
-      const user = await login(email, password);
-      if (user?.id) navigate("/");
+      const result = await dispatch(loginUser({ email, password })).unwrap();
+      console.log("Login Bem-sucedido", result);
     } catch (err) {
-      setError(err.message || "Erro ao realizar login. Tente novamente.");
-    } finally {
-      setLoading(false);
+      console.log("Erro ao tentar login:", err); 
+      alert("Erro: " + (err.message || "Erro desconhecido"));
     }
   };
 
@@ -82,10 +101,7 @@ export default function LoginPage() {
               label="Email"
               variant="outlined"
               value={email}
-              onChange={(e) => {
-                setEmail(e.target.value);
-                setError(null);
-              }}
+              onChange={(e) => setEmail(e.target.value)}
               sx={commonInputStyles}
             />
             <TextField
@@ -94,10 +110,7 @@ export default function LoginPage() {
               variant="outlined"
               type={showPassword ? "text" : "password"}
               value={password}
-              onChange={(e) => {
-                setPassword(e.target.value);
-                setError(null);
-              }}
+              onChange={(e) => setPassword(e.target.value)}
               sx={{ ...commonInputStyles, marginBottom: "24px" }}
               InputProps={{
                 endAdornment: (
@@ -122,6 +135,7 @@ export default function LoginPage() {
               fullWidth
               variant="contained"
               disabled={loading}
+              type="submit"
               sx={{
                 bgcolor: "#FF0037",
                 color: "#fff",
@@ -135,7 +149,6 @@ export default function LoginPage() {
                   fontSize: "1rem",
                 },
               }}
-              onClick={handleSubmit}
             >
               {loading ? <CircularProgress size={24} sx={{ color: "#fff" }} /> : "Entrar"}
             </Button>

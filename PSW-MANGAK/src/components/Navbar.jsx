@@ -1,11 +1,4 @@
-import {
-  Box,
-  IconButton,
-  Avatar,
-  InputBase,
-  Typography,
-  AppBar,
-} from "@mui/material";
+import { Box, IconButton, Avatar, InputBase, Typography, AppBar, Button, CircularProgress } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import SearchIcon from "@mui/icons-material/Search";
 import FavoriteIcon from "@mui/icons-material/Favorite";
@@ -15,13 +8,16 @@ import { useState } from "react";
 import PropTypes from "prop-types";
 import useAuth from "../contexts/useAuth";
 
-const Navbar = ({ searchTerm = "", setSearchTerm = () => {} }) => {
+const Navbar = ({ searchTerm = "", setSearchTerm = () => {}, loading = false }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { user } = useAuth();
   const [showSearch, setShowSearch] = useState(false);
 
   const isCatalogPage = location.pathname === "/";
+  const isLoginPage = location.pathname === "/login";
+  const isRegisterPage = location.pathname === "/register";
+
   const handleBackClick = () => navigate(-1);
   const handleSearchClick = () => setShowSearch(true);
   const handleBlur = () => setShowSearch(false);
@@ -44,11 +40,7 @@ const Navbar = ({ searchTerm = "", setSearchTerm = () => {} }) => {
         </IconButton>
       )}
       <IconButton
-        aria-label={
-          user?.role === "admin"
-            ? "Abrir painel administrativo"
-            : "Abrir favoritos"
-        }
+        aria-label={user?.role === "admin" ? "Abrir painel administrativo" : "Abrir favoritos"}
         onClick={() => {
           if (user?.role === "admin") {
             navigate("/admin-dashboard");
@@ -60,11 +52,7 @@ const Navbar = ({ searchTerm = "", setSearchTerm = () => {} }) => {
         }}
         sx={{ color: user?.role === "admin" ? "#FFFFFF" : "#FF0037" }}
       >
-        {user?.role === "admin" ? (
-          <EditIcon sx={{ width: "30px", height: "30px" }} />
-        ) : (
-          <FavoriteIcon sx={{ width: "30px", height: "30px" }} />
-        )}
+        {user?.role === "admin" ? <EditIcon sx={{ width: "30px", height: "30px" }} /> : <FavoriteIcon sx={{ width: "30px", height: "30px" }} />}
       </IconButton>
       <Avatar
         onClick={() => handleProtectedRoute("/profile")}
@@ -77,6 +65,62 @@ const Navbar = ({ searchTerm = "", setSearchTerm = () => {} }) => {
       />
     </Box>
   );
+
+  const renderAuthButton = () => {
+    if (isLoginPage) {
+      return (
+        <Button
+          variant="contained"
+          type="submit"
+          disabled={loading}
+          sx={{
+            bgcolor: "#FF0037",
+            color: "#fff",
+            padding: "10px 20px",
+            fontWeight: "bold",
+            fontSize: "1rem",
+            borderRadius: "8px",
+            "&:hover": { bgcolor: "#CC002A" },
+            "@media (min-width: 600px)": {
+              padding: "8px 18px",
+              fontSize: "1rem",
+            },
+          }}
+          onClick={() => navigate("/register")}
+        >
+          {loading ? <CircularProgress size={24} sx={{ color: "#fff" }} /> : "Registrar"}
+        </Button>
+      );
+    }
+
+    if (isRegisterPage) {
+      return (
+        <Button
+          variant="contained"
+          type="submit"
+          disabled={loading}
+          sx={{
+            bgcolor: "#FF0037",
+            color: "#fff",
+            padding: "10px 20px",
+            fontWeight: "bold",
+            fontSize: "1rem",
+            borderRadius: "8px",
+            "&:hover": { bgcolor: "#CC002A" },
+            "@media (min-width: 600px)": {
+              padding: "8px 24px",
+              fontSize: "1rem",
+            },
+          }}
+          onClick={() => navigate("/login")}
+        >
+          {loading ? <CircularProgress size={24} sx={{ color: "#fff" }} /> : "Login"}
+        </Button>
+      );
+    }
+
+    return renderNavbarButtons();
+  };
 
   return (
     <AppBar
@@ -93,7 +137,7 @@ const Navbar = ({ searchTerm = "", setSearchTerm = () => {} }) => {
     >
       {!showSearch && (
         <Box sx={{ display: "flex", alignItems: "center" }}>
-          {isCatalogPage ? (
+          {isCatalogPage || isLoginPage || isRegisterPage ? (
             <Typography
               variant="h6"
               component="a"
@@ -134,7 +178,9 @@ const Navbar = ({ searchTerm = "", setSearchTerm = () => {} }) => {
           }}
         />
       ) : (
-        renderNavbarButtons()
+        <Box sx={{ display: "flex", justifyContent: "flex-end", width: "100%" }}>
+          {renderAuthButton()}
+        </Box>
       )}
     </AppBar>
   );
@@ -142,8 +188,8 @@ const Navbar = ({ searchTerm = "", setSearchTerm = () => {} }) => {
 
 export default Navbar;
 
-
 Navbar.propTypes = {
   searchTerm: PropTypes.string,
   setSearchTerm: PropTypes.func,
+  loading: PropTypes.bool,
 };

@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { Typography, Box, Button, Paper, CircularProgress } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import useAuth from "../contexts/useAuth";
+import { useDispatch, useSelector } from "react-redux";
+import { registerUser } from "../redux/authSlice"; 
 import backgroundImage from "../assets/img/login-background.jpg";
 import StyledTextField from "../components/StyledTextField";
 import Navbar from "../components/Navbar";
@@ -12,9 +13,10 @@ export default function RegisterPage() {
   const [username, setUsername] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const { register } = useAuth();
+
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { loading, error: reduxError } = useSelector((state) => state.auth);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -26,19 +28,25 @@ export default function RegisterPage() {
       setError("As senhas não coincidem.");
       return;
     }
-
-    setLoading(true);
-    setError(null);
-    try {
-      console.log("Tentando registrar com", username, email, password);
-      await register({ username, email, password });
-      navigate("/");
-    } catch (err) {
-      console.error("Erro ao registrar:", err.message);
-      setError(err.message || "Erro ao registrar. Tente novamente.");
-    } finally {
-      setLoading(false);
+    if (!/\S+@\S+\.\S+/.test(email)) {
+      setError("Por favor, insira um email válido.");
+      return;
     }
+    if (password.length < 6) {
+      setError("A senha deve ter pelo menos 6 caracteres.");
+      return;
+    }
+
+    setError(null);
+
+    dispatch(registerUser({ username, email, password }))
+      .unwrap()
+      .then(() => {
+        navigate("/");
+      })
+      .catch((err) => {
+        setError(err.message || "Erro ao registrar. Tente novamente.");
+      });
   };
 
   return (
@@ -88,14 +96,20 @@ export default function RegisterPage() {
             <StyledTextField
               label="Nome de Usuário"
               value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              onChange={(e) => {
+                setUsername(e.target.value);
+                setError(null);
+              }}
               fullWidth
               required
             />
             <StyledTextField
               label="Email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                setError(null);
+              }}
               fullWidth
               required
             />
@@ -103,7 +117,10 @@ export default function RegisterPage() {
               label="Senha"
               type="password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => {
+                setPassword(e.target.value);
+                setError(null);
+              }}
               fullWidth
               required
             />
@@ -111,17 +128,20 @@ export default function RegisterPage() {
               label="Confirmar Senha"
               type="password"
               value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
+              onChange={(e) => {
+                setConfirmPassword(e.target.value);
+                setError(null);
+              }}
               fullWidth
               required
             />
-            {error && (
+            {(error || reduxError) && (
               <Typography
                 variant="body2"
                 color="error"
                 sx={{ marginBottom: "16px" }}
               >
-                {error}
+                {error || reduxError}
               </Typography>
             )}
             <Button
