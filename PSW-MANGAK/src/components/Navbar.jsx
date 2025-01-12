@@ -186,10 +186,10 @@ const Navbar = ({ searchTerm = "", setSearchTerm = () => {}, loading = false }) 
   );
 };
 
-export default Navbar;
-
 Navbar.propTypes = {
   searchTerm: PropTypes.string,
   setSearchTerm: PropTypes.func,
   loading: PropTypes.bool,
 };
+
+export default Navbar;
