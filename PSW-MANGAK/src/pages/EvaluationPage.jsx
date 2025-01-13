@@ -68,7 +68,6 @@ export default function EvaluationPage() {
 
         const evaluations = await fetchEvaluations(mangaId);
 
-        // Busca usernames associados às avaliações
         const evaluationsWithUsernames = await Promise.all(
           evaluations.map(async (evaluation) => {
             const user = await fetchAccountById(evaluation.userId);
@@ -275,7 +274,11 @@ export default function EvaluationPage() {
             value={parseFloat(averageRating)}
             precision={0.1}
             readOnly
-            sx={{ color: "#EC7C01" }}
+            sx={{
+              color: "#EC7C01",
+              "& .MuiRating-iconEmpty": { color: "#EC7C01" },
+              "& .MuiRating-iconFilled": { color: "#EC7C01" },
+            }}
           />
           <Typography variant="body2" sx={{ color: "#ccc" }}>
             ({comments.length} avaliações)

@@ -27,7 +27,6 @@ const TagsSection = ({ data }) => {
 
         {tags.map((tag, index) =>
           typeof tag === "object" && tag.name && tag.url ? (
-            // Renderiza botões com links para a seção "retail"
             <Button
               key={index}
               href={tag.url}
@@ -50,7 +49,7 @@ const TagsSection = ({ data }) => {
               {tag.name}
             </Button>
           ) : (
-            // Renderiza botões sem links para seções como "Genres" e "Demographic"
+      
             <Button
               key={index}
               variant="contained"
