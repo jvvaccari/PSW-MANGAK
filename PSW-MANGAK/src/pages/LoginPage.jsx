@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   Typography,
   Box,
@@ -10,8 +10,8 @@ import {
   IconButton,
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { loginUser } from "../redux/authSlice";
 import backgroundImage from "../assets/img/login-background.jpg";
 import Navbar from "../components/Navbar";
@@ -24,28 +24,22 @@ export default function LoginPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { user, loading, error } = useSelector((state) => state.auth);
-
-  // Redireciona se o login for bem-sucedido (usuario encontrado)
-  useEffect(() => {
-    if (user) {
-      navigate("/"); // Redireciona para a página inicial ou dashboard
-    }
-  }, [user, navigate]);
+  const { loading, error } = useSelector((state) => state.auth);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     if (!email || !password) {
       alert("Por favor, preencha todos os campos.");
       return;
     }
-  
+
     try {
       const result = await dispatch(loginUser({ email, password })).unwrap();
       console.log("Login Bem-sucedido", result);
+      navigate("/dashboard"); // Substitua por sua rota pós-login.
     } catch (err) {
-      console.log("Erro ao tentar login:", err); 
+      console.log("Erro ao tentar login:", err);
       alert("Erro: " + (err.message || "Erro desconhecido"));
     }
   };
@@ -88,7 +82,7 @@ export default function LoginPage() {
           sx={{
             padding: "5%",
             borderRadius: "8px",
-            bgcolor: "var(--bg-color)",
+            bgcolor: "#2C2C2C", // Definir um valor fixo para evitar dependência de variáveis CSS.
             width: "90%",
             maxWidth: "400px",
             textAlign: "center",
@@ -127,7 +121,11 @@ export default function LoginPage() {
               }}
             />
             {error && (
-              <Typography variant="body2" color="error" sx={{ marginBottom: "16px" }}>
+              <Typography
+                variant="body2"
+                color="error"
+                sx={{ marginBottom: "16px" }}
+              >
                 {error}
               </Typography>
             )}

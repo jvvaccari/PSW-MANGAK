@@ -3,7 +3,6 @@ import axios from "axios";
 
 const BASE_URL = "http://localhost:5501/accounts";
 
-// Thunks para operações assíncronas
 export const loginUser = createAsyncThunk(
   "auth/loginUser",
   async ({ email, password }, thunkAPI) => {
@@ -16,8 +15,7 @@ export const loginUser = createAsyncThunk(
 
       if (!foundUser) throw new Error("Credenciais inválidas.");
       
-      // Armazena no Redux e localStorage
-      localStorage.setItem("userId", foundUser.id); // Persistir no localStorage
+      localStorage.setItem("userId", foundUser.id); 
       return foundUser;
     } catch (error) {
       const errorMessage = error.message || "Erro desconhecido";
@@ -47,7 +45,7 @@ export const registerUser = createAsyncThunk(
       };
 
       await axios.post(BASE_URL, newUser);
-      localStorage.setItem("userId", newUser.id); // Persistir no localStorage
+      localStorage.setItem("userId", newUser.id); 
       return newUser;
     } catch (error) {
       const errorMessage = error.message || "Erro ao registrar usuário";
@@ -66,15 +64,15 @@ export const loadUserFromStorage = createAsyncThunk(
         
         if (!response.data) throw new Error("Usuário não encontrado");
 
-        return response.data; // Retorna usuário ao Redux
+        return response.data;
       } catch (error) {
-        localStorage.removeItem("userId"); // Limpa do localStorage caso erro
+        localStorage.removeItem("userId");
         return thunkAPI.rejectWithValue(
           `Erro ao carregar usuário: ${error.message || "Erro desconhecido"}`
         );
       }
     }
-    return null; // Se não encontrar o usuário no localStorage
+    return null;
   }
 );
 
@@ -89,7 +87,7 @@ const authSlice = createSlice({
   reducers: {
     logout: (state) => {
       state.user = null;
-      localStorage.removeItem("userId"); // Remove do localStorage ao deslogar
+      localStorage.removeItem("userId"); 
     },
   },
   extraReducers: (builder) => {
@@ -100,7 +98,7 @@ const authSlice = createSlice({
       })
       .addCase(loginUser.fulfilled, (state, action) => {
         state.loading = false;
-        state.user = action.payload; // Salva o usuário após login
+        state.user = action.payload; 
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
@@ -112,7 +110,7 @@ const authSlice = createSlice({
       })
       .addCase(registerUser.fulfilled, (state, action) => {
         state.loading = false;
-        state.user = action.payload; // Salva o usuário após registro
+        state.user = action.payload;
       })
       .addCase(registerUser.rejected, (state, action) => {
         state.loading = false;
@@ -123,12 +121,12 @@ const authSlice = createSlice({
       })
       .addCase(loadUserFromStorage.fulfilled, (state, action) => {
         state.loading = false;
-        state.user = action.payload; // Salva o usuário no Redux após carregar do localStorage
+        state.user = action.payload;
       })
       .addCase(loadUserFromStorage.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
-        state.user = null; // Caso falhe, o usuário é removido
+        state.user = null; 
       });
   },
 });
