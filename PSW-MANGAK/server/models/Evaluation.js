@@ -1,11 +1,11 @@
 import mongoose from 'mongoose';
 
 const evaluationSchema = new mongoose.Schema({
-  mangaId: String,
-  userId: String,
+  mangaId: { type: mongoose.Schema.Types.ObjectId, ref: 'Manga' }, // Reference to Manga
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'Account' }, // Reference to Account
   rating: Number,
   comment: String,
-  timestamp: Date
+  timestamp: { type: Date, default: Date.now }
 });
 
 const Evaluation = mongoose.model('Evaluation', evaluationSchema);
