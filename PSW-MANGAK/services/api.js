@@ -10,8 +10,9 @@ const axiosInstance = axios.create({
 
 const transformResponse = (data) =>
   Array.isArray(data)
-    ? data.map((item) => ({ ...item, id: item._id }))
-    : { ...data, id: data._id };
+    ? data.map((item) => ({ ...item, id: item._id || item.id }))
+    : { ...data, id: data._id || data.id };
+
 
 
 
@@ -197,7 +198,7 @@ export const deleteEvaluation = async (evaluationId) => {
   try {
     validateId(evaluationId, "avaliação");
     const response = await axiosInstance.delete(`/evaluations/${evaluationId}`);
-    return transformResponse(response.data);
+    return transformResponse(response.data); // Ensure consistency
   } catch (error) {
     handleError(error, `Erro ao excluir avaliação com ID ${evaluationId}`);
   }

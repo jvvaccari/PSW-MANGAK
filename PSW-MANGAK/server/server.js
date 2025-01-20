@@ -135,15 +135,29 @@ app.delete('/authors/:id', async (req, res) => {
   }
 });
 
-// Get all accounts (for admin or debugging purposes)
-app.get('/accounts', async (req, res) => {
+app.get('/accounts/:id', async (req, res) => {
+  const { id } = req.params;
+
+  if (!id || id === 'undefined') {
+    return res.status(400).send('Account ID is missing or invalid.');
+  }
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).send('Invalid ObjectId format.');
+  }
+
   try {
-    const accounts = await Account.find();
-    res.json(accounts);
+    const account = await Account.findById(id);
+    if (!account) {
+      return res.status(404).send('Account not found');
+    }
+    res.json(account);
   } catch (err) {
-    res.status(500).send(err.message);
+    console.error('Error fetching account:', err.message);
+    res.status(500).send('Internal server error');
   }
 });
+
 
 
 app.post('/accounts/login', async (req, res) => {

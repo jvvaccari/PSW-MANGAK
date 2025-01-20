@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import {useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 import {
   Box,
   Typography,
@@ -17,7 +18,7 @@ import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { fetchFavoriteListById, fetchMangasByIds, removeMangaFromFavoriteList } from "../../services/api";
 
 const FavoriteListDetails = () => {
-  const { id } = useParams();
+  const { userId } = useSelector((state) => state.auth.user);
   const navigate = useNavigate();
   const [list, setList] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -26,7 +27,7 @@ const FavoriteListDetails = () => {
   useEffect(() => {
     const loadList = async () => {
       try {
-        const data = await fetchFavoriteListById(id);
+        const data = await fetchFavoriteListById(userId);
         if (data?.mangas?.length > 0) {
           const mangas = await fetchMangasByIds(data.mangas);
           setList({ ...data, mangas });
@@ -42,14 +43,14 @@ const FavoriteListDetails = () => {
     };
 
     loadList();
-  }, [id]);
+  }, [userId]);
 
   const handleMangaClick = (mangaId) => navigate(`/manga/${mangaId}`);
 
   const handleRemoveManga = async (mangaId) => {
     try {
       // Tente remover o manga da lista no banco de dados
-      const success = await removeMangaFromFavoriteList(id, mangaId);
+      const success = await removeMangaFromFavoriteList(userId, mangaId);
   
       if (success) {
         // Atualiza a lista de mangas local, após remoção bem-sucedida

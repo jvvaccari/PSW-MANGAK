@@ -12,6 +12,7 @@ import {
 } from "@mui/material";
 import Navbar from "../components/Navbar";
 import { useParams } from "react-router-dom";
+import { useSelector } from "react-redux";
 import {
   updateEvaluation,
   deleteEvaluation,
@@ -19,7 +20,8 @@ import {
 } from "../../services/api";
 
 export default function EvaluationPage() {
-  const { mangaId, userId } = useParams();
+  const { mangaId} = useParams();
+  const { userId } = useSelector((state) => state.auth.user);
   console.log("Manga ID:", mangaId);
   console.log("User ID:", userId);
 

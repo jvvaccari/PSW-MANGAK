@@ -1,4 +1,5 @@
-import { useEffect, useState, useSelector, useDispatch } from "react";
+import { useEffect, useState, useDispatch } from "react";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { logout } from "../redux/authSlice";
 

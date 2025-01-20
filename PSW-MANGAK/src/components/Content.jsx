@@ -113,7 +113,7 @@ const Content = ({ manga }) => {
             }}
           >
             <Link
-              to={`/author/${manga.authorId}`}
+              to={`/authors/${manga.authorId}`}
               style={{ textDecoration: "none", color: "inherit" }} 
             >
               {authorName}
