@@ -135,6 +135,17 @@ app.delete('/authors/:id', async (req, res) => {
   }
 });
 
+// Get all accounts (for admin or debugging purposes)
+app.get('/accounts', async (req, res) => {
+  try {
+    const accounts = await Account.find();
+    res.json(accounts);
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+});
+
+
 app.post('/accounts/login', async (req, res) => {
   const { email, password } = req.body;
   try {
