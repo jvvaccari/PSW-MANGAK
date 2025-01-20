@@ -1,50 +1,69 @@
-import { useContext, useState, useEffect } from "react";
+// src/pages/CatalogPage.jsx
+import { useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { Box, Typography, CircularProgress, Container } from "@mui/material";
+
 import Navbar from "../components/Navbar";
 import MangaList from "../components/MangaList";
-import { Box, Typography, CircularProgress, Container } from "@mui/material";
-import MangaContext from "../contexts/MangaContext";
-import { fetchAuthorById } from "../../services/api";
+import { loadMangas } from "../redux/mangaSlice"; // Redux thunk
+import { fetchAuthorById } from "../../services/api"; // If you still want to fetch authors individually
 
 function CatalogPage() {
-  const { mangas, loading, error } = useContext(MangaContext);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [mangasWithAuthors, setMangasWithAuthors] = useState([]);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const handleMangaClick = (id) => {
-    navigate(`/manga/${id}`);
-  };
+  // Redux manga state
+  const { mangas, loading, error } = useSelector((state) => state.manga);
 
+  // Local state for search and authors
+  const [searchTerm, setSearchTerm] = useState("");
+  const [mangasWithAuthors, setMangasWithAuthors] = useState([]);
+
+  // Initially load if we have no mangas
+  useEffect(() => {
+    if (mangas.length === 0) {
+      dispatch(loadMangas());
+    }
+  }, [dispatch, mangas.length]);
+
+  // Once we have mangas, optionally fetch each manga's author
   useEffect(() => {
     const fetchAuthors = async () => {
       try {
         const updatedMangas = await Promise.all(
           mangas.map(async (manga) => {
-            const author = manga.authorId
-              ? await fetchAuthorById(manga.authorId)
-              : null;
-
-            return {
-              ...manga,
-              author: author ? author.name : "Autor desconhecido",
-            };
+            if (manga.authorId) {
+              const author = await fetchAuthorById(manga.authorId);
+              return {
+                ...manga,
+                author: author ? author.name : "Autor desconhecido",
+              };
+            } else {
+              return { ...manga, author: "Autor desconhecido" };
+            }
           })
         );
         setMangasWithAuthors(updatedMangas);
-      } catch (error) {
-        console.error("Erro ao buscar autores:", error.message);
-        setMangasWithAuthors(mangas.map((manga) => ({
-          ...manga,
-          author: "Erro ao carregar autor",
-        })));
+      } catch (err) {
+        console.error("Erro ao buscar autores:", err.message);
+        setMangasWithAuthors(
+          mangas.map((m) => ({
+            ...m,
+            author: "Erro ao carregar autor",
+          }))
+        );
       }
     };
 
-    if (mangas?.length > 0) {
+    if (mangas && mangas.length > 0) {
       fetchAuthors();
     }
   }, [mangas]);
+
+  const handleMangaClick = (id) => {
+    navigate(`/manga/${id}`);
+  };
 
   if (loading) {
     return (
@@ -62,18 +81,24 @@ function CatalogPage() {
   }
 
   if (error) {
-    return <Typography>{error}</Typography>;
+    return (
+      <Box sx={{ p: 4 }}>
+        <Typography color="error">{error}</Typography>
+      </Box>
+    );
   }
 
+  // Filter by searchTerm
   const filteredMangas = mangasWithAuthors.filter((manga) => {
     const search = searchTerm.toLowerCase();
-
     return (
       manga.id.toString().includes(search) ||
       manga.title.toLowerCase().includes(search) ||
       manga.author.toLowerCase().includes(search) ||
-      manga.genres.some((genre) => genre.toLowerCase().includes(search)) ||
-      manga.demographic.toLowerCase().includes(search)
+      (manga.genres || []).some((genre) =>
+        genre.toLowerCase().includes(search)
+      ) ||
+      (manga.demographic || "").toLowerCase().includes(search)
     );
   });
 
@@ -98,7 +123,7 @@ function CatalogPage() {
               color: "#fff",
             }}
           >
-            {filteredMangas?.length > 0 ? (
+            {filteredMangas.length > 0 ? (
               <MangaList
                 mangas={filteredMangas}
                 searchTerm={searchTerm}

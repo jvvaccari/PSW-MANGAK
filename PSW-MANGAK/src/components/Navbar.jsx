@@ -5,13 +5,13 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import EditIcon from "@mui/icons-material/Edit";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useState } from "react";
+import { useSelector } from "react-redux";
 import PropTypes from "prop-types";
-import useAuth from "../contexts/useAuth";
 
 const Navbar = ({ searchTerm = "", setSearchTerm = () => {}, loading = false }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user } = useAuth();
+  const { user } = useSelector(state => state.auth)
   const [showSearch, setShowSearch] = useState(false);
 
   const isCatalogPage = location.pathname === "/";

@@ -1,38 +1,45 @@
-import { useContext, useState, useEffect } from "react";
+// src/pages/MangaAdminPage.jsx
+import { useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import { Box, Button, TextField, Typography, IconButton } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
-import {
-  updateManga,
-  createManga,
-  deleteManga,
-  fetchMangas,
-} from "../../services/api";
-import MangaContext from "../contexts/MangaContext";
 import EditIcon from "@mui/icons-material/Edit";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import DeleteIcon from "@mui/icons-material/Delete";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router-dom";
 
-const MangaAdminPage = () => {
-  const { mangas, setMangas } = useContext(MangaContext);
+// Thunks from your mangaSlice
+import {
+  loadMangas,
+  createMangaThunk,
+  updateMangaThunk,
+  deleteMangaThunk,
+} from "../redux/mangaSlice";
+
+// If you want color theme or extra services
+// import { fetchMangas, createManga, updateManga, deleteManga } from "../../services/api";
+
+function MangaAdminPage() {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  // Redux state
+  const { mangas, loading, error } = useSelector((state) => state.manga);
+
+  // Local UI state
   const [editingRow, setEditingRow] = useState(null);
   const [isCreating, setIsCreating] = useState(false);
   const [formData, setFormData] = useState({});
-  const navigate = useNavigate();
 
-  // Buscar mangás ao carregar a página
+  // Fetch mangas on mount
   useEffect(() => {
-    const loadMangas = async () => {
-      try {
-        const data = await fetchMangas();
-        setMangas(data);
-      } catch (error) {
-        console.error("Erro ao carregar mangás:", error);
-      }
-    };
-    loadMangas();
-  }, [setMangas]);
+    // only load if not yet loaded
+    if (mangas.length === 0) {
+      dispatch(loadMangas());
+    }
+  }, [dispatch, mangas.length]);
 
+  // field change helpers
   const handleFieldChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
@@ -44,18 +51,26 @@ const MangaAdminPage = () => {
     }));
   };
 
+  // Save (create or update)
   const handleSaveClick = async () => {
     try {
       if (isCreating) {
+        // CREATE
         const newManga = { ...formData, id: `${Date.now()}` };
-        const createdManga = await createManga(newManga);
-        setMangas((prev) => [...prev, createdManga]);
+        dispatch(createMangaThunk(newManga));
       } else if (editingRow) {
-        const updatedManga = await updateManga(editingRow.id, formData);
-        setMangas((prev) =>
-          prev.map((m) => (m.id === editingRow.id ? updatedManga : m))
+        // UPDATE
+        dispatch(
+          updateMangaThunk({
+            id: editingRow.id,
+            mangaData: {
+              ...formData,
+              // convert any comma-strings back to arrays if needed
+            },
+          })
         );
       }
+      // Reset form state
       setEditingRow(null);
       setIsCreating(false);
       setFormData({});
@@ -64,8 +79,10 @@ const MangaAdminPage = () => {
     }
   };
 
+  // Edit
   const handleEditClick = (row) => {
     setEditingRow(row);
+    setIsCreating(false);
     setFormData({
       ...row,
       genres: row.genres?.join(", "),
@@ -73,21 +90,19 @@ const MangaAdminPage = () => {
     });
   };
 
-  const handleDeleteClick = async (id) => {
-    try {
-      await deleteManga(id);
-      setMangas((prev) => prev.filter((manga) => manga.id !== id));
-    } catch (error) {
-      console.error("Erro ao excluir mangá:", error);
-    }
+  // Delete
+  const handleDeleteClick = (id) => {
+    dispatch(deleteMangaThunk(id));
   };
 
+  // Cancel
   const handleCancelClick = () => {
     setEditingRow(null);
     setIsCreating(false);
     setFormData({});
   };
 
+  // Table columns
   const columns = [
     { field: "id", headerName: "ID", width: 70 },
     { field: "title", headerName: "Título", width: 200 },
@@ -111,6 +126,7 @@ const MangaAdminPage = () => {
     },
   ];
 
+  // Fields for editing/creating
   const formFields = [
     { label: "Título", field: "title" },
     { label: "Autor", field: "author" },
@@ -140,6 +156,7 @@ const MangaAdminPage = () => {
         color: "#FFF",
       }}
     >
+      {/* Header */}
       <Box sx={{ display: "flex", alignItems: "center", marginBottom: "20px" }}>
         <IconButton onClick={() => navigate(-1)} sx={{ color: "#FFF" }}>
           <ArrowBackIcon />
@@ -149,9 +166,11 @@ const MangaAdminPage = () => {
         </Typography>
       </Box>
 
+      {/* Create new manga button */}
       <Button
         onClick={() => {
           setIsCreating(true);
+          setEditingRow(null);
           setFormData({});
         }}
         variant="contained"
@@ -160,26 +179,32 @@ const MangaAdminPage = () => {
         Adicionar Novo Mangá
       </Button>
 
+      {/* Show loading or error */}
+      {loading && <Typography>Carregando mangás...</Typography>}
+      {error && <Typography color="error">Erro: {error}</Typography>}
+
+      {/* DataGrid Table */}
       <DataGrid
         rows={mangas}
         columns={columns}
         pageSize={5}
         sx={{
-    height: 400,
-    backgroundColor: "#2C2C2C",
-    color: "#FFF",
-    "& .MuiDataGrid-columnHeaders": {
-      backgroundColor: "#333", // Cor de fundo do header
-      color: "#000000", // Cor do texto do header
-      fontSize: "16px", // Tamanho do texto
-      fontWeight: "bold", // Texto em negrito
-    },
-    "& .MuiDataGrid-cell": {
-      color: "#FFF",
-    },
-  }}
+          height: 400,
+          backgroundColor: "#2C2C2C",
+          color: "#FFF",
+          "& .MuiDataGrid-columnHeaders": {
+            backgroundColor: "#333",
+            color: "#000",
+            fontSize: "16px",
+            fontWeight: "bold",
+          },
+          "& .MuiDataGrid-cell": {
+            color: "#FFF",
+          },
+        }}
       />
 
+      {/* Edit/Create Form */}
       {(editingRow || isCreating) && (
         <Box
           sx={{
@@ -255,6 +280,6 @@ const MangaAdminPage = () => {
       )}
     </Box>
   );
-};
+}
 
 export default MangaAdminPage;

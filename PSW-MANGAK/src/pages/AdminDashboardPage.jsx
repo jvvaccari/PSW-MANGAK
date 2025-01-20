@@ -1,11 +1,10 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSelector } from "react-router-dom";
 import { Button, Box, Typography, IconButton } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import useAuth from "../contexts/useAuth"; // Importa o contexto de autenticação
 
 const AdminDashboardPage = () => {
   const navigate = useNavigate();
-  const { user } = useAuth(); // Obtém o usuário autenticado
+  const { user } = useSelector(state => state.auth)
 
   const handleNavigation = (path) => {
     if (!user?.id) {

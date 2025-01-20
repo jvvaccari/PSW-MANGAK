@@ -1,12 +1,13 @@
 import { useState } from "react";
+import { useSelector } from "react-redux";
 import { BookmarkAdd as AddIcon, IosShare as ShareIcon } from "@mui/icons-material";
 import { Button, Box } from "@mui/material";
 import PropTypes from "prop-types";
-import useAuth from "../contexts/useAuth";
+
 import AddToListModal from "./AddToListModal";
 
 const Actions = ({ mangaId }) => {
-  const { user } = useAuth();
+  const { user } = useSelector(state => state.auth)
   const [openModal, setOpenModal] = useState(false);
 
   const handleAddToList = () => setOpenModal(true);

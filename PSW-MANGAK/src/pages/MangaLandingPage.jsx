@@ -1,20 +1,33 @@
-import { useContext } from "react";
+// src/pages/MangaLandingPage.jsx
+import { useEffect } from "react";
 import { useParams } from "react-router-dom";
-import MangaContext from "../contexts/MangaContext";
+import { useDispatch, useSelector } from "react-redux";
+import { Box, CircularProgress, Typography, Container } from "@mui/material";
+
+import { loadMangas } from "../redux/mangaSlice"; // Our new thunk
+// Components
 import Actions from "../components/Actions";
 import ArtGallery from "../components/ArtGallery";
 import Content from "../components/Content";
 import Description from "../components/Description";
 import Navbar from "../components/Navbar";
 import TagsSection from "../components/TagsSection";
-import { Box, CircularProgress, Typography, Container } from "@mui/material";
-import useAuth from "../contexts/useAuth";
 
 function MangaLandingPage() {
   const { id } = useParams();
-  const { mangas, loading, error } = useContext(MangaContext);
-  const { user } = useAuth();
-  const userId = user?.id;
+  const dispatch = useDispatch();
+
+  // Get data from Redux store
+  const { user } = useSelector((state) => state.auth);
+  const { mangas, loading, error } = useSelector((state) => state.manga);
+
+  // Load mangas if not already loaded
+  useEffect(() => {
+    // Only load if we haven't yet
+    if (mangas.length === 0) {
+      dispatch(loadMangas());
+    }
+  }, [dispatch, mangas.length]);
 
   if (loading) {
     return (
@@ -48,6 +61,7 @@ function MangaLandingPage() {
     );
   }
 
+  // Find the manga by URL param 'id'
   const manga = mangas.find((m) => m.id === id);
 
   if (!manga) {
@@ -66,6 +80,7 @@ function MangaLandingPage() {
     );
   }
 
+  const userId = user?.id;
   const tagsData = [
     { section: "Genres", tags: manga.genres || [] },
     { section: "Demographic", tags: [manga.demographic || "Indefinido"] },
@@ -84,7 +99,7 @@ function MangaLandingPage() {
         >
           <Content
             manga={{
-              id: manga.id || "ID Desconhecido",
+              id: manga.id,
               image: manga.image || "",
               title: manga.title || "Título Desconhecido",
               authorId: manga.authorId || null,
@@ -122,20 +137,22 @@ function MangaLandingPage() {
             />
           ))}
 
-          <TagsSection
-            data={{
-              section: "Where to Buy",
-              tags: manga.retail.map((item) => ({
-                name: item.name,
-                url: item.url,
-              })),
-            }}
-            sx={{
-              marginBottom: "var(--spacing-medium)",
-            }}
-          />
+          {manga.retail && (
+            <TagsSection
+              data={{
+                section: "Where to Buy",
+                tags: manga.retail.map((item) => ({
+                  name: item.name,
+                  url: item.url,
+                })),
+              }}
+              sx={{
+                marginBottom: "var(--spacing-medium)",
+              }}
+            />
+          )}
 
-          {manga.artsList && <ArtGallery artsList={manga.artsList || []} />}
+          {manga.artsList && <ArtGallery artsList={manga.artsList} />}
         </Box>
       </Container>
     </>

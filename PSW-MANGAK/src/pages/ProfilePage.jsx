@@ -1,5 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSelector, useDispatch } from "react";
 import { useNavigate } from "react-router-dom";
+import { logout } from "../redux/authSlice";
+
 import {
   Box,
   Typography,
@@ -19,7 +21,6 @@ import CloseIcon from "@mui/icons-material/Close";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { fetchAccountById, updateAccount, deleteAccount } from "../../services/api";
-import useAuth from "../contexts/useAuth";
 
 const inputStyles = {
   bgcolor: "var(--bg-data-color)",
@@ -40,7 +41,7 @@ const inputStyles = {
 };
 
 function ProfilePage() {
-  const { user, logout } = useAuth();
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -48,6 +49,15 @@ function ProfilePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
+
+  const { user } = useSelector((state) => state.auth);
+
+  // Dispatch the logout action
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate("/login");
+  };
+
 
   useEffect(() => {
     const loadUser = async () => {
@@ -111,11 +121,6 @@ function ProfilePage() {
 
   const handleCloseDialog = () => {
     setOpenDialog(false);
-  };
-
-  const handleLogout = () => {
-    logout();
-    navigate("/login");
   };
 
   if (loading) {

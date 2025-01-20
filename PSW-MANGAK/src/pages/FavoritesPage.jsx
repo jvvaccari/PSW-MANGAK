@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSelector } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Box,
@@ -15,10 +15,9 @@ import {
 import { fetchFavoriteLists, createFavoriteList } from "../../services/api";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import AddIcon from "@mui/icons-material/Add";
-import useAuth from "../contexts/useAuth";
 
 const FavoritesPage = () => {
-  const { user } = useAuth();
+  const { user } = useSelector(state => state.auth)
   const navigate = useNavigate();
   const [lists, setLists] = useState([]);
   const [loading, setLoading] = useState(true);

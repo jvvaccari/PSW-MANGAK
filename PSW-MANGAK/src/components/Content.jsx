@@ -1,16 +1,16 @@
 import PropTypes from "prop-types";
 import { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 import { Box, Typography, Rating } from "@mui/material";
 import CommentIcon from "@mui/icons-material/Comment";
 import { useNavigate } from "react-router-dom";
 import { fetchAuthorById, fetchEvaluations } from "../../services/api";
-import useAuth from "../contexts/useAuth";
 import styles from "./Content.module.css";
 import { Link } from "react-router-dom";
 
 const Content = ({ manga }) => {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user } = useSelector(state => state.auth)
   const [authorName, setAuthorName] = useState("Carregando autor...");
   const [averageRating, setAverageRating] = useState(0.0);
 
