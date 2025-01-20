@@ -69,12 +69,12 @@ function CatalogPage() {
     const search = searchTerm.toLowerCase();
 
     return (
-      manga.id?.toString().includes(search) || // Check if id exists
-      manga.title?.toLowerCase().includes(search) || // Check if title exists
-      manga.author?.toLowerCase().includes(search) || // Check if author exists
-      manga.genres?.some((genre) => genre.toLowerCase().includes(search)) || // Check if genres exist
-      manga.demographic?.toLowerCase().includes(search) // Check if demographic exists
-    );    
+      manga.id.toString().includes(search) ||
+      manga.title.toLowerCase().includes(search) ||
+      manga.author.toLowerCase().includes(search) ||
+      manga.genres.some((genre) => genre.toLowerCase().includes(search)) ||
+      manga.demographic.toLowerCase().includes(search)
+    );
   });
 
   return (

@@ -7,11 +7,19 @@ const axiosInstance = axios.create({
   headers: { "Content-Type": "application/json" },
 });
 
+
+const transformResponse = (data) =>
+  Array.isArray(data)
+    ? data.map((item) => ({ ...item, id: item._id }))
+    : { ...data, id: data._id };
+
+
+
 export const fetchEvaluationById = async (evaluationId) => {
   try {
     validateId(evaluationId, "avaliação");
     const response = await axiosInstance.get(`/evaluations/${evaluationId}`);
-    return response.data;
+    return transformResponse(response.data);
   } catch (error) {
     handleError(error, `Erro ao buscar avaliação com ID ${evaluationId}`);
   }
@@ -34,7 +42,7 @@ const fetchById = async (endpoint, id, type) => {
   try {
     validateId(id, type);
     const response = await axiosInstance.get(`/${endpoint}/${id}`);
-    return response.data;
+    return transformResponse(response.data);
   } catch (error) {
     handleError(error, `Erro ao buscar ${type} com ID ${id}`);
   }
@@ -44,7 +52,7 @@ const updateById = async (endpoint, id, data, type) => {
   try {
     validateId(id, type);
     const response = await axiosInstance.put(`/${endpoint}/${id}`, data);
-    return response.data;
+    return transformResponse(response.data);
   } catch (error) {
     handleError(error, `Erro ao atualizar ${type} com ID ${id}`);
   }
@@ -56,7 +64,7 @@ export const fetchAuthorById = async (authorId) =>
 export const fetchMangas = async () => {
   try {
     const response = await axiosInstance.get("/mangas");
-    return response.data;
+    return transformResponse(response.data);
   } catch (error) {
     handleError(error, "Erro ao buscar mangás");
   }
@@ -67,7 +75,7 @@ export const fetchMangaById = async (id) => fetchById("mangas", id, "mangá");
 export const createManga = async (newManga) => {
   try {
     const response = await axiosInstance.post("/mangas", newManga);
-    return response.data;
+    return transformResponse(response.data);
   } catch (error) {
     handleError(error, "Erro ao criar mangá");
   }
@@ -151,7 +159,7 @@ export const fetchEvaluations = async (mangaId) => {
     if (response.status !== 200 || !response.data) {
       throw new Error("Erro ao buscar avaliações");
     }
-    return response.data;
+    return transformResponse(response.data);
   } catch (error) {
     console.error("Erro no fetchEvaluations:", error.message);
     return [];
@@ -198,7 +206,7 @@ export const deleteEvaluation = async (evaluationId) => {
 export const fetchAuthors = async () => {
   try {
     const response = await axiosInstance.get("/authors");
-    return response.data;
+    return transformResponse(response.data);
   } catch (error) {
     handleError(error, "Erro ao buscar autores");
   }

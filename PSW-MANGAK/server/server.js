@@ -39,15 +39,6 @@ app.get('/mangas', async (_req, res) => {
   }
 });
 
-app.get('/mangas/:id', async (req, res) => {
-  try {
-    const manga = await Manga.findById(req.params.id).populate('authorId');
-    if (!manga) return res.status(404).send('Manga not found');
-    res.json(manga);
-  } catch (err) {
-    res.status(500).send(err.message);
-  }
-});
 
 app.post('/mangas', async (req, res) => {
   try {
@@ -59,9 +50,24 @@ app.post('/mangas', async (req, res) => {
   }
 });
 
+
+app.get('/mangas/:id', async (req, res) => {
+  try {
+    const manga = await Manga.findById(new mongoose.Types.ObjectId(req.params.id)).populate('authorId');
+    if (!manga) return res.status(404).send('Manga not found');
+    res.json(manga);
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+});
+
 app.put('/mangas/:id', async (req, res) => {
   try {
-    const updatedManga = await Manga.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    const updatedManga = await Manga.findByIdAndUpdate(
+      new mongoose.Types.ObjectId(req.params.id),
+      req.body,
+      { new: true }
+    );
     res.json(updatedManga);
   } catch (err) {
     res.status(400).send(err.message);
@@ -70,7 +76,7 @@ app.put('/mangas/:id', async (req, res) => {
 
 app.delete('/mangas/:id', async (req, res) => {
   try {
-    await Manga.findByIdAndDelete(req.params.id);
+    await Manga.findByIdAndDelete(new mongoose.Types.ObjectId(req.params.id));
     res.status(204).send();
   } catch (err) {
     res.status(500).send(err.message);
@@ -87,16 +93,6 @@ app.get('/authors', async (req, res) => {
   }
 });
 
-app.get('/authors/:id', async (req, res) => {
-  try {
-    const author = await Author.findById(req.params.id);
-    if (!author) return res.status(404).send('Author not found');
-    res.json(author);
-  } catch (err) {
-    res.status(500).send(err.message);
-  }
-});
-
 app.post('/authors', async (req, res) => {
   try {
     const newAuthor = new Author(req.body);
@@ -107,9 +103,23 @@ app.post('/authors', async (req, res) => {
   }
 });
 
+app.get('/authors/:id', async (req, res) => {
+  try {
+    const author = await Author.findById(new mongoose.Types.ObjectId(req.params.id));
+    if (!author) return res.status(404).send('Author not found');
+    res.json(author);
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+});
+
 app.put('/authors/:id', async (req, res) => {
   try {
-    const updatedAuthor = await Author.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    const updatedAuthor = await Author.findByIdAndUpdate(
+      new mongoose.Types.ObjectId(req.params.id),
+      req.body,
+      { new: true }
+    );
     res.json(updatedAuthor);
   } catch (err) {
     res.status(400).send(err.message);
@@ -118,7 +128,7 @@ app.put('/authors/:id', async (req, res) => {
 
 app.delete('/authors/:id', async (req, res) => {
   try {
-    await Author.findByIdAndDelete(req.params.id);
+    await Author.findByIdAndDelete(new mongoose.Types.ObjectId(req.params.id));
     res.status(204).send();
   } catch (err) {
     res.status(500).send(err.message);
@@ -164,7 +174,7 @@ app.post('/accounts/register', async (req, res) => {
 
 app.get('/accounts/:id', async (req, res) => {
   try {
-    const account = await Account.findById(req.params.id);
+    const account = await Account.findById(new mongoose.Types.ObjectId(req.params.id));
     if (!account) return res.status(404).send('Account not found');
     res.json(account);
   } catch (err) {
@@ -174,7 +184,11 @@ app.get('/accounts/:id', async (req, res) => {
 
 app.put('/accounts/:id', async (req, res) => {
   try {
-    const updatedAccount = await Account.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    const updatedAccount = await Account.findByIdAndUpdate(
+      new mongoose.Types.ObjectId(req.params.id),
+      req.body,
+      { new: true }
+    );
     res.json(updatedAccount);
   } catch (err) {
     res.status(400).send(err.message);
@@ -183,7 +197,7 @@ app.put('/accounts/:id', async (req, res) => {
 
 app.delete('/accounts/:id', async (req, res) => {
   try {
-    await Account.findByIdAndDelete(req.params.id);
+    await Account.findByIdAndDelete(new mongoose.Types.ObjectId(req.params.id));
     res.status(204).send();
   } catch (err) {
     res.status(500).send(err.message);
