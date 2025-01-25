@@ -28,53 +28,52 @@ const MONGO_URI = 'mongodb://localhost:27017/mongo';
     });
     console.log('Connected to MongoDB');
 
-    // Insert authors and track their `_id` values
-    const authors = await Author.insertMany(
-      data.authors.map(({ id, ...rest }) => rest) // Exclude `id` field
-    );
-    console.log('Authors inserted:', authors.length);
-
-    // Create a mapping of old `id` to MongoDB `_id` for authors
+    // Insert authors and create mapping
+    const authors = await Author.insertMany(data.authors);
     const authorIdMap = authors.reduce((map, author) => {
       map[author.id] = author._id; // Map old `id` to new `_id`
       return map;
     }, {});
+    console.log('Authors inserted:', authors.length);
 
-    // Replace `authorId` in mangas with the corresponding `_id`
+    // Insert mangas with updated `authorId`
     const mangas = data.mangas.map((manga) => ({
       ...manga,
-      authorId: authorIdMap[manga.authorId], // Replace with ObjectId
+      authorId: authorIdMap[manga.authorId],
     }));
     const insertedMangas = await Manga.insertMany(mangas);
-    console.log('Mangas inserted:', insertedMangas.length);
-
-    // Create a mapping of old `id` to MongoDB `_id` for mangas
     const mangaIdMap = insertedMangas.reduce((map, manga) => {
       map[manga.id] = manga._id; // Map old `id` to new `_id`
       return map;
     }, {});
+    console.log('Mangas inserted:', insertedMangas.length);
 
-    // Replace `favorites` in accounts with the corresponding `_id`
+    // Insert accounts with updated `favorites`
     const accounts = data.accounts.map((account) => ({
       ...account,
-      favorites: account.favorites.map((favoriteId) => mangaIdMap[favoriteId]), // Map to ObjectId
+      favorites: account.favorites.map((favoriteId) => mangaIdMap[favoriteId]),
     }));
-    await Account.insertMany(accounts);
-    console.log('Accounts inserted:', accounts.length);
+    const insertedAccounts = await Account.insertMany(accounts);
+    const accountIdMap = insertedAccounts.reduce((map, acc) => {
+      map[acc.id] = acc._id; // Map old `id` to new `_id`
+      return map;
+    }, {});
+    console.log('Accounts inserted:', insertedAccounts.length);
 
-    // Replace `userId` in favorite lists and evaluations with the corresponding `_id`
+    // Insert favorite lists with updated `userId` and `mangas`
     const favoriteLists = data.favoriteLists.map((list) => ({
       ...list,
-      userId: accounts.find((acc) => acc.id === list.userId)._id, // Replace with ObjectId
-      mangas: list.mangas.map((mangaId) => mangaIdMap[mangaId]), // Replace manga references
+      userId: accountIdMap[list.userId],
+      mangas: list.mangas.map((mangaId) => mangaIdMap[mangaId]),
     }));
     await FavoriteList.insertMany(favoriteLists);
     console.log('Favorite Lists inserted:', favoriteLists.length);
 
+    // Insert evaluations with updated `userId` and `mangaId`
     const evaluations = data.evaluations.map((evaluation) => ({
       ...evaluation,
-      userId: accounts.find((acc) => acc.id === evaluation.userId)._id, // Replace user reference
-      mangaId: mangaIdMap[evaluation.mangaId], // Replace manga reference
+      userId: accountIdMap[evaluation.userId],
+      mangaId: mangaIdMap[evaluation.mangaId],
     }));
     await Evaluation.insertMany(evaluations);
     console.log('Evaluations inserted:', evaluations.length);
