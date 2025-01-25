@@ -30,7 +30,7 @@ const FavoriteListDetails = lazy(() => import("./pages/FavoriteListDetails"));
  * loadUserFromStorage once, using hooks (which we can't do in a class or outside the Provider).
  */
 function AppWrapper() {
-  const dispatch = useDispatch(loadUserFromStorage());
+  const dispatch = useDispatch();
   const { loading } = useSelector((state) => state.auth);
 
   useEffect(() => {

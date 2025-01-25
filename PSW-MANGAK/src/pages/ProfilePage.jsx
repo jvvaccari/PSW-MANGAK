@@ -1,5 +1,5 @@
-import { useEffect, useState, useDispatch } from "react";
-import { useSelector } from "react-redux";
+import { useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { logout } from "../redux/authSlice";
 
@@ -69,7 +69,7 @@ function ProfilePage() {
           return;
         }
   
-        setLoading(true); // Garante que o carregamento seja iniciado
+        setLoading(true);
         const data = await fetchAccountById(user.id);
         if (data) {
           setFormData(data);
@@ -79,15 +79,18 @@ function ProfilePage() {
       } catch (err) {
         console.error("Erro ao carregar os dados do usuário:", err.message);
         setError("Erro ao carregar os dados. Faça login novamente.");
-        logout();
+        
+        // Use dispatch to actually log the user out in Redux
+        dispatch(logout());
         navigate("/login");
       } finally {
-        setLoading(false); // Garante que o carregamento seja encerrado
+        setLoading(false);
       }
     };
   
     loadUser();
-  }, [user, navigate, logout]);
+  }, [user, navigate, dispatch]);
+  
   
 
   const handleInputChange = (e) => {

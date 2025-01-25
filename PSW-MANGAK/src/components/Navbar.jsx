@@ -45,7 +45,7 @@ const Navbar = ({ searchTerm = "", setSearchTerm = () => {}, loading = false }) 
           if (user?.role === "admin") {
             navigate("/admin-dashboard");
           } else if (user?.id) {
-            navigate("/favorites/lists");
+            handleProtectedRoute("/favorites/lists");
           } else {
             navigate("/login");
           }

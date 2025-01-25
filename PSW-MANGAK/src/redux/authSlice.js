@@ -2,33 +2,40 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
+// You can keep this base for /accounts, or use a more general API_URL 
+// if you prefer. The key is that we have /accounts/login & /accounts/register.
 const BASE_URL = "http://localhost:5501/accounts";
 
 /**
  * Thunk: loginUser
- * 1. Fetches all accounts from BASE_URL
- * 2. Finds a matching account by email and password
- * 3. If found, saves userId to localStorage and returns the foundUser
- * 4. If not found, rejects with an error message
+ * 
+ * Calls POST /accounts/login with { email, password }.
+ * If successful, saves userId to localStorage. Otherwise, rejects with an error.
  */
 export const loginUser = createAsyncThunk(
   "auth/loginUser",
   async ({ email, password }, thunkAPI) => {
     try {
-      const response = await axios.get(BASE_URL);
-      const foundUser = response.data.find(
-        (account) =>
-          account.email === email && account.password === password
-      );
+      const response = await axios.post(`${BASE_URL}/login`, {
+        email,
+        password,
+      });
+      const foundUser = response.data; // The server returns the user object
 
       if (!foundUser) {
         throw new Error("Credenciais inválidas.");
       }
 
-      localStorage.setItem("userId", foundUser.id); // Persist userId in localStorage
-      return foundUser;
+      // Use either foundUser._id or foundUser.id, depending on how your server returns it
+      const userWithId = { ...foundUser, id: foundUser._id };
+      localStorage.setItem("userId", userWithId.id);
+
+      return userWithId;
+
     } catch (error) {
-      const errorMessage = error.message || "Erro desconhecido";
+      // If the server throws a 401 or other error, you can capture it here
+      const errorMessage =
+        error.response?.data || error.message || "Erro desconhecido";
       return thunkAPI.rejectWithValue(errorMessage);
     }
   }
@@ -36,39 +43,32 @@ export const loginUser = createAsyncThunk(
 
 /**
  * Thunk: registerUser
- * 1. Fetches all accounts from BASE_URL
- * 2. Checks if email already exists
- * 3. If it doesn't, creates a new user object, posts it to the server,
- *    saves userId to localStorage, and returns the newly created user
- * 4. If user already exists, rejects with an error message
+ * 
+ * Calls POST /accounts/register with { username, email, password }.
+ * If successful, saves userId to localStorage. Otherwise, rejects with an error.
  */
 export const registerUser = createAsyncThunk(
   "auth/registerUser",
   async ({ username, email, password }, thunkAPI) => {
     try {
-      const response = await axios.get(BASE_URL);
-      const existingUser = response.data.find(
-        (account) => account.email === email
-      );
-
-      if (existingUser) {
-        throw new Error("O e-mail já está em uso.");
-      }
-
-      const newUser = {
-        id: Date.now().toString(),
+      const response = await axios.post(`${BASE_URL}/register`, {
         username,
         email,
         password,
-        favorites: [],
-        role: "user",
-      };
+      });
+      const newUser = response.data;
 
-      await axios.post(BASE_URL, newUser);
-      localStorage.setItem("userId", newUser.id); // Persist userId in localStorage
-      return newUser;
+      if (!newUser) {
+        throw new Error("Erro ao criar usuário.");
+      }
+
+      const userWithId = { ...newUser, id: newUser._id };
+      localStorage.setItem("userId", userWithId.id);
+
+      return userWithId;
     } catch (error) {
-      const errorMessage = error.message || "Erro ao registrar usuário";
+      const errorMessage =
+        error.response?.data || error.message || "Erro ao registrar usuário";
       return thunkAPI.rejectWithValue(errorMessage);
     }
   }
@@ -76,30 +76,30 @@ export const registerUser = createAsyncThunk(
 
 /**
  * Thunk: loadUserFromStorage
- * 1. Checks if "userId" exists in localStorage
- * 2. If yes, fetches that user from the server
- * 3. If user is found, returns user; if not, removes "userId" and rejects
- * 4. If "userId" doesn't exist, returns null
+ * 
+ * Checks if "userId" exists in localStorage.
+ * If yes, fetches that user from GET /accounts/:id.
+ * If not found, removes "userId" and rejects.
  */
 export const loadUserFromStorage = createAsyncThunk(
   "auth/loadUser",
   async (_, thunkAPI) => {
     const userId = localStorage.getItem("userId");
-    if (userId) {
-      try {
-        const response = await axios.get(`${BASE_URL}/${userId}`);
-        if (!response.data) {
-          throw new Error("Usuário não encontrado");
-        }
-        return response.data; // Return user to Redux
-      } catch (error) {
-        localStorage.removeItem("userId"); // Remove invalid userId
-        return thunkAPI.rejectWithValue(
-          `Erro ao carregar usuário: ${error.message || "Erro desconhecido"}`
-        );
+    if (!userId) return null; // No userId in localStorage
+
+    try {
+      const response = await axios.get(`${BASE_URL}/${userId}`);
+      if (!response.data) {
+        throw new Error("Usuário não encontrado");
       }
+      const userWithId = { ...response.data, id: response.data._id };
+      return userWithId; // Return user to Redux
+    } catch (error) {
+      localStorage.removeItem("userId"); // Remove invalid userId
+      return thunkAPI.rejectWithValue(
+        `Erro ao carregar usuário: ${error.response?.data || error.message || "Erro desconhecido"}`
+      );
     }
-    return null; // No userId in localStorage
   }
 );
 
@@ -107,9 +107,9 @@ export const loadUserFromStorage = createAsyncThunk(
 const authSlice = createSlice({
   name: "auth",
   initialState: {
-    user: null,
-    loading: false,
-    error: null,
+    user: null,       // Holds the user object once logged in
+    loading: false,   // For showing spinners during async ops
+    error: null,      // Stores error messages from login/register
   },
   reducers: {
     /**
@@ -169,5 +169,4 @@ const authSlice = createSlice({
 });
 
 export const { logout } = authSlice.actions;
-
 export default authSlice.reducer;

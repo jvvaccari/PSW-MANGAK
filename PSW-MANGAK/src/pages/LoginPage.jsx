@@ -42,13 +42,17 @@ export default function LoginPage() {
     }
   
     try {
+      // Dispatch the updated loginUser thunk
       const result = await dispatch(loginUser({ email, password })).unwrap();
       console.log("Login Bem-sucedido", result);
+      // Optionally navigate to a specific page after successful login
+      // navigate("/profile");
     } catch (err) {
-      console.log("Erro ao tentar login:", err); 
+      console.error("Erro ao tentar login:", err);
       alert("Erro: " + (err.message || "Erro desconhecido"));
     }
   };
+
 
   const commonInputStyles = {
     marginBottom: "16px",
