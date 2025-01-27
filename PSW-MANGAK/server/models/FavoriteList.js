@@ -1,10 +1,14 @@
 import mongoose from 'mongoose';
 
-const favoriteListSchema = new mongoose.Schema({
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'Account' },
-  name: String,
-  mangas: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Manga' }]
-});
+const favoriteListSchema = new mongoose.Schema(
+  {
+    _id: { type: String, required: true },
+    userId: { type: String, ref: 'Account' },
+    name: String,
+    mangas: [{ type: String, ref: 'Manga' }]
+  },
+  { _id: false }
+);
 
 const FavoriteList = mongoose.model('FavoriteList', favoriteListSchema);
 export default FavoriteList;
