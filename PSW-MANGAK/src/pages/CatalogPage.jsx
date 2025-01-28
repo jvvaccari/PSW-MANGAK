@@ -1,4 +1,3 @@
-// src/pages/CatalogPage.jsx
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -6,35 +5,30 @@ import { Box, Typography, CircularProgress, Container } from "@mui/material";
 
 import Navbar from "../components/Navbar";
 import MangaList from "../components/MangaList";
-import { loadMangas } from "../redux/mangaSlice"; // Redux thunk
-import { fetchAuthorById } from "../../services/api"; // If you still want to fetch authors individually
+import { loadMangas } from "../redux/mangaSlice";
+import { AuthorAPI } from "../../services/api";
 
 function CatalogPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  // Redux manga state
-  const { mangas, loading, error } = useSelector((state) => state.manga);
-
-  // Local state for search and authors
+  const { mangas = [], loading, error } = useSelector((state) => state.manga || {});
   const [searchTerm, setSearchTerm] = useState("");
   const [mangasWithAuthors, setMangasWithAuthors] = useState([]);
 
-  // Initially load if we have no mangas
   useEffect(() => {
     if (mangas.length === 0) {
       dispatch(loadMangas());
     }
   }, [dispatch, mangas.length]);
 
-  // Once we have mangas, optionally fetch each manga's author
   useEffect(() => {
     const fetchAuthors = async () => {
       try {
         const updatedMangas = await Promise.all(
           mangas.map(async (manga) => {
             if (manga.authorId) {
-              const author = await fetchAuthorById(manga.authorId);
+              const author = await AuthorAPI.fetchById(manga.authorId);
               return {
                 ...manga,
                 author: author ? author.name : "Autor desconhecido",
@@ -56,7 +50,7 @@ function CatalogPage() {
       }
     };
 
-    if (mangas && mangas.length > 0) {
+    if (mangas.length > 0) {
       fetchAuthors();
     }
   }, [mangas]);
@@ -67,14 +61,7 @@ function CatalogPage() {
 
   if (loading) {
     return (
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "100vh",
-        }}
-      >
+      <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
         <CircularProgress sx={{ color: "#fff" }} />
       </Box>
     );
@@ -88,16 +75,13 @@ function CatalogPage() {
     );
   }
 
-  // Filter by searchTerm
-  const filteredMangas = mangasWithAuthors.filter((manga) => {
+  const filteredMangasWithSearch = mangasWithAuthors.filter((manga) => {
     const search = searchTerm.toLowerCase();
     return (
       manga.id.toString().includes(search) ||
       manga.title.toLowerCase().includes(search) ||
       manga.author.toLowerCase().includes(search) ||
-      (manga.genres || []).some((genre) =>
-        genre.toLowerCase().includes(search)
-      ) ||
+      (manga.genres || []).some((genre) => genre.toLowerCase().includes(search)) ||
       (manga.demographic || "").toLowerCase().includes(search)
     );
   });
@@ -106,39 +90,12 @@ function CatalogPage() {
     <>
       <Navbar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
       <Container maxWidth="xxl">
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "flex-start",
-            minHeight: "100vh",
-            bgcolor: "#000",
-          }}
-        >
-          <Box
-            sx={{
-              width: "100%",
-              maxWidth: "100vw",
-              bgcolor: "#000",
-              color: "#fff",
-            }}
-          >
-            {filteredMangas.length > 0 ? (
-              <MangaList
-                mangas={filteredMangas}
-                searchTerm={searchTerm}
-                onMangaClick={handleMangaClick}
-                horizontalScroll
-              />
+        <Box sx={{ display: "flex", justifyContent: "center", alignItems: "flex-start", minHeight: "100vh", bgcolor: "#000" }}>
+          <Box sx={{ width: "100%", maxWidth: "100vw", bgcolor: "#000", color: "#fff" }}>
+            {filteredMangasWithSearch.length > 0 ? (
+              <MangaList mangas={filteredMangasWithSearch} searchTerm={searchTerm} onMangaClick={handleMangaClick} horizontalScroll />
             ) : (
-              <Typography
-                variant="subtitle1"
-                sx={{
-                  marginTop: { xs: "0.5em", sm: "0.8em", lg: "2em" },
-                  fontWeight: 700,
-                  fontSize: { xs: "1.2em", md: "1.4em", lg: "1.6em" },
-                }}
-              >
+              <Typography variant="subtitle1" sx={{ marginTop: { xs: "0.5em", sm: "0.8em", lg: "2em" }, fontWeight: 700, fontSize: { xs: "1.2em", md: "1.4em", lg: "1.6em" } }}>
                 Nenhum mangá encontrado
               </Typography>
             )}

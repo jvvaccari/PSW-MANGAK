@@ -1,4 +1,3 @@
-import React from "react";
 import TextField from "@mui/material/TextField";
 import PropTypes from "prop-types";
 
@@ -32,12 +31,11 @@ const StyledTextField = ({ label, value, onChange, type = "text", ...props }) =>
           color: "#FFFFFF",
         },
       }}
-      {...props} // Permite passar propriedades adicionais
+      {...props}
     />
   );
 };
 
-// Validações de Propriedades
 StyledTextField.propTypes = {
   label: PropTypes.string.isRequired,
   value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,

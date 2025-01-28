@@ -4,7 +4,7 @@ import axios from "axios";
 
 // You can keep this base for /accounts, or use a more general API_URL 
 // if you prefer. The key is that we have /accounts/login & /accounts/register.
-const BASE_URL = "http://localhost:5501/accounts";
+const BASE_URL = "http://localhost:5502/accounts";
 
 /**
  * Thunk: loginUser

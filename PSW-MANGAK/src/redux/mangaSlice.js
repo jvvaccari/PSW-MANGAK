@@ -1,9 +1,9 @@
 // mangaSlice.js
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { fetchMangas } from "../../services/api";
+import { MangaAPI } from "../../services/api";
 
 export const loadMangas = createAsyncThunk("manga/loadMangas", async () => {
-  const data = await fetchMangas();
+  const data = await MangaAPI.fetchAll();
   return data || [];
 });
 

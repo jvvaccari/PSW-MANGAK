@@ -4,19 +4,19 @@ import { useSelector } from "react-redux";
 import { Box, Typography, Rating } from "@mui/material";
 import CommentIcon from "@mui/icons-material/Comment";
 import { useNavigate } from "react-router-dom";
-import { fetchAuthorById, fetchEvaluations } from "../../services/api";
+import { fetchEvaluations,AuthorAPI } from "../../services/api";
 import styles from "./Content.module.css";
 import { Link } from "react-router-dom";
 
 const Content = ({ manga }) => {
   const navigate = useNavigate();
-  const { user } = useSelector(state => state.auth)
+  const { user } = useSelector(state => state.auth);
   const [authorName, setAuthorName] = useState("Carregando autor...");
   const [averageRating, setAverageRating] = useState(0.0);
 
   useEffect(() => {
     if (manga.authorId) {
-      fetchAuthorById(manga.authorId)
+      AuthorAPI.fetchById(manga.authorId)
         .then((author) => {
           setAuthorName(author?.name || "Autor desconhecido");
         })
@@ -59,7 +59,6 @@ const Content = ({ manga }) => {
       console.warn("Usuário não autenticado.");
       return;
     }
-    console.log(user.id);
     navigate(`/evaluations/${manga.id}/${user.id}`);
   };
 
@@ -114,7 +113,7 @@ const Content = ({ manga }) => {
           >
             <Link
               to={`/authors/${manga.authorId}`}
-              style={{ textDecoration: "none", color: "inherit" }} 
+              style={{ textDecoration: "none", color: "inherit" }}
             >
               {authorName}
             </Link>

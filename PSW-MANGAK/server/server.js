@@ -4,33 +4,25 @@ import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
 import cors from 'cors';
 
-// Import Mongoose models
 import Manga from './models/Manga.js';
 import Author from './models/Author.js';
 import Account from './models/Account.js';
 import FavoriteList from './models/FavoriteList.js';
 import Evaluation from './models/Evaluation.js';
 
-// Load environment variables
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5501;
 
 app.use(cors());
-
-// Middleware
 app.use(bodyParser.json());
 
-// Connect to MongoDB
 mongoose
   .connect('mongodb://localhost:27017/mongo')
   .then(() => console.log('Connected to MongoDB'))
   .catch((err) => console.error('MongoDB connection error:', err));
 
-/* --------------------------------------------------
-   MANGA ROUTES
--------------------------------------------------- */
 app.get('/mangas', async (_req, res) => {
   try {
     const mangas = await Manga.find();
@@ -84,9 +76,6 @@ app.delete('/mangas/:id', async (req, res) => {
   }
 });
 
-/* --------------------------------------------------
-   AUTHOR ROUTES
--------------------------------------------------- */
 app.get('/authors', async (req, res) => {
   try {
     const authors = await Author.find();
@@ -140,10 +129,6 @@ app.delete('/authors/:id', async (req, res) => {
   }
 });
 
-/* --------------------------------------------------
-   ACCOUNT ROUTES
--------------------------------------------------- */
-// GET Account by ID
 app.get('/accounts/:id', async (req, res) => {
   try {
     const account = await Account.findById(req.params.id);
@@ -154,7 +139,6 @@ app.get('/accounts/:id', async (req, res) => {
   }
 });
 
-// Login
 app.post('/accounts/login', async (req, res) => {
   const { email, password } = req.body;
   try {
@@ -168,7 +152,6 @@ app.post('/accounts/login', async (req, res) => {
   }
 });
 
-// Registration
 app.post('/accounts/register', async (req, res) => {
   const { username, email, password } = req.body;
   try {
@@ -178,7 +161,6 @@ app.post('/accounts/register', async (req, res) => {
     }
 
     const newUser = new Account({
-      _id: req.body.id, // If you want to explicitly set the ID, or remove this if it's auto
       username,
       email,
       password,
@@ -193,7 +175,6 @@ app.post('/accounts/register', async (req, res) => {
   }
 });
 
-// Update Account
 app.put('/accounts/:id', async (req, res) => {
   try {
     const updatedAccount = await Account.findByIdAndUpdate(
@@ -208,7 +189,6 @@ app.put('/accounts/:id', async (req, res) => {
   }
 });
 
-// Delete Account
 app.delete('/accounts/:id', async (req, res) => {
   try {
     const deletedAccount = await Account.findByIdAndDelete(req.params.id);
@@ -219,9 +199,6 @@ app.delete('/accounts/:id', async (req, res) => {
   }
 });
 
-/* --------------------------------------------------
-   FAVORITE LIST ROUTES
--------------------------------------------------- */
 app.get('/favoriteLists', async (req, res) => {
   try {
     const userId = req.query.userId;
@@ -284,9 +261,6 @@ app.delete('/favoriteLists/:id', async (req, res) => {
   }
 });
 
-/* --------------------------------------------------
-   EVALUATION ROUTES
--------------------------------------------------- */
 app.get('/evaluations', async (req, res) => {
   try {
     const { mangaId } = req.query;
@@ -343,7 +317,6 @@ app.delete('/evaluations/:id', async (req, res) => {
   }
 });
 
-// Start server
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });

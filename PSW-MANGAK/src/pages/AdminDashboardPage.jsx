@@ -1,11 +1,14 @@
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { Button, Box, Typography, IconButton } from "@mui/material";
+import { useState } from "react";
+import { Button, Box, Typography, IconButton, CircularProgress } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 const AdminDashboardPage = () => {
   const navigate = useNavigate();
-  const { user } = useSelector(state => state.auth)
+  const { user } = useSelector(state => state.auth);
+
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleNavigation = (path) => {
     if (!user?.id) {
@@ -13,6 +16,7 @@ const AdminDashboardPage = () => {
       navigate("/login");
       return;
     }
+    setIsLoading(true);
     navigate(path);
   };
 
@@ -39,7 +43,7 @@ const AdminDashboardPage = () => {
           marginBottom: "1rem",
         }}
       >
-        <IconButton onClick={() => navigate(-1)} sx={{ color: "#FFF" }}>
+        <IconButton onClick={() => navigate(-1)} sx={{ color: "#FFF" }} aria-label="voltar">
           <ArrowBackIcon />
         </IconButton>
       </Box>
@@ -70,8 +74,10 @@ const AdminDashboardPage = () => {
               backgroundColor: "#CC002A",
             },
           }}
+          disabled={isLoading}
+          aria-label="editar mangás"
         >
-          Editar Mangás
+          {isLoading ? <CircularProgress size={24} color="inherit" /> : "Editar Mangás"}
         </Button>
         <Button
           variant="contained"
@@ -85,8 +91,10 @@ const AdminDashboardPage = () => {
               backgroundColor: "#CC002A",
             },
           }}
+          disabled={isLoading}
+          aria-label="editar autores"
         >
-          Editar Autores
+          {isLoading ? <CircularProgress size={24} color="inherit" /> : "Editar Autores"}
         </Button>
       </Box>
     </Box>

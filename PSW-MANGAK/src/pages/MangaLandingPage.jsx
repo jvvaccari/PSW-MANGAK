@@ -17,11 +17,9 @@ function MangaLandingPage() {
   const { id } = useParams();
   const dispatch = useDispatch();
 
-  // Get data from Redux store
   const { user } = useSelector((state) => state.auth);
   const { mangas, loading, error } = useSelector((state) => state.manga);
 
-  // Load mangas if not already loaded
   useEffect(() => {
     // Only load if we haven't yet
     if (mangas.length === 0) {

@@ -11,7 +11,7 @@ import PropTypes from "prop-types";
 const Navbar = ({ searchTerm = "", setSearchTerm = () => {}, loading = false }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user } = useSelector(state => state.auth)
+  const { user } = useSelector(state => state.auth);
   const [showSearch, setShowSearch] = useState(false);
 
   const isCatalogPage = location.pathname === "/";
@@ -23,7 +23,11 @@ const Navbar = ({ searchTerm = "", setSearchTerm = () => {}, loading = false }) 
   const handleBlur = () => setShowSearch(false);
 
   const handleProtectedRoute = (route) => {
-    user?.id ? navigate(`${route}/${user.id}`) : navigate("/login");
+    if (user?.id) {
+      navigate(`${route}/${user.id}`);
+    } else {
+      navigate("/login");
+    }
   };
 
   const renderNavbarButtons = () => (

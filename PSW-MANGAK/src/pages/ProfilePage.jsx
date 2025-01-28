@@ -21,7 +21,7 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
-import { fetchAccountById, updateAccount, deleteAccount } from "../../services/api";
+import { AccountAPI } from "../../services/api";
 
 const inputStyles = {
   bgcolor: "var(--bg-data-color)",
@@ -70,7 +70,7 @@ function ProfilePage() {
         }
   
         setLoading(true);
-        const data = await fetchAccountById(user.id);
+        const data = await AccountAPI.fetchById(user.id);
         if (data) {
           setFormData(data);
         } else {
@@ -100,7 +100,7 @@ function ProfilePage() {
 
   const handleSave = async () => {
     try {
-      await updateAccount(user.id, formData);
+      await AccountAPI.update(user.id, formData);
       setIsEditing(false);
     } catch (err) {
       console.error("Erro ao atualizar conta:", err.message);
@@ -110,7 +110,7 @@ function ProfilePage() {
 
   const handleDelete = async () => {
     try {
-      await deleteAccount(user.id);
+      await AccountAPI.delete(user.id);
       logout();
       navigate("/");
     } catch (err) {

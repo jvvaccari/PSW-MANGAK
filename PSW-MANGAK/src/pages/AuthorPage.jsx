@@ -9,6 +9,7 @@ import {
   Alert,
 } from "@mui/material";
 import Navbar from "../components/Navbar";
+import { AuthorAPI } from "../../services/api";
 
 export default function AuthorDetails() {
   const { authorId } = useParams();
@@ -21,9 +22,7 @@ export default function AuthorDetails() {
       setLoading(true);
       setError("");
       try {
-        const response = await fetch(`http://localhost:5501/authors/${authorId}`);
-        if (!response.ok) throw new Error("Erro ao buscar informações do autor.");
-        const data = await response.json();
+        const data = await AuthorAPI.fetchById(authorId);
         setAuthor(data);
       } catch (err) {
         console.error("Erro ao carregar o autor:", err.message);

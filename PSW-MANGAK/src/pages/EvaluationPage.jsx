@@ -13,17 +13,11 @@ import {
 import Navbar from "../components/Navbar";
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
-import {
-  updateEvaluation,
-  deleteEvaluation,
-  fetchEvaluations,
-} from "../../services/api";
+import { EvaluationAPI } from "../../services/api";
 
 export default function EvaluationPage() {
-  const { mangaId} = useParams();
+  const { mangaId } = useParams();
   const { userId } = useSelector((state) => state.auth.user);
-  console.log("Manga ID:", mangaId);
-  console.log("User ID:", userId);
 
   const [manga, setManga] = useState(null);
   const [author, setAuthor] = useState("");
@@ -38,7 +32,7 @@ export default function EvaluationPage() {
 
   const fetchAccountById = async (id) => {
     try {
-      const response = await fetch(`http://localhost:5501/accounts/${id}`);
+      const response = await fetch(`http://localhost:5502/accounts/${id}`);
       if (!response.ok) throw new Error("Erro ao buscar usuário.");
       return await response.json();
     } catch (error) {
@@ -54,21 +48,21 @@ export default function EvaluationPage() {
 
       try {
         const mangaResponse = await fetch(
-          `http://localhost:5501/mangas/${mangaId}`
+          `http://localhost:5502/mangas/${mangaId}`
         );
         if (!mangaResponse.ok) throw new Error("Erro ao buscar o mangá.");
         const mangaData = await mangaResponse.json();
         setManga(mangaData);
 
         const authorResponse = await fetch(
-          `http://localhost:5501/authors/${mangaData.authorId}`
+          `http://localhost:5502/authors/${mangaData.authorId}`
         );
         const authorData = authorResponse.ok
           ? await authorResponse.json()
           : { name: "Autor desconhecido" };
         setAuthor(authorData.name);
 
-        const evaluations = await fetchEvaluations(mangaId);
+        const evaluations = await EvaluationAPI.fetchByMangaId(mangaId);
 
         const evaluationsWithUsernames = await Promise.all(
           evaluations.map(async (evaluation) => {
@@ -78,50 +72,6 @@ export default function EvaluationPage() {
         );
 
         setComments(evaluationsWithUsernames);
-
-        const average =
-          evaluations.length > 0
-            ? (
-                evaluations.reduce(
-                  (acc, evaluation) => acc + evaluation.rating,
-                  0
-                ) / evaluations.length
-              ).toFixed(1)
-            : 0.0;
-        setAverageRating(average);
-      } catch (err) {
-        console.error("Erro ao buscar mangá ou avaliações:", err.message);
-        setError("Erro ao carregar os dados. Tente novamente mais tarde.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchMangaAndEvaluations();
-  }, [mangaId]);
-
-  useEffect(() => {
-    const fetchMangaAndEvaluations = async () => {
-      setLoading(true);
-      setError("");
-      try {
-        const mangaResponse = await fetch(
-          `http://localhost:5501/mangas/${mangaId}`
-        );
-        if (!mangaResponse.ok) throw new Error("Erro ao buscar o mangá.");
-        const mangaData = await mangaResponse.json();
-        setManga(mangaData);
-
-        const authorResponse = await fetch(
-          `http://localhost:5501/authors/${mangaData.authorId}`
-        );
-        const authorData = authorResponse.ok
-          ? await authorResponse.json()
-          : { name: "Autor desconhecido" };
-        setAuthor(authorData.name);
-
-        const evaluations = await fetchEvaluations(mangaId);
-        setComments(evaluations);
 
         const average =
           evaluations.length > 0
@@ -162,10 +112,7 @@ export default function EvaluationPage() {
           comment: newComment,
           timestamp: new Date().toISOString(),
         };
-        const updatedData = await updateEvaluation(
-          editingId,
-          updatedEvaluation
-        );
+        const updatedData = await EvaluationAPI.update(editingId, updatedEvaluation);
         setComments((prevComments) =>
           prevComments.map((comment) =>
             comment.id === editingId ? { ...comment, ...updatedData } : comment
@@ -180,14 +127,8 @@ export default function EvaluationPage() {
           comment: newComment,
           timestamp: new Date().toISOString(),
         };
-        const response = await fetch("http://localhost:5501/evaluations", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(newEntry),
-        });
 
-        if (!response.ok) throw new Error("Erro ao adicionar avaliação.");
-        const createdEvaluation = await response.json();
+        const createdEvaluation = await EvaluationAPI.create(newEntry);
         setComments([createdEvaluation, ...comments]);
       }
     } catch (err) {
@@ -215,7 +156,7 @@ export default function EvaluationPage() {
     }
 
     try {
-      await deleteEvaluation(evaluationId);
+      await EvaluationAPI.delete(evaluationId);
       setComments(comments.filter((comment) => comment.id !== evaluationId));
     } catch (err) {
       console.error("Erro ao excluir avaliação:", err.message);
@@ -242,9 +183,7 @@ export default function EvaluationPage() {
   return (
     <>
       <Navbar />
-      <Container
-        sx={{ mt: 4, color: "#fff", backgroundColor: "#000", padding: "1em" }}
-      >
+      <Container sx={{ mt: 4, color: "#fff", backgroundColor: "#000", padding: "1em" }}>
         <Box sx={{ mb: 12 }}>
           <Typography variant="h4" sx={{ color: "#fff", fontWeight: "bold" }}>
             {manga.title}
@@ -260,14 +199,7 @@ export default function EvaluationPage() {
           </Alert>
         )}
 
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            mb: 2,
-            gap: 2,
-          }}
-        >
+        <Box sx={{ display: "flex", alignItems: "center", mb: 2, gap: 2 }}>
           <Typography variant="h5" sx={{ color: "#EC7C01" }}>
             {averageRating}
           </Typography>
@@ -363,66 +295,41 @@ export default function EvaluationPage() {
 
         <Box>
           {comments.map((comment) => (
-            <Box
-              key={comment.id}
-              sx={{
-                mb: 3,
-                borderBottom: "1px solid #444",
-                pb: 2,
-                color: "#fff",
-              }}
-            >
-              <Box
-                sx={{ display: "flex", alignItems: "center", mb: 1, gap: 2 }}
-              >
+            <Box key={comment.id} sx={{ mb: 3, borderBottom: "1px solid #444", pb: 2, color: "#fff" }}>
+              <Box sx={{ display: "flex", alignItems: "center", mb: 1, gap: 2 }}>
                 <Avatar
                   alt={`Avatar de ${comment.username || "Desconhecido"}`}
                   src={comment.avatar || ""}
                 />
                 <Box>
                   <Typography variant="subtitle1" sx={{ color: "#fff" }}>
-                    {comment.username && typeof comment.userId === "string"
-                      ? `${comment.username} #${comment.userId}`
-                      : "Usuário desconhecido"}
+                    {comment.username || "Usuário desconhecido"}
                   </Typography>
-
                   <Typography variant="caption" sx={{ color: "#fff" }}>
                     {new Date(comment.timestamp).toLocaleString()}
                   </Typography>
                 </Box>
               </Box>
-              <Rating
-                name={`rating-${comment.id}`}
-                value={comment.rating}
-                precision={0.5}
-                readOnly
-                sx={{ color: "#EC7C01" }}
-              />
+              <Rating name={`rating-${comment.id}`} value={comment.rating} precision={0.5} readOnly sx={{ color: "#EC7C01" }} />
               <Typography variant="body2" sx={{ mt: 1, color: "#ccc" }}>
                 {comment.comment}
               </Typography>
 
               {comment.userId === userId && (
-                <Box sx={{ display: "flex", gap: 2, mt: 1 }}>
+                <Box sx={{ display: "flex", gap: 2, mt: 2 }}>
                   <Button
-                    variant="outlined"
-                    sx={{
-                      color: "#FF0037",
-                      borderColor: "#FF0037",
-                      "&:hover": { backgroundColor: "#FF0037", color: "#fff" },
-                    }}
+                    variant="contained"
+                    color="secondary"
                     onClick={() => handleEdit(comment)}
+                    sx={{ fontWeight: "bold", backgroundColor: "#282828" }}
                   >
                     Editar
                   </Button>
                   <Button
-                    variant="outlined"
-                    sx={{
-                      color: "#FF0037",
-                      borderColor: "#FF0037",
-                      "&:hover": { backgroundColor: "#FF0037", color: "#fff" },
-                    }}
+                    variant="contained"
+                    color="error"
                     onClick={() => handleDeleteEvaluation(comment.id)}
+                    sx={{ fontWeight: "bold" }}
                   >
                     Excluir
                   </Button>

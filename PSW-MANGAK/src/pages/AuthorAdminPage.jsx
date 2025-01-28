@@ -11,10 +11,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import {
-  fetchAuthors,
-  createAuthor,
-  updateAuthor,
-  deleteAuthor,
+  AuthorAPI,
 } from "../../services/api";
 import { useNavigate } from "react-router-dom";
 
@@ -28,7 +25,7 @@ const AuthorAdminPage = () => {
   useEffect(() => {
     const loadAuthors = async () => {
       try {
-        const data = await fetchAuthors();
+        const data = await AuthorAPI.fetchAll();
         setAuthors(data);
       } catch (error) {
         console.error("Erro ao carregar autores:", error);
@@ -66,10 +63,10 @@ const AuthorAdminPage = () => {
     try {
       if (isCreating) {
         const newAuthor = { ...formData, id: `${Date.now()}` };
-        const createdAuthor = await createAuthor(newAuthor);
+        const createdAuthor = await AuthorAPI.create(newAuthor);
         setAuthors((prev) => [...prev, createdAuthor]);
       } else if (editingRow) {
-        const updatedAuthor = await updateAuthor(editingRow.id, formData);
+        const updatedAuthor = await AuthorAPI.update(editingRow.id, formData);
         setAuthors((prev) =>
           prev.map((a) => (a.id === editingRow.id ? updatedAuthor : a))
         );
@@ -89,7 +86,7 @@ const AuthorAdminPage = () => {
 
   const handleDeleteClick = async (id) => {
     try {
-      await deleteAuthor(id);
+      await AuthorAPI.delete(id);
       setAuthors((prev) => prev.filter((author) => author.id !== id));
     } catch (error) {
       console.error("Erro ao excluir autor:", error);
@@ -160,7 +157,6 @@ const AuthorAdminPage = () => {
       ),
     },
   ];
-  
 
   const formFields = [
     { label: "Nome", field: "name" },
@@ -213,25 +209,24 @@ const AuthorAdminPage = () => {
       </Button>
 
       <DataGrid
-  rows={authors}
-  columns={columns}
-  pageSize={5}
-  sx={{
-    height: 400,
-    backgroundColor: "#2C2C2C",
-    color: "#FFF",
-    "& .MuiDataGrid-columnHeaders": {
-      backgroundColor: "#333", // Cor de fundo do header
-      color: "#000000", // Cor do texto do header
-      fontSize: "16px", // Tamanho do texto
-      fontWeight: "bold", // Texto em negrito
-    },
-    "& .MuiDataGrid-cell": {
-      color: "#FFF",
-    },
-  }}
-/>
-
+        rows={authors}
+        columns={columns}
+        pageSize={5}
+        sx={{
+          height: 400,
+          backgroundColor: "#2C2C2C",
+          color: "#FFF",
+          "& .MuiDataGrid-columnHeaders": {
+            backgroundColor: "#333", // Cor de fundo do header
+            color: "#000000", // Cor do texto do header
+            fontSize: "16px", // Tamanho do texto
+            fontWeight: "bold", // Texto em negrito
+          },
+          "& .MuiDataGrid-cell": {
+            color: "#FFF",
+          },
+        }}
+      />
 
       {(editingRow || isCreating) && (
         <Box

@@ -8,29 +8,26 @@ import Account from './models/Account.js';
 import FavoriteList from './models/FavoriteList.js';
 import Evaluation from './models/Evaluation.js';
 
-// Convert import.meta.url to __dirname
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Load JSON data
 const filePath = path.join(__dirname, 'db.json');
 const data = JSON.parse(fs.readFileSync(filePath, 'utf8'));
 
-// MongoDB connection URI
 const MONGO_URI = 'mongodb://localhost:27017/mongo';
 
 (async function migrateData() {
   try {
-    // Connect to MongoDB
+
     await mongoose.connect(MONGO_URI, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
     console.log('Connected to MongoDB');
 
-    // 1) Transform authors so "id" => "_id"
+
     const authorsData = data.authors.map((author) => ({
-      _id: author.id, // rename
+      _id: author.id,
       name: author.name,
       authorPhoto: author.authorPhoto,
       pseudonym: author.pseudonym,
@@ -43,16 +40,14 @@ const MONGO_URI = 'mongodb://localhost:27017/mongo';
       biography: author.biography,
     }));
 
-    // Insert authors
     await Author.insertMany(authorsData);
     console.log('Authors inserted:', authorsData.length);
 
-    // 2) Transform mangas so "id" => "_id"
     const mangasData = data.mangas.map((manga) => ({
       _id: manga.id,
       title: manga.title,
       image: manga.image,
-      authorId: manga.authorId, // This matches the string _id in Author
+      authorId: manga.authorId,
       description: manga.description,
       yearPubli: manga.yearPubli,
       status: manga.status,
@@ -62,41 +57,35 @@ const MONGO_URI = 'mongodb://localhost:27017/mongo';
       retail: manga.retail,
     }));
 
-    // Insert mangas
     await Manga.insertMany(mangasData);
     console.log('Mangas inserted:', mangasData.length);
 
-    // 3) Transform accounts so "id" => "_id" and favorites remain string references
     const accountsData = data.accounts.map((account) => ({
       _id: account.id,
       username: account.username,
       email: account.email,
       password: account.password,
       role: account.role,
-      // "favorites" already uses the same string IDs from Manga
       favorites: account.favorites, 
     }));
 
-    // Insert accounts
     await Account.insertMany(accountsData);
     console.log('Accounts inserted:', accountsData.length);
 
-    // 4) Transform favoriteLists
     const favoriteListsData = data.favoriteLists.map((list) => ({
       _id: list.id,
-      userId: list.userId, // matches the string _id in Account
+      userId: list.userId, 
       name: list.name,
-      mangas: list.mangas, // matches the string _id in Manga
+      mangas: list.mangas,
     }));
 
     await FavoriteList.insertMany(favoriteListsData);
     console.log('Favorite Lists inserted:', favoriteListsData.length);
 
-    // 5) Transform evaluations
     const evaluationsData = data.evaluations.map((evaluation) => ({
       _id: evaluation.id,
-      mangaId: evaluation.mangaId,  // string _id from Manga
-      userId: evaluation.userId,    // string _id from Account
+      mangaId: evaluation.mangaId,  
+      userId: evaluation.userId,
       rating: evaluation.rating,
       comment: evaluation.comment,
       timestamp: evaluation.timestamp,
