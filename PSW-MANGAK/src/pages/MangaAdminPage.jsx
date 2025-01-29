@@ -1,30 +1,20 @@
 // src/pages/MangaAdminPage.jsx
 import { useState, useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
 import { Box, Button, TextField, Typography, IconButton } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router-dom";
-
-// Thunks from your mangaSlice
-import {
-  loadMangas,
-  createMangaThunk,
-  updateMangaThunk,
-  deleteMangaThunk,
-} from "../redux/mangaSlice";
-
-// If you want color theme or extra services
-// import { fetchMangas, createManga, updateManga, deleteManga } from "../../services/api";
+import { MangaAPI } from "../../services/api";
 
 function MangaAdminPage() {
-  const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  // Redux state
-  const { mangas, loading, error } = useSelector((state) => state.manga);
+  // Local state for mangas, loading, and errors
+  const [mangas, setMangas] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   // Local UI state
   const [editingRow, setEditingRow] = useState(null);
@@ -33,13 +23,30 @@ function MangaAdminPage() {
 
   // Fetch mangas on mount
   useEffect(() => {
-    // only load if not yet loaded
-    if (mangas.length === 0) {
-      dispatch(loadMangas());
-    }
-  }, [dispatch, mangas.length]);
+    const fetchMangas = async () => {
+      try {
+        setLoading(true);
+        const data = await MangaAPI.fetchAll();
+        setMangas(data);
+      } catch (err) {
+        setError("Erro ao carregar mangás.",err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchMangas();
+  }, []);
 
-  // field change helpers
+  const refreshMangas = async () => {
+    try {
+      const data = await MangaAPI.fetchAll();
+      setMangas(data);
+    } catch (err) {
+      setError("Erro ao atualizar a lista de mangás.",err);
+    }
+  };
+
+  // Handle form input changes
   const handleFieldChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
@@ -51,35 +58,26 @@ function MangaAdminPage() {
     }));
   };
 
-  // Save (create or update)
+  // Save manga (create or update)
   const handleSaveClick = async () => {
     try {
       if (isCreating) {
         // CREATE
-        const newManga = { ...formData, id: `${Date.now()}` };
-        dispatch(createMangaThunk(newManga));
+        await MangaAPI.create(formData);
       } else if (editingRow) {
         // UPDATE
-        dispatch(
-          updateMangaThunk({
-            id: editingRow.id,
-            mangaData: {
-              ...formData,
-              // convert any comma-strings back to arrays if needed
-            },
-          })
-        );
+        await MangaAPI.update(editingRow.id, formData);
       }
-      // Reset form state
+      await refreshMangas();
       setEditingRow(null);
       setIsCreating(false);
       setFormData({});
-    } catch (error) {
-      console.error("Erro ao salvar mangá:", error);
+    } catch (err) {
+      setError("Erro ao salvar o mangá.",err);
     }
   };
 
-  // Edit
+  // Edit manga
   const handleEditClick = (row) => {
     setEditingRow(row);
     setIsCreating(false);
@@ -90,19 +88,23 @@ function MangaAdminPage() {
     });
   };
 
-  // Delete
-  const handleDeleteClick = (id) => {
-    dispatch(deleteMangaThunk(id));
+  // Delete manga
+  const handleDeleteClick = async (id) => {
+    try {
+      await MangaAPI.delete(id);
+      await refreshMangas();
+    } catch (err) {
+      setError("Erro ao excluir o mangá.",err);
+    }
   };
 
-  // Cancel
+  // Cancel editing/creating
   const handleCancelClick = () => {
     setEditingRow(null);
     setIsCreating(false);
     setFormData({});
   };
 
-  // Table columns
   const columns = [
     { field: "id", headerName: "ID", width: 70 },
     { field: "title", headerName: "Título", width: 200 },
@@ -126,7 +128,6 @@ function MangaAdminPage() {
     },
   ];
 
-  // Fields for editing/creating
   const formFields = [
     { label: "Título", field: "title" },
     { label: "Autor", field: "author" },
@@ -166,7 +167,7 @@ function MangaAdminPage() {
         </Typography>
       </Box>
 
-      {/* Create new manga button */}
+      {/* Add new manga button */}
       <Button
         onClick={() => {
           setIsCreating(true);
@@ -179,11 +180,9 @@ function MangaAdminPage() {
         Adicionar Novo Mangá
       </Button>
 
-      {/* Show loading or error */}
       {loading && <Typography>Carregando mangás...</Typography>}
-      {error && <Typography color="error">Erro: {error}</Typography>}
+      {error && <Typography color="error">{error}</Typography>}
 
-      {/* DataGrid Table */}
       <DataGrid
         rows={mangas}
         columns={columns}
@@ -204,7 +203,6 @@ function MangaAdminPage() {
         }}
       />
 
-      {/* Edit/Create Form */}
       {(editingRow || isCreating) && (
         <Box
           sx={{

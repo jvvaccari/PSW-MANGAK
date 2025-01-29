@@ -13,7 +13,7 @@ import {
   AppBar,
   Toolbar,
 } from "@mui/material";
-import { fetchFavoriteLists, createFavoriteList } from "../../services/api";
+import { FavoriteListAPI } from "../../services/api";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import AddIcon from "@mui/icons-material/Add";
 
@@ -34,7 +34,7 @@ const FavoritesPage = () => {
 
     const loadLists = async () => {
       try {
-        const data = await fetchFavoriteLists(user.id);
+        const data = await FavoriteListAPI.fetchById(user.id);
         setLists(data || []);
       } catch {
         setError("Erro ao carregar listas.");
@@ -52,7 +52,7 @@ const FavoritesPage = () => {
       return;
     }
     try {
-      const newList = await createFavoriteList({ name: listName, userId: user.id, mangas: [] });
+      const newList = await FavoriteListAPI.create({ name: listName, userId: user.id, mangas: [] });
       setLists([...lists, newList]);
       setListName("");
       setOpenModal(false);

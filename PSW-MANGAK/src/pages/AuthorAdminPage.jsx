@@ -10,9 +10,7 @@ import { DataGrid } from "@mui/x-data-grid";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import {
-  AuthorAPI,
-} from "../../services/api";
+import { AuthorAPI } from "../../services/api";
 import { useNavigate } from "react-router-dom";
 
 const AuthorAdminPage = () => {
@@ -217,10 +215,10 @@ const AuthorAdminPage = () => {
           backgroundColor: "#2C2C2C",
           color: "#FFF",
           "& .MuiDataGrid-columnHeaders": {
-            backgroundColor: "#333", // Cor de fundo do header
-            color: "#000000", // Cor do texto do header
-            fontSize: "16px", // Tamanho do texto
-            fontWeight: "bold", // Texto em negrito
+            backgroundColor: "#333",
+            color: "#000000",
+            fontSize: "16px",
+            fontWeight: "bold",
           },
           "& .MuiDataGrid-cell": {
             color: "#FFF",

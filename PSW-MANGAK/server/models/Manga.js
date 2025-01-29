@@ -5,7 +5,7 @@ const mangaSchema = new mongoose.Schema(
     _id: { type: String, required: true },
     title: String,
     image: String,
-    authorId: { type: String, ref: 'Author' }, // Reference to Author by string
+    authorId: { type: String, ref: 'Author' },
     description: String,
     yearPubli: String,
     status: String,

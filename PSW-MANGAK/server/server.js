@@ -1,6 +1,5 @@
 import express from 'express';
 import mongoose from 'mongoose';
-import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
 import cors from 'cors';
 
@@ -16,7 +15,7 @@ const app = express();
 const PORT = process.env.PORT || 5501;
 
 app.use(cors());
-app.use(bodyParser.json());
+app.use(express.json());
 
 mongoose
   .connect('mongodb://localhost:27017/mongo')
@@ -285,10 +284,27 @@ app.get('/evaluations/:id', async (req, res) => {
 
 app.post('/evaluations', async (req, res) => {
   try {
-    const newEvaluation = new Evaluation(req.body);
+    const { mangaId, userId, rating, comment } = req.body;
+
+    if (typeof mangaId !== 'string' || typeof userId !== 'string') {
+      return res.status(400).send('mangaId and userId must be strings');
+    }
+
+    console.log("mangaId:", mangaId, "userId:", userId, "rating:", rating, "comment:", comment);
+
+    const newEvaluation = new Evaluation({
+      mangaId: mangaId,
+      userId: userId,
+      rating,
+      comment
+    });
+
+    // Salvando no MongoDB
     await newEvaluation.save();
+
     res.status(201).json(newEvaluation);
   } catch (err) {
+    console.error("Erro ao salvar a avaliação:", err);
     res.status(400).send(err.message);
   }
 });
@@ -309,11 +325,16 @@ app.put('/evaluations/:id', async (req, res) => {
 
 app.delete('/evaluations/:id', async (req, res) => {
   try {
-    const deletedEvaluation = await Evaluation.findByIdAndDelete(req.params.id);
-    if (!deletedEvaluation) return res.status(404).send('Evaluation not found');
-    res.status(204).send();
+    const evaluationId = req.params.id;
+    const evaluation = await Evaluation.findByIdAndDelete(evaluationId);
+
+    if (!evaluation) {
+      return res.status(404).send('Avaliação não encontrada');
+    }
+
+    res.status(200).send('Avaliação excluída com sucesso');
   } catch (err) {
-    res.status(500).send(err.message);
+    res.status(400).send('Erro ao excluir avaliação');
   }
 });
 
