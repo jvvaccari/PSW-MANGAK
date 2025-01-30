@@ -148,19 +148,27 @@ EvaluationAPI.createEvaluation = async (mangaId, evaluationData, userId) => {
 EvaluationAPI.updateEvaluation = async (evaluationId, evaluationData) => {
   try {
     validateId(evaluationId, "avaliação");
+
     const evaluation = await EvaluationAPI.fetchById(evaluationId);
     if (!evaluation) throw new Error("Avaliação não encontrada");
-    const updatedEvaluation = { ...evaluation, ...evaluationData };
+
+    const updatedEvaluation = { 
+      ...evaluationData, 
+    };
+
+    console.log(updatedEvaluation);
+
     return apiRequest("put", `/evaluations/${evaluationId}`, updatedEvaluation, "avaliação");
   } catch (error) {
     handleError(error, "Erro ao atualizar avaliação");
   }
 };
 
-EvaluationAPI.deleteEvaluation = async (evaluationId) => {
+
+EvaluationAPI.deleteEvaluation = async (evaluationId, mangaId) => {
   try {
     validateId(evaluationId, "avaliação");
-    return apiRequest("delete", `/evaluations/${evaluationId}`, null, "avaliação");
+    return apiRequest("delete", `/evaluations/${mangaId}/${evaluationId}`, {}, "avaliação");
   } catch (error) {
     handleError(error, "Erro ao excluir avaliação");
   }
@@ -178,3 +186,79 @@ AccountAPI.register = async (userData) => {
     handleError(error, "Erro ao registrar usuário");
   }
 };
+
+AuthorAPI.update = async (authorId, authorData) => {
+  try {
+    validateId(authorId, "autor");
+
+    // Verifica se o autor existe
+    const author = await AuthorAPI.fetchById(authorId);
+    if (!author) {
+      throw new Error("Autor não encontrado");
+    }
+
+    // Cria os dados atualizados
+    const updatedAuthor = {
+      ...author,
+      ...authorData, // Atualiza as informações do autor com os dados recebidos
+    };
+
+    // Chama o método de atualização
+    return apiRequest("put", `/authors/${authorId}`, updatedAuthor, "autor");
+  } catch (error) {
+    handleError(error, "Erro ao atualizar autor");
+  }
+};
+
+AuthorAPI.fetchAll = async () => {
+  try {
+    const authors = await apiRequest("get", "/authors", null, "autores");
+    if (!authors || authors.length === 0) {
+      throw new Error("Nenhum autor encontrado");
+    }
+    return authors;
+  } catch (error) {
+    handleError(error, "Erro ao buscar autores");
+  }
+};
+
+AuthorAPI.fetchById = async (authorId) => {
+  try {
+    validateId(authorId, "autor");
+
+    const author = await apiRequest("get", `/authors/${authorId}`, null, "autor");
+    if (!author) {
+      throw new Error("Autor não encontrado");
+    }
+
+    return author;
+  } catch (error) {
+    handleError(error, "Erro ao buscar autor");
+  }
+};
+
+AuthorAPI.delete = async (authorId) => {
+  try {
+    validateId(authorId, "autor");
+
+    const author = await AuthorAPI.fetchById(authorId);
+    if (!author) {
+      throw new Error("Autor não encontrado");
+    }
+
+    await apiRequest("delete", `/authors/${authorId}`, null, "autor");
+    console.log("Autor excluído com sucesso");
+  } catch (error) {
+    handleError(error, "Erro ao excluir autor");
+  }
+};
+
+AuthorAPI.create = async (data) => {
+  try {
+    const response = await axios.post('http://localhost:5502/admin-author', data);
+    return response.data; // Retorna os dados do autor criado
+  } catch (error) {
+    console.error("Erro ao criar autor:", error.message);
+    throw error; // Lança o erro para ser tratado onde a função for chamada
+  }
+}

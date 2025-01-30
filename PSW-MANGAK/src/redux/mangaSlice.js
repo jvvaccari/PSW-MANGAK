@@ -50,6 +50,7 @@ const mangaSlice = createSlice({
     builder
       // Load mangas
       .addCase(loadMangas.pending, (state) => {
+        console.log("passei aqui.")
         state.loading = true;
         state.error = null;
       })

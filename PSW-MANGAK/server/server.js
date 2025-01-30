@@ -84,13 +84,13 @@ app.get('/authors', async (req, res) => {
   }
 });
 
-app.post('/authors', async (req, res) => {
+app.post('/admin-author', async (req, res) => {
   try {
-    const newAuthor = new Author(req.body);
-    await newAuthor.save();
-    res.status(201).json(newAuthor);
+    const newAuthor = req.body;
+    const createdAuthor = await Author.create(newAuthor); // Chama a função de criação do AuthorAPI
+    res.status(201).json(createdAuthor); // Retorna o autor criado no formato JSON
   } catch (err) {
-    res.status(400).send(err.message);
+    res.status(400).send(err.message); // Retorna erro em caso de falha
   }
 });
 
@@ -311,21 +311,30 @@ app.post('/evaluations', async (req, res) => {
 
 app.put('/evaluations/:id', async (req, res) => {
   try {
+    console.log("Recebendo update:", req.body);
+    
+    const evaluation = await Evaluation.findById(req.params.id);
+    if (!evaluation) return res.status(404).send('Evaluation not found');
+
     const updatedEvaluation = await Evaluation.findByIdAndUpdate(
       req.params.id,
-      req.body,
+      { ...req.body, userId: evaluation.userId },
       { new: true }
     );
-    if (!updatedEvaluation) return res.status(404).send('Evaluation not found');
+
+    console.log("Avaliação atualizada:", updatedEvaluation);
     res.json(updatedEvaluation);
   } catch (err) {
+    console.error("Erro no update:", err);
     res.status(400).send(err.message);
   }
 });
 
-app.delete('/evaluations/:id', async (req, res) => {
+app.delete('/evaluations/:mangaId/:id', async (req, res) => {
   try {
     const evaluationId = req.params.id;
+    console.log('ID da avaliação:', evaluationId);
+
     const evaluation = await Evaluation.findByIdAndDelete(evaluationId);
 
     if (!evaluation) {
@@ -334,6 +343,7 @@ app.delete('/evaluations/:id', async (req, res) => {
 
     res.status(200).send('Avaliação excluída com sucesso');
   } catch (err) {
+    console.log(err);  // Log de erro para investigar mais a fundo
     res.status(400).send('Erro ao excluir avaliação');
   }
 });

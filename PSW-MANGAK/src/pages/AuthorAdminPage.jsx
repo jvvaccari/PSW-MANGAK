@@ -59,14 +59,17 @@ const AuthorAdminPage = () => {
       return;
     }
     try {
+      const formattedData = {
+        ...formData,
+        birthDate: formData.birthDate ? new Date(formData.birthDate) : null,
+      };
       if (isCreating) {
-        const newAuthor = { ...formData, id: `${Date.now()}` };
-        const createdAuthor = await AuthorAPI.create(newAuthor);
-        setAuthors((prev) => [...prev, createdAuthor]);
+        const newAuthor = await AuthorAPI.create(formattedData);
+        setAuthors((prev) => [...prev, newAuthor]);
       } else if (editingRow) {
-        const updatedAuthor = await AuthorAPI.update(editingRow.id, formData);
+        const updatedAuthor = await AuthorAPI.update(editingRow._id, formattedData);
         setAuthors((prev) =>
-          prev.map((a) => (a.id === editingRow.id ? updatedAuthor : a))
+          prev.map((a) => (a._id === editingRow._id ? updatedAuthor : a))
         );
       }
       setEditingRow(null);
@@ -85,7 +88,7 @@ const AuthorAdminPage = () => {
   const handleDeleteClick = async (id) => {
     try {
       await AuthorAPI.delete(id);
-      setAuthors((prev) => prev.filter((author) => author.id !== id));
+      setAuthors((prev) => prev.filter((author) => author._id !== id));
     } catch (error) {
       console.error("Erro ao excluir autor:", error);
     }
@@ -148,7 +151,7 @@ const AuthorAdminPage = () => {
           <IconButton onClick={() => handleEditClick(params.row)}>
             <EditIcon sx={{ color: "#FFC107" }} />
           </IconButton>
-          <IconButton onClick={() => handleDeleteClick(params.row.id)}>
+          <IconButton onClick={() => handleDeleteClick(params.row._id)}>
             <DeleteIcon sx={{ color: "#FF0037" }} />
           </IconButton>
         </>
@@ -210,6 +213,7 @@ const AuthorAdminPage = () => {
         rows={authors}
         columns={columns}
         pageSize={5}
+        getRowId={(row) => row._id}
         sx={{
           height: 400,
           backgroundColor: "#2C2C2C",
