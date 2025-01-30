@@ -1,17 +1,17 @@
 // src/redux/mangaSlice.js
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { MangaAPI } from "../../services/api";
+import * as api from "../../services/api";
 
 // Async thunks
 export const loadMangas = createAsyncThunk("manga/loadMangas", async () => {
-  const data = await MangaAPI.fetchAll();
+  const data = await api.fetchMangas();
   return data || [];
 });
 
 export const createMangaThunk = createAsyncThunk(
   "manga/createManga",
   async (newManga) => {
-    const data = await MangaAPI.create(newManga);
+    const data = await api.createManga(newManga);
     return data;
   }
 );
@@ -19,7 +19,7 @@ export const createMangaThunk = createAsyncThunk(
 export const updateMangaThunk = createAsyncThunk(
   "manga/updateManga",
   async ({ id, mangaData }) => {
-    const data = await MangaAPI.update(id, mangaData);
+    const data = await api.updateManga(id, mangaData);
     return { id, ...data };
   }
 );
@@ -27,7 +27,7 @@ export const updateMangaThunk = createAsyncThunk(
 export const deleteMangaThunk = createAsyncThunk(
   "manga/deleteManga",
   async (id) => {
-    await MangaAPI.delete(id);
+    await api.deleteManga(id);
     return id;
   }
 );

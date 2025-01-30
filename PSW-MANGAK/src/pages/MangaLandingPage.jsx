@@ -58,9 +58,9 @@ function MangaLandingPage() {
       </Box>
     );
   }
-
-  // Find the manga by URL param 'id'
-  const manga = mangas.find((m) => m.id === id);
+  console.log(id);
+  console.log(mangas);
+  const manga = mangas.find((m) => m._id === id);
 
   if (!manga) {
     return (

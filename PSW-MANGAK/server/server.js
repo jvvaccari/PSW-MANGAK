@@ -84,6 +84,15 @@ app.get('/authors', async (req, res) => {
   }
 });
 
+app.get('/authors/:id', async (req, res) => {
+  try {
+    const authors = await Author.find();
+    res.json(authors);
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+});
+
 app.post('/authors', async (req, res) => {
   try {
     const newAuthor = new Author(req.body);

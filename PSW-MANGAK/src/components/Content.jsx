@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import { Box, Typography, Rating } from "@mui/material";
 import CommentIcon from "@mui/icons-material/Comment";
 import { useNavigate } from "react-router-dom";
-import { fetchEvaluations,AuthorAPI } from "../../services/api";
+import * as api from "../../services/api";
 import styles from "./Content.module.css";
 import { Link } from "react-router-dom";
 
@@ -16,7 +16,8 @@ const Content = ({ manga }) => {
 
   useEffect(() => {
     if (manga.authorId) {
-      AuthorAPI.fetchById(manga.authorId)
+      console.log(manga);
+      api.fetchAuthorById(manga.authorId)
         .then((author) => {
           setAuthorName(author?.name || "Autor desconhecido");
         })
@@ -26,11 +27,11 @@ const Content = ({ manga }) => {
     } else {
       setAuthorName("Autor desconhecido");
     }
-  }, [manga.authorId]);
+  }, [manga.authorId,manga]);
 
   useEffect(() => {
     if (manga.id) {
-      fetchEvaluations(manga.id)
+      api.fetchEvaluationById(manga.id)
         .then((evaluations) => {
           if (evaluations.length > 0) {
             const totalRatings = evaluations.reduce(

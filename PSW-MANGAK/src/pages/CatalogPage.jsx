@@ -6,7 +6,7 @@ import { Box, Typography, CircularProgress, Container } from "@mui/material";
 import Navbar from "../components/Navbar";
 import MangaList from "../components/MangaList";
 import { loadMangas } from "../redux/mangaSlice";
-import { AuthorAPI } from "../../services/api";
+import * as api from "../../services/api";
 
 function CatalogPage() {
   const dispatch = useDispatch();
@@ -28,7 +28,7 @@ function CatalogPage() {
         const updatedMangas = await Promise.all(
           mangas.map(async (manga) => {
             if (manga.authorId) {
-              const author = await AuthorAPI.fetchById(manga.authorId);
+              const author = await api.fetchAuthorById(manga.authorId);
               return {
                 ...manga,
                 author: author ? author.name : "Autor desconhecido",
@@ -78,13 +78,13 @@ function CatalogPage() {
   const filteredMangasWithSearch = mangasWithAuthors.filter((manga) => {
     const search = searchTerm.toLowerCase();
     return (
-      manga.id.toString().includes(search) ||
+      (manga.id && manga.id.toString().includes(search)) ||
       manga.title.toLowerCase().includes(search) ||
       manga.author.toLowerCase().includes(search) ||
       (manga.genres || []).some((genre) => genre.toLowerCase().includes(search)) ||
       (manga.demographic || "").toLowerCase().includes(search)
     );
-  });
+  });  
 
   return (
     <>

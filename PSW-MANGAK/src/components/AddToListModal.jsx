@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Button, Modal, Box, Typography, FormControl, Select, MenuItem } from "@mui/material";
 import PropTypes from "prop-types";
-import { FavoriteListAPI, modifyMangaInFavoriteList } from "../../services/api";
+import * as api from "../../services/api";
 import { Warning } from "@mui/icons-material"; 
 
 const AddToListModal = ({ open, onClose, mangaId, userId }) => { 
@@ -13,7 +13,7 @@ const AddToListModal = ({ open, onClose, mangaId, userId }) => {
   useEffect(() => {
     if (open && userId) {
       setLoading(true);
-      FavoriteListAPI.fetchAll()
+      api.fetchFavorites()
         .then((lists) => {
           setFavoriteLists(lists || []);
           setLoading(false);
@@ -43,11 +43,11 @@ const AddToListModal = ({ open, onClose, mangaId, userId }) => {
           mangas: [mangaId],
         };
 
-        await FavoriteListAPI.create(newListData);
+        await api.createFavoriteList(newListData);
         console.log("Nova lista criada com sucesso.");
       } else {
 
-        await modifyMangaInFavoriteList(selectedList, mangaId, "add");
+        await api.addMangaToList(selectedList, mangaId, "add");
         console.log("Mangá adicionado à lista com sucesso.");
       }
 
