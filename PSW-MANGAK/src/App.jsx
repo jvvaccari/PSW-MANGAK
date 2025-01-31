@@ -105,7 +105,7 @@ function AppWrapper() {
             }
           />
           <Route
-            path="/evaluations/:mangaId/:userId"
+            path="/evaluations/:mangaId"
             element={
               <ProtectedRoute>
                 <EvaluationPage />

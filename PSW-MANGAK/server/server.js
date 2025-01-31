@@ -292,11 +292,11 @@ app.get('/evaluations', async (req, res) => {
   }
 });
 
-app.get('/evaluations/:id', async (req, res) => {
+app.get('/evaluations/:mangaId', async (req, res) => {
   try {
-    const evaluation = await Evaluation.findById(req.params.id);
-    if (!evaluation) return res.status(404).send('Evaluation not found');
-    res.json(evaluation);
+    const mangaEvaluations = await Evaluation.find({ mangaId: req.params.mangaId });
+    if (mangaEvaluations.length === 0) return res.status(404).send('Evaluations not found');
+    res.json(mangaEvaluations);
   } catch (err) {
     res.status(500).send(err.message);
   }

@@ -62,11 +62,10 @@ const Content = ({ manga }) => {
   const handleViewComments = () => {
     if (!user?.id) {
       console.warn("Usuário não autenticado.");
-      // Redireciona para a página de login se o usuário não estiver autenticado
-      navigate("/login"); // Ou outra rota de sua escolha
+      navigate("/login");
       return;
     }
-    navigate(`/evaluations/${manga.id}/${user.id}`);
+    navigate(`/evaluations/${manga.id}`);
   };
   
 

@@ -7,13 +7,22 @@ const axiosInstance = axios.create({
   headers: { "Content-Type": "application/json" },
 });
 
-export const fetchEvaluationById = async (evaluationId) => {
+export const fetchEvaluations = async () => {
   try {
-    validateId(evaluationId, "avaliação");
-    const response = await axiosInstance.get(`/evaluations/${evaluationId}`);
+    const response = await axiosInstance.get(`/evaluations`);
     return response.data;
   } catch (error) {
-    handleError(error, `Erro ao buscar avaliação com ID ${evaluationId}`);
+    handleError(error, `Erro ao buscar avaliações.`);
+  }
+};
+
+export const fetchEvaluationById = async (mangaId) => {
+  try {
+    validateId(mangaId, "avaliação");
+    const response = await axiosInstance.get(`/evaluations/${mangaId}`);
+    return response.data;
+  } catch (error) {
+    handleError(error, `Erro ao buscar avaliação com ID ${mangaId}`);
   }
 };
 
@@ -62,7 +71,41 @@ export const fetchMangas = async () => {
   }
 };
 
-export const fetchMangaById = async (id) => fetchById("mangas", id, "mangá");
+export const fetchMangaById = async (id) => {
+  try {
+    console.log("Fetching manga with ID:", id);
+    const response = await fetch(`http://localhost:5502/mangas/${id}`);
+
+    if (!response.ok) {
+      throw new Error('Manga not found');
+    }
+
+    const manga = await response.json();
+    console.log("Manga fetched:", manga);
+
+    if (manga && manga._id) {
+      const filledManga = {
+        _id: manga._id, 
+        title: manga.title || "Título não disponível", 
+        image: manga.image || "URL da imagem não disponível", 
+        authorId: manga.authorId || "Autor não disponível", 
+        description: manga.description || "Descrição não disponível", 
+        yearPubli: manga.yearPubli || "Ano de publicação não disponível", 
+        status: manga.status || "Status não disponível", 
+        demographic: manga.demographic || "Demografia não disponível", 
+        genres: manga.genres || [], 
+        artsList: manga.artsList || [], 
+        retail: manga.retail || []
+      };
+
+      return filledManga;
+    } else {
+      console.error("Manga ID not found in the response.");
+    }
+  } catch (error) {
+    console.error("Error fetching manga:", error.message);
+  }
+};
 
 export const createManga = async (newManga) => {
   try {
@@ -143,11 +186,9 @@ export const updateFavorites = async (userId, mangaId, action) => {
   }
 };
 
-export const fetchEvaluations = async (mangaId) => {
+export const fetchEvaluationsById = async (mangaId) => {
   try {
-    const response = await axios.get(
-      `http://localhost:5501/evaluations?mangaId=${mangaId}`
-    );
+    const response = await axiosInstance.get(`/evaluations?mangaId=${mangaId}`);
     if (response.status !== 200 || !response.data) {
       throw new Error("Erro ao buscar avaliações");
     }
@@ -171,7 +212,7 @@ export const fetchMangaAndEvaluations = async (mangaId) => {
     }
 
     // Busca as avaliações do mangá
-    const evaluations = await fetchEvaluations(mangaId);
+    const evaluations = await fetchEvaluationsById(mangaId);
 
     // Associa os dados do usuário (se existirem) às avaliações
     const detailedEvaluations = await Promise.all(
@@ -190,16 +231,20 @@ export const fetchMangaAndEvaluations = async (mangaId) => {
 
   } catch (error) {
     handleError(error, "Erro ao buscar mangá e avaliações");
-    throw error; // Repassa o erro para o tratamento adequado em outro lugar
+    throw error;
   }
 };
 
-export const postEvaluation = async (mangaId, evaluationData) => {
+export const postEvaluation = async (mangaId, evaluationData, userId) => {
   try {
-    validateId(mangaId, "mangá");
+ 
+    console.log(mangaId);
+    console.log(userId);
+
     const response = await axiosInstance.post(`/evaluations`, {
       ...evaluationData,
       mangaId,
+      userId
     });
     return response.data;
   } catch (error) {
@@ -223,6 +268,7 @@ export const updateEvaluation = async (evaluationId, updatedData) => {
 
 export const deleteEvaluation = async (evaluationId) => {
   try {
+    console.log(evaluationId);
     validateId(evaluationId, "avaliação");
     const response = await axiosInstance.delete(`/evaluations/${evaluationId}`);
     return response.data;

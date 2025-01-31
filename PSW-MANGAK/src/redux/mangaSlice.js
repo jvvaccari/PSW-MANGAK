@@ -8,6 +8,15 @@ export const loadMangas = createAsyncThunk("manga/loadMangas", async () => {
   return data || [];
 });
 
+export const fetchMangaByIdThunk = createAsyncThunk(
+  "manga/fetchMangaById",
+  async (id) => {
+    const manga = await api.fetchMangaById(id);
+    console.log(manga);
+    return manga;
+  }
+);
+
 export const createMangaThunk = createAsyncThunk(
   "manga/createManga",
   async (newManga) => {
@@ -71,9 +80,13 @@ const mangaSlice = createSlice({
       })
       // Update manga
       .addCase(updateMangaThunk.fulfilled, (state, action) => {
-        const index = state.mangas.findIndex((manga) => manga.id === action.payload.id);
-        if (index !== -1) {
-          state.mangas[index] = action.payload;
+        if (action.payload?.id) {
+          const index = state.mangas.findIndex(
+            (manga) => manga.id === action.payload.id
+          );
+          if (index !== -1) {
+            state.mangas[index] = action.payload;
+          }
         }
       })
       .addCase(updateMangaThunk.rejected, (state, action) => {
@@ -81,10 +94,35 @@ const mangaSlice = createSlice({
       })
       // Delete manga
       .addCase(deleteMangaThunk.fulfilled, (state, action) => {
-        state.mangas = state.mangas.filter((manga) => manga.id !== action.payload);
+        state.mangas = state.mangas.filter(
+          (manga) => manga.id !== action.payload
+        );
       })
       .addCase(deleteMangaThunk.rejected, (state, action) => {
         state.error = action.error?.message || "Erro ao deletar mangá.";
+      })
+      // Fetch Manga by ID
+      .addCase(fetchMangaByIdThunk.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchMangaByIdThunk.fulfilled, (state, action) => {
+        state.loading = false;
+        state.error = null;
+        if (action.payload?.id) {
+          const index = state.mangas.findIndex(
+            (manga) => manga.id === action.payload.id
+          );
+          if (index !== -1) {
+            state.mangas[index] = action.payload;
+          } else {
+            state.mangas.push(action.payload);
+          }
+        }
+      })
+      .addCase(fetchMangaByIdThunk.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error?.message || "Erro ao buscar o mangá.";
       });
   },
 });

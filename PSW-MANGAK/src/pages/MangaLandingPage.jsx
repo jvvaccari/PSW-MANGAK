@@ -17,7 +17,6 @@ function MangaLandingPage() {
   const { id } = useParams();
   const dispatch = useDispatch();
 
-  const { user } = useSelector((state) => state.auth);
   const { mangas, loading, error } = useSelector((state) => state.manga);
 
   useEffect(() => {
@@ -77,7 +76,6 @@ function MangaLandingPage() {
     );
   }
 
-  const userId = user?.id;
   const tagsData = [
     { section: "Genres", tags: manga.genres || [] },
     { section: "Demographic", tags: [manga.demographic || "Indefinido"] },
@@ -96,7 +94,7 @@ function MangaLandingPage() {
         >
           <Content
             manga={{
-              id: manga.id,
+              id: manga._id,
               image: manga.image || "",
               title: manga.title || "Título Desconhecido",
               authorId: manga.authorId || null,
@@ -104,7 +102,6 @@ function MangaLandingPage() {
               status: manga.status || "Status Desconhecido",
               yearPubli: manga.yearPubli || "????",
             }}
-            userId={userId}
           />
 
           <Actions
