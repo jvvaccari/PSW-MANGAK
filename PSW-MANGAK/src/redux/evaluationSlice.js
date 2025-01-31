@@ -13,7 +13,7 @@ export const fetchEvaluationsThunk = createAsyncThunk(
 export const createEvaluationThunk = createAsyncThunk(
   "evaluations/createEvaluation",
   async ({ mangaId, evaluationData, userId }) => {
-    const data = await EvaluationAPI.createEvaluation(
+    const data = await api.postEvaluation(
       mangaId,
       evaluationData,
       userId
@@ -26,7 +26,7 @@ export const updateEvaluationThunk = createAsyncThunk(
     "evaluations/updateEvaluation",
     async ({ evaluationId, evaluationData }) => {
       console.log("Updating Evaluation:", { evaluationId, evaluationData });
-      const data = await EvaluationAPI.updateEvaluation(
+      const data = await api.updateEvaluation(
         evaluationId,
         evaluationData
       );
@@ -42,7 +42,7 @@ export const updateEvaluationThunk = createAsyncThunk(
 export const deleteEvaluationThunk = createAsyncThunk(
   "evaluations/deleteEvaluation",
   async ({ evaluationId, mangaId }) => {
-    await EvaluationAPI.deleteEvaluation(evaluationId, mangaId);
+    await api.deleteEvaluation(evaluationId, mangaId);
     return evaluationId;
   }
 );

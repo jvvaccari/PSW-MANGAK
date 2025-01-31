@@ -158,6 +158,42 @@ export const fetchEvaluations = async (mangaId) => {
   }
 };
 
+export const fetchMangaAndEvaluations = async (mangaId) => {
+  try {
+    // Valida o ID do mangá
+    validateId(mangaId, "mangá");
+
+    // Busca o mangá com o ID fornecido
+    const manga = await fetchMangaById(mangaId);
+
+    if (!manga) {
+      throw new Error("Mangá não encontrado");
+    }
+
+    // Busca as avaliações do mangá
+    const evaluations = await fetchEvaluations(mangaId);
+
+    // Associa os dados do usuário (se existirem) às avaliações
+    const detailedEvaluations = await Promise.all(
+      evaluations.map(async (evaluation) => {
+        const user = evaluation.userId
+          ? await fetchAccountById(evaluation.userId) 
+          : { username: "Usuário desconhecido" };
+
+        // Retorna a avaliação detalhada, incluindo o nome de usuário
+        return { ...evaluation, username: user.username };
+      })
+    );
+
+    // Retorna o mangá com suas avaliações detalhadas
+    return { manga, evaluations: detailedEvaluations };
+
+  } catch (error) {
+    handleError(error, "Erro ao buscar mangá e avaliações");
+    throw error; // Repassa o erro para o tratamento adequado em outro lugar
+  }
+};
+
 export const postEvaluation = async (mangaId, evaluationData) => {
   try {
     validateId(mangaId, "mangá");
