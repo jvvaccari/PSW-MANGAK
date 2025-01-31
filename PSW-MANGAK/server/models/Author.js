@@ -2,7 +2,6 @@ import mongoose from 'mongoose';
 
 const authorSchema = new mongoose.Schema(
   {
-    _id: { type: mongoose.Schema.Types.ObjectId, required: true },
     name: String,
     authorPhoto: String,
     pseudonym: String,
@@ -14,7 +13,7 @@ const authorSchema = new mongoose.Schema(
     notableWorks: [String],
     biography: String
   },
-  { _id: false }
+  { timestamps: true }
 );
 
 const Author = mongoose.model('Author', authorSchema);

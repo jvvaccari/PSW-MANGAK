@@ -69,6 +69,8 @@ const EvaluationPage = () => {
     api
       .fetchAuthorById(manga.authorId._id)
       .then((author) => {
+        console.log(author);
+
         setAuthorName(author?.name || "Autor desconhecido");
       })
       .catch((error) => {
@@ -100,6 +102,10 @@ const EvaluationPage = () => {
     }
   }, [evaluations]);
 
+  useEffect(() => {
+    dispatch(fetchEvaluationsThunk(mangaId));
+  }, [evaluations, dispatch, mangaId]);  
+
   const handleAuthorClick = () => {
     if (manga?.authorId?._id) {
       navigate(`/authors/${manga.authorId._id}`);
@@ -116,7 +122,7 @@ const EvaluationPage = () => {
       const evaluationData = {
         rating,
         comment: newComment,
-        userId: user._id, // Passando o user._id diretamente
+        userId: user._id,
       };
   
       if (editingId) {
@@ -129,12 +135,11 @@ const EvaluationPage = () => {
           })
         );
       } else {
-        // Chamando o Thunk de criação de avaliação
         await dispatch(
           createEvaluationThunk({
             mangaId,
             evaluationData,
-            userId: user._id, // Passando o userId para o Thunk
+            userId: user._id,
           })
         );
       }
@@ -142,11 +147,14 @@ const EvaluationPage = () => {
       setEditingId(null);
       setNewComment("");
       setRating(0);
-      dispatch(fetchEvaluationsThunk(mangaId));
+  
+      // A linha abaixo atualiza as avaliações depois de salvar a edição ou criação
+      await dispatch(fetchEvaluationsThunk(mangaId));
     } catch (err) {
       console.error("Erro ao salvar avaliação.", err);
     }
-  };  
+  };
+  
 
   const handleDelete = async (evaluationId) => {
     try {

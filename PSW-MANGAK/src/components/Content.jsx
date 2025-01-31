@@ -35,6 +35,7 @@ const Content = ({ manga }) => {
 
   useEffect(() => {
     if (manga.id) {
+      console.log("id do manga:",manga.id);
       api.fetchEvaluationById(manga.id)
         .then((evaluations) => {
           if (evaluations.length > 0) {

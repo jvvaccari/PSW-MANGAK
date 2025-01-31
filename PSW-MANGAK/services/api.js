@@ -43,6 +43,7 @@ const fetchById = async (endpoint, id, type) => {
   try {
     validateId(id, type);
     const response = await axiosInstance.get(`/${endpoint}/${id}`);
+    console.log(response);
     return response.data;
   } catch (error) {
     handleError(error, `Erro ao buscar ${type} com ID ${id}`);

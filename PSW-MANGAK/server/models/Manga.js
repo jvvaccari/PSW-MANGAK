@@ -12,7 +12,8 @@ const mangaSchema = new mongoose.Schema({
   genres: [String],
   artsList: [String],
   retail: [{ name: String, url: String }],
-});
+},
+{ _id: false });
 
 const Manga = mongoose.model("Manga", mangaSchema);
 export default Manga;

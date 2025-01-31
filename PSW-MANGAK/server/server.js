@@ -294,8 +294,16 @@ app.get('/evaluations', async (req, res) => {
 
 app.get('/evaluations/:mangaId', async (req, res) => {
   try {
-    const mangaEvaluations = await Evaluation.find({ mangaId: req.params.mangaId });
-    if (mangaEvaluations.length === 0) return res.status(404).send('Evaluations not found');
+    // Certifique-se de tratar o mangaId como uma string
+    const mangaId = req.params.mangaId;
+
+    // Busca pelas avaliações usando mangaId como string
+    const mangaEvaluations = await Evaluation.find({ mangaId: mangaId });
+
+    if (mangaEvaluations.length === 0) {
+      return res.status(404).send('Evaluations not found');
+    }
+
     res.json(mangaEvaluations);
   } catch (err) {
     res.status(500).send(err.message);

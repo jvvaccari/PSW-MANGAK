@@ -26,10 +26,9 @@ export default function LoginPage() {
 
   const { user, loading, error } = useSelector((state) => state.auth);
 
-  // Redireciona se o login for bem-sucedido (usuario encontrado)
   useEffect(() => {
     if (user) {
-      navigate("/"); // Redireciona para a página inicial ou dashboard
+      navigate("/"); 
     }
   }, [user, navigate]);
 
@@ -42,11 +41,9 @@ export default function LoginPage() {
     }
   
     try {
-      // Dispatch the updated loginUser thunk
+
       const result = await dispatch(loginUser({ email, password })).unwrap();
       console.log("Login Bem-sucedido", result);
-      // Optionally navigate to a specific page after successful login
-      // navigate("/profile");
     } catch (err) {
       console.error("Erro ao tentar login:", err);
       alert("Erro: " + (err.message || "Erro desconhecido"));
