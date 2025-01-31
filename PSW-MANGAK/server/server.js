@@ -150,11 +150,20 @@ app.delete('/authors/:id', async (req, res) => {
 
 app.get('/accounts/:id', async (req, res) => {
   try {
-    const account = await Account.findById(req.params.id);
-    if (!account) return res.status(404).send('Account not found');
+    const { id } = req.params;
+
+    console.log("ID recebido:", id);
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "Invalid ID format" });
+    }
+
+    const account = await Account.findById(id); // Aqui usa "id" corretamente
+    if (!account) return res.status(404).json({ message: "Account not found" });
+
     res.json(account);
   } catch (err) {
-    res.status(500).send(err.message);
+    res.status(500).json({ error: err.message });
   }
 });
 

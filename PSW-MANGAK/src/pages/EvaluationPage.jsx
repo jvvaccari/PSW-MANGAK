@@ -79,28 +79,31 @@ const EvaluationPage = () => {
       });
   }, [manga?.authorId, manga]);
 
-  // Função para carregar os usernames de todos os usuários que fizeram avaliações
   useEffect(() => {
     const fetchUsernames = async () => {
-      const fetchedUsernames = {};
-      for (const evaluation of evaluations) {
-        if (!fetchedUsernames[evaluation.userId]) {
+      const fetchedUsernames = { ...usernames }; // Evita sobrescrever nomes já carregados
+      const uniqueUserIds = [...new Set(evaluations.map((ev) => ev.userId))]; // Garante IDs únicos
+  
+      const userPromises = uniqueUserIds.map(async (userId) => {
+        if (!fetchedUsernames[userId]) {
           try {
-            const user = await api.fetchAccountById(evaluation.userId);
-            fetchedUsernames[evaluation.userId] = user?.username || "Nome de usuário desconhecido";
+            const user = await api.fetchAccountById(userId);
+            fetchedUsernames[userId] = user?.username || "Nome desconhecido";
           } catch (error) {
-            console.error("Erro ao buscar usuário:", error);
-            fetchedUsernames[evaluation.userId] = "Erro ao carregar nome";
+            console.error(`Erro ao buscar usuário ${userId}:`, error);
+            fetchedUsernames[userId] = "Erro ao carregar";
           }
         }
-      }
+      });
+  
+      await Promise.all(userPromises);
       setUsernames(fetchedUsernames);
     };
-
+  
     if (evaluations.length > 0) {
       fetchUsernames();
     }
-  }, [evaluations]);
+  }, [evaluations, usernames]);  
 
   useEffect(() => {
     dispatch(fetchEvaluationsThunk(mangaId));
@@ -113,7 +116,7 @@ const EvaluationPage = () => {
   };
 
   const handleSubmit = async () => {
-    if (!user || !user._id) {
+    if (!user || !user.id) {
       console.error("Usuário não autenticado.");
       return;
     }
@@ -183,6 +186,7 @@ const EvaluationPage = () => {
           color="red"
           onClick={handleAuthorClick}
           sx={{
+            width: "400px",
             cursor: "pointer",
             color: "white",
             ":hover": {
@@ -208,7 +212,7 @@ const EvaluationPage = () => {
             }}
           >
             <Typography variant="h6" color="white">
-              {usernames[comment.userId] || "Nome de usuário desconhecido"}
+              {comment._id || "Nome de usuário desconhecido"}
             </Typography>
             <Rating
               value={comment.rating}
@@ -221,7 +225,7 @@ const EvaluationPage = () => {
               }}
             />
             <Typography color="white">{comment.comment}</Typography>
-            {comment.userId === user?.id && (
+            {comment.userId === user?._id && (
               <Box sx={{ display: "flex", gap: 1 }}>
                 <Button
                   color="error"
