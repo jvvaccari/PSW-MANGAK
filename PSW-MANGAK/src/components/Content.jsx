@@ -15,19 +15,23 @@ const Content = ({ manga }) => {
   const [averageRating, setAverageRating] = useState(0.0);
 
   useEffect(() => {
-    if (manga.authorId) {
-      console.log(manga);
-      api.fetchAuthorById(manga.authorId)
-        .then((author) => {
-          setAuthorName(author?.name || "Autor desconhecido");
-        })
-        .catch(() => {
-          setAuthorName("Erro ao carregar autor");
-        });
-    } else {
+    if (!manga.authorId) {
+      console.warn("Nenhum authorId encontrado");
       setAuthorName("Autor desconhecido");
+      return;
     }
-  }, [manga.authorId,manga]);
+  
+    console.log("Buscando autor com ID:", manga.authorId);
+    api.fetchAuthorById(manga.authorId)
+      .then((author) => {
+        console.log("Autor encontrado:", author);
+        setAuthorName(author?.name || "Autor desconhecido");
+      })
+      .catch((error) => {
+        console.error("Erro ao buscar autor:", error);
+        setAuthorName("Erro ao carregar autor");
+      });
+  }, [manga.authorId]);  
 
   useEffect(() => {
     if (manga.id) {
@@ -58,10 +62,13 @@ const Content = ({ manga }) => {
   const handleViewComments = () => {
     if (!user?.id) {
       console.warn("Usuário não autenticado.");
+      // Redireciona para a página de login se o usuário não estiver autenticado
+      navigate("/login"); // Ou outra rota de sua escolha
       return;
     }
     navigate(`/evaluations/${manga.id}/${user.id}`);
   };
+  
 
   const status = manga.status?.toUpperCase() || "INDEFINIDO";
   const statusColor = statusColors[status] || statusColors.default;

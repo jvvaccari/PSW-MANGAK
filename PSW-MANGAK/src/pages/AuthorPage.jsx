@@ -9,7 +9,7 @@ import {
   Alert,
 } from "@mui/material";
 import Navbar from "../components/Navbar";
-import { AuthorAPI } from "../../services/api";
+import * as api from "../../services/api";
 
 export default function AuthorDetails() {
   const { authorId } = useParams();
@@ -22,7 +22,7 @@ export default function AuthorDetails() {
       setLoading(true);
       setError("");
       try {
-        const data = await AuthorAPI.fetchById(authorId);
+        const data = await api.fetchAuthorById(authorId);
         setAuthor(data);
       } catch (err) {
         console.error("Erro ao carregar o autor:", err.message);

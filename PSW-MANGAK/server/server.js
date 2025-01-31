@@ -86,8 +86,19 @@ app.get('/authors', async (req, res) => {
 
 app.get('/authors/:id', async (req, res) => {
   try {
-    const authors = await Author.find();
-    res.json(authors);
+    const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "ID inválido" });
+    }
+
+    const author = await Author.findById(new mongoose.Types.ObjectId(id));
+
+    if (!author) {
+      return res.status(404).json({ message: `${id} não encontrado` });
+    }
+
+    res.json(author);
   } catch (err) {
     res.status(500).send(err.message);
   }

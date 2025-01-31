@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 
 const mangaSchema = new mongoose.Schema(
   {
-    _id: { type: String, required: true },
+    _id: { type: mongoose.Schema.Types.ObjectId, required: true },
     title: String,
     image: String,
     authorId: { type: String, ref: 'Author' },

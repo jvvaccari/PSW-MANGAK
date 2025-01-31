@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { logout } from "../redux/authSlice";
-
 import {
   Box,
   Typography,
@@ -21,7 +20,7 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
-import { AccountAPI } from "../../services/api";
+import * as api from "../../services/api";
 
 const inputStyles = {
   bgcolor: "var(--bg-data-color)",
@@ -70,7 +69,7 @@ function ProfilePage() {
         }
   
         setLoading(true);
-        const data = await AccountAPI.fetchById(user.id);
+        const data = await api.fetchAccountById(user.id);
         if (data) {
           setFormData(data);
         } else {
@@ -100,7 +99,7 @@ function ProfilePage() {
 
   const handleSave = async () => {
     try {
-      await AccountAPI.update(user.id, formData);
+      await api.updateAccount(user.id, formData);
       setIsEditing(false);
     } catch (err) {
       console.error("Erro ao atualizar conta:", err.message);
@@ -110,7 +109,7 @@ function ProfilePage() {
 
   const handleDelete = async () => {
     try {
-      await AccountAPI.delete(user.id);
+      await api.deleteAccount(user.id);
       logout();
       navigate("/");
     } catch (err) {

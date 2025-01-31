@@ -2,14 +2,13 @@ import mongoose from 'mongoose';
 
 const accountSchema = new mongoose.Schema(
   {
-    _id: { type: String, required: true },
-    username: String,
-    email: String,
+    username: { type: String, required: true, unique: true },
+    email: { type: String, required: true, unique: true },
     password: String,
-    role: { type: String, default: 'user' }, // Defaults to "user"
-    favorites: [{ type: String, ref: 'Manga' }] // References by string ID to Manga
+    role: { type: String, default: 'user' },
+    favorites: [{ type: String, ref: 'Manga' }]
   },
-  { _id: false } // Disables Mongoose's auto _id
+  { timestamps: true }
 );
 
 const Account = mongoose.model('Account', accountSchema);

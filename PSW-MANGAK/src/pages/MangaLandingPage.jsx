@@ -58,8 +58,7 @@ function MangaLandingPage() {
       </Box>
     );
   }
-  console.log(id);
-  console.log(mangas);
+
   const manga = mangas.find((m) => m._id === id);
 
   if (!manga) {
