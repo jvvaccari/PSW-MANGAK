@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import { Suspense, lazy, useEffect } from "react";
+import { useEffect } from "react";
 import { Box, CircularProgress } from "@mui/material";
 import PropTypes from "prop-types";
 
@@ -12,17 +12,16 @@ import { loadUserFromStorage } from "./redux/authSlice";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import CatalogPage from "./pages/CatalogPage";
 import MangaLandingPage from "./pages/MangaLandingPage";
-// Lazy loading other components
-const ProfilePage = lazy(() => import("./pages/ProfilePage"));
-const LoginPage = lazy(() => import("./pages/LoginPage"));
-const FavoritesPage = lazy(() => import("./pages/FavoritesPage"));
-const MangaAdminPage = lazy(() => import("./pages/MangaAdminPage"));
-const RegisterPage = lazy(() => import("./pages/RegisterPage"));
-const EvaluationPage = lazy(() => import("./pages/EvaluationPage"));
-const AuthorDetails = lazy(() => import("./pages/AuthorPage"));
-const AdminDashboardPage = lazy(() => import("./pages/AdminDashboardPage"));
-const AuthorAdminPage = lazy(() => import("./pages/AuthorAdminPage"));
-const FavoriteListDetails = lazy(() => import("./pages/FavoriteListDetails"));
+import ProfilePage from "./pages/ProfilePage";
+import LoginPage from "./pages/LoginPage";
+// import FavoritesPage from "./pages/FavoritesPage";
+import MangaAdminPage from "./pages/MangaAdminPage";
+import RegisterPage from "./pages/RegisterPage";
+import EvaluationPage from "./pages/EvaluationPage";
+import AuthorDetails from "./pages/AuthorPage";
+import AdminDashboardPage from "./pages/AdminDashboardPage";
+import AuthorAdminPage from "./pages/AuthorAdminPage";
+import FavoriteListDetails from "./pages/FavoriteListDetails";
 
 function AppWrapper() {
   const dispatch = useDispatch();
@@ -49,89 +48,73 @@ function AppWrapper() {
   }
 
   return (
-    <Suspense
-      fallback={
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            minHeight: "100vh",
-            bgcolor: "#f5f5f5",
-          }}
-        >
-          <CircularProgress />
-        </Box>
-      }
-    >
-      <Routes>
-        <Route path="/" element={<CatalogPage />} />
-        <Route path="/manga/:id" element={<MangaLandingPage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
+    <Routes>
+      <Route path="/" element={<CatalogPage />} />
+      <Route path="/manga/:id" element={<MangaLandingPage />} />
+      <Route path="/login" element={<LoginPage />} />
+      <Route path="/register" element={<RegisterPage />} />
 
-        <Route
-          path="/profile/:id"
-          element={
-            <ProtectedRoute>
-              <ProfilePage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/favorites/:id"
-          element={
-            <ProtectedRoute>
-              <FavoritesPage />
-            </ProtectedRoute>
-          }
-        />
+      <Route
+        path="/profile/:id"
+        element={
+          <ProtectedRoute>
+            <ProfilePage />
+          </ProtectedRoute>
+        }
+      />
+      {/* <Route
+        path="/favorites/:id"
+        element={
+          <ProtectedRoute>
+            <FavoritesPage />
+          </ProtectedRoute>
+        }
+      /> */}
 
-        <Route
-          path="/favorites/lists/:id"
-          element={
-            <ProtectedRoute>
-              <FavoriteListDetails />
-            </ProtectedRoute>
-          }
-        />
+      <Route
+        path="/favorites/lists/:id"
+        element={
+          <ProtectedRoute>
+            <FavoriteListDetails />
+          </ProtectedRoute>
+        }
+      />
 
-        <Route
-          path="/admin-manga/:id"
-          element={
-            <ProtectedRoute roleRequired="admin">
-              <MangaAdminPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/evaluations/:mangaId"
-          element={
-            <ProtectedRoute>
-              <EvaluationPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route path="/authors/:authorId" element={<AuthorDetails />} />
-        <Route
-          path="/admin-dashboard"
-          element={
-            <ProtectedRoute roleRequired="admin">
-              <AdminDashboardPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/admin-author"
-          element={
-            <ProtectedRoute roleRequired="admin">
-              <AuthorAdminPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route path="*" element={<CatalogPage />} />
-      </Routes>
-    </Suspense>
+      <Route
+        path="/admin-manga"
+        element={
+          <ProtectedRoute roleRequired="admin">
+            <MangaAdminPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/evaluations/:mangaId"
+        element={
+          <ProtectedRoute>
+            <EvaluationPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route path="/authors/:authorId" element={<AuthorDetails />} />
+      <Route
+        path="/admin-dashboard"
+        element={
+          <ProtectedRoute roleRequired="admin">
+            <AdminDashboardPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin-author"
+        element={
+          <ProtectedRoute roleRequired="admin">
+            <AuthorAdminPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route path="*" element={<CatalogPage />} />
+    </Routes>
   );
 }
 
@@ -142,7 +125,7 @@ AppWrapper.propTypes = {
 const App = () => {
   return (
     <Provider store={store}>
-      <Router> {/* Certifique-se de que o Router envolve o AppWrapper */}
+      <Router>
         <AppWrapper />
       </Router>
     </Provider>

@@ -31,83 +31,56 @@ const EvaluationPage = () => {
   const [averageRating, setAverageRating] = useState(0);
   const [manga, setManga] = useState(null);
   const [usernames, setUsernames] = useState({});
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const fetchMangaData = async () => {
+    const fetchData = async () => {
       try {
-        const data = await api.fetchMangaById(mangaId);
-        setManga(data);
+        // Busca os dados do mangá e as avaliações simultaneamente
+        const [mangaData, evaluationsData] = await Promise.all([
+          api.fetchMangaById(mangaId),
+          dispatch(fetchEvaluationsThunk(mangaId)).unwrap(),
+        ]);
+
+        setManga(mangaData);
+
+        // Calcula a média das avaliações
+        const avg =
+          evaluationsData.reduce((acc, cur) => acc + cur.rating, 0) /
+          evaluationsData.length;
+        setAverageRating(Number(avg.toFixed(1)));
+
+        // Busca o nome do autor
+        if (mangaData?.authorId) {
+          const author = await api.fetchAuthorById(mangaData.authorId._id);
+          setAuthorName(author?.name || "Autor desconhecido");
+        } else {
+          setAuthorName("Autor desconhecido");
+        }
+
+        // Busca os usernames dos usuários que fizeram avaliações
+        const fetchedUsernames = {};
+        for (const evaluation of evaluationsData) {
+          if (!fetchedUsernames[evaluation.userId]) {
+            try {
+              const user = await api.fetchAccountById(evaluation.userId);
+              fetchedUsernames[evaluation.userId] = user?.username || "Nome de usuário desconhecido";
+            } catch (error) {
+              console.error("Erro ao buscar usuário:", error);
+              fetchedUsernames[evaluation.userId] = "Erro ao carregar nome";
+            }
+          }
+        }
+        setUsernames(fetchedUsernames);
       } catch (error) {
-        console.error("Erro ao buscar o manga:", error);
+        console.error("Erro ao buscar dados:", error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
-    fetchMangaData();
-  }, [mangaId]);
-
-  useEffect(() => {
-    dispatch(fetchEvaluationsThunk(mangaId));
-  }, [dispatch, mangaId]);
-
-  useEffect(() => {
-    if (evaluations.length > 0) {
-      const avg =
-        evaluations.reduce((acc, cur) => acc + cur.rating, 0) /
-        evaluations.length;
-      setAverageRating(Number(avg.toFixed(1)));
-    } else {
-      setAverageRating(0);
-    }
-  }, [evaluations]);
-
-  // Função para buscar o nome do autor
-  useEffect(() => {
-    if (!manga?.authorId) {
-      setAuthorName("Autor desconhecido");
-      return;
-    }
-    api
-      .fetchAuthorById(manga.authorId._id)
-      .then((author) => {
-        console.log(author);
-
-        setAuthorName(author?.name || "Autor desconhecido");
-      })
-      .catch((error) => {
-        console.error("Erro ao buscar autor:", error);
-        setAuthorName("Erro ao carregar autor");
-      });
-  }, [manga?.authorId, manga]);
-
-  useEffect(() => {
-    const fetchUsernames = async () => {
-      const fetchedUsernames = { ...usernames }; // Evita sobrescrever nomes já carregados
-      const uniqueUserIds = [...new Set(evaluations.map((ev) => ev.userId))]; // Garante IDs únicos
-  
-      const userPromises = uniqueUserIds.map(async (userId) => {
-        if (!fetchedUsernames[userId]) {
-          try {
-            const user = await api.fetchAccountById(userId);
-            fetchedUsernames[userId] = user?.username || "Nome desconhecido";
-          } catch (error) {
-            console.error(`Erro ao buscar usuário ${userId}:`, error);
-            fetchedUsernames[userId] = "Erro ao carregar";
-          }
-        }
-      });
-  
-      await Promise.all(userPromises);
-      setUsernames(fetchedUsernames);
-    };
-  
-    if (evaluations.length > 0) {
-      fetchUsernames();
-    }
-  }, [evaluations, usernames]);  
-
-  useEffect(() => {
-    dispatch(fetchEvaluationsThunk(mangaId));
-  }, [evaluations, dispatch, mangaId]);  
+    fetchData();
+  }, [mangaId, dispatch]);
 
   const handleAuthorClick = () => {
     if (manga?.authorId?._id) {
@@ -116,18 +89,18 @@ const EvaluationPage = () => {
   };
 
   const handleSubmit = async () => {
-    if (!user || !user.id) {
+    if (!user || !user._id) {
       console.error("Usuário não autenticado.");
       return;
     }
-  
+
     try {
       const evaluationData = {
         rating,
         comment: newComment,
         userId: user._id,
       };
-  
+
       if (editingId) {
         await dispatch(
           updateEvaluationThunk({
@@ -146,18 +119,17 @@ const EvaluationPage = () => {
           })
         );
       }
-  
+
       setEditingId(null);
       setNewComment("");
       setRating(0);
-  
-      // A linha abaixo atualiza as avaliações depois de salvar a edição ou criação
+
+      // Atualiza as avaliações depois de salvar a edição ou criação
       await dispatch(fetchEvaluationsThunk(mangaId));
     } catch (err) {
       console.error("Erro ao salvar avaliação.", err);
     }
   };
-  
 
   const handleDelete = async (evaluationId) => {
     try {
@@ -174,6 +146,10 @@ const EvaluationPage = () => {
     setRating(comment.rating);
   };
 
+  if (isLoading) {
+    return <Typography color="white">Carregando...</Typography>;
+  }
+
   return (
     <Box sx={{ backgroundColor: "black" }}>
       <Navbar />
@@ -186,7 +162,6 @@ const EvaluationPage = () => {
           color="red"
           onClick={handleAuthorClick}
           sx={{
-            width: "400px",
             cursor: "pointer",
             color: "white",
             ":hover": {
@@ -212,7 +187,7 @@ const EvaluationPage = () => {
             }}
           >
             <Typography variant="h6" color="white">
-              {comment._id || "Nome de usuário desconhecido"}
+              {usernames[comment.userId] || "Nome de usuário desconhecido"}
             </Typography>
             <Rating
               value={comment.rating}
@@ -225,7 +200,7 @@ const EvaluationPage = () => {
               }}
             />
             <Typography color="white">{comment.comment}</Typography>
-            {comment.userId === user?._id && (
+            {comment.userId === user?.id && (
               <Box sx={{ display: "flex", gap: 1 }}>
                 <Button
                   color="error"

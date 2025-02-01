@@ -43,7 +43,6 @@ const fetchById = async (endpoint, id, type) => {
   try {
     validateId(id, type);
     const response = await axiosInstance.get(`/${endpoint}/${id}`);
-    console.log(response);
     return response.data;
   } catch (error) {
     handleError(error, `Erro ao buscar ${type} com ID ${id}`);
@@ -74,7 +73,6 @@ export const fetchMangas = async () => {
 
 export const fetchMangaById = async (id) => {
   try {
-    console.log("Fetching manga with ID:", id);
     const response = await fetch(`http://localhost:5502/mangas/${id}`);
 
     if (!response.ok) {
@@ -269,7 +267,6 @@ export const updateEvaluation = async (evaluationId, updatedData) => {
 
 export const deleteEvaluation = async (evaluationId) => {
   try {
-    console.log(evaluationId);
     validateId(evaluationId, "avaliação");
     const response = await axiosInstance.delete(`/evaluations/${evaluationId}`);
     return response.data;

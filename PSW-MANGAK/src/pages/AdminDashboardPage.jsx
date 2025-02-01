@@ -64,7 +64,7 @@ const AdminDashboardPage = () => {
       <Box sx={{ display: "flex", flexWrap: "wrap", gap: "2rem" }}>
         <Button
           variant="contained"
-          onClick={() => handleNavigation(`/admin-manga/${user?.id}`)}
+          onClick={() => handleNavigation(`/admin-manga`)}
           sx={{
             backgroundColor: "#FF0037",
             color: "#FFF",

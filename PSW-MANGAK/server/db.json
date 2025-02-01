@@ -156,22 +156,7 @@
     }
   ],
   "evaluations": [
-    {
-      "id": "679cdefd96b0f97303b7b9fe",
-      "mangaId": "679cdefd96b0f97303b7b9e0",
-      "userId": "679cef0a97f04526e645e936",
-      "rating": 4.5,
-      "comment": "Amei a obra!",
-      "timestamp": "2024-12-28T18:25:15.554Z"
-    },
-    {
-      "id": "679cdefd96b0f97303b7b9ff",
-      "mangaId": "679cdefd96b0f97303b7b9e0",
-      "userId": "679cdefd96b0f97303b7b9dc",
-      "rating": 5,
-      "comment": "Gostei muito da obra!",
-      "timestamp": "2024-12-28T18:26:25.406Z"
-    }
+    
   ],
 
   "authors": [
