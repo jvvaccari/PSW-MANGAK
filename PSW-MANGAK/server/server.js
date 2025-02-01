@@ -241,7 +241,7 @@ app.get('/favorites', async (req, res) => {
 
 app.get('/favorites/:id', async (req, res) => {
   try {
-    const favoriteList = await FavoriteList.findById(req.params._id);
+    const favoriteList = await FavoriteList.findById(req.params.id);
     if (!favoriteList) return res.status(404).send('Favorite list not found');
     res.json(favoriteList);
   } catch (err) {
@@ -262,7 +262,23 @@ app.post('/favorites', async (req, res) => {
 app.put('/favorites/:id', async (req, res) => {
   try {
     const updatedFavoriteList = await FavoriteList.findByIdAndUpdate(
-      req.params.id,
+      req.params.id, 
+      req.body,
+      { new: true }
+    );
+    if (!updatedFavoriteList) {
+      return res.status(404).send('Favorite list not found');
+    }
+    res.json(updatedFavoriteList);
+  } catch (err) {
+    res.status(400).send(err.message);
+  }
+});
+
+app.put('/favorites/list/:id', async (req, res) => {
+  try {
+    const updatedFavoriteList = await FavoriteList.findByIdAndUpdate(
+      req.params.id, 
       req.body,
       { new: true }
     );

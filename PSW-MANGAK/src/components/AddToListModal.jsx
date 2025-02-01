@@ -3,17 +3,30 @@ import {
   Modal,
   Box,
   Typography,
-  FormControl,
-  Select,
-  MenuItem,
   Button,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  OutlinedInput,
 } from "@mui/material";
 import PropTypes from "prop-types";
 import * as api from "../../services/api";
 
-const ListSelectorModal = ({ open, onClose, userId, onSelect }) => {
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+      width: 250,
+    },
+  },
+};
+
+const AddToListModal = ({ open, onClose, userId, onSelect }) => {
   const [favoriteLists, setFavoriteLists] = useState([]);
-  const [selectedList, setSelectedList] = useState("");
+  const [selectedList, setSelectedList] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -28,16 +41,16 @@ const ListSelectorModal = ({ open, onClose, userId, onSelect }) => {
       .then((lists) => {
         setFavoriteLists(lists || []);
       })
-      .catch((err) => {
-        setError("Erro ao carregar as listas. Tente novamente.",err);
+      .catch(() => {
+        setError("Erro ao carregar as listas. Tente novamente.");
       })
       .finally(() => setLoading(false));
   }, [open, userId]);
 
   const handleSelectList = () => {
     if (selectedList) {
-      onSelect(selectedList);
-      onClose(); // Fecha o modal após a seleção
+      onSelect([selectedList]);
+      onClose();
     } else {
       setError("Por favor, selecione uma lista.");
     }
@@ -73,18 +86,17 @@ const ListSelectorModal = ({ open, onClose, userId, onSelect }) => {
           <Typography>Carregando...</Typography>
         ) : (
           <FormControl fullWidth>
+            <InputLabel id="single-select-label">Lista</InputLabel>
             <Select
-              value={selectedList}
-              displayEmpty
-              inputProps={{ "aria-label": "Selecione uma lista" }}
+              labelId="single-select-label"
+              value={selectedList || ""}
               onChange={(e) => setSelectedList(e.target.value)}
+              input={<OutlinedInput label="Lista" />}
+              MenuProps={MenuProps}
             >
-              <MenuItem value="" disabled>
-                Selecione uma lista
-              </MenuItem>
-              {favoriteLists.map((list) => (
-                <MenuItem key={list.id} value={list.id}>
-                  {list.name}
+              {favoriteLists.map((list, index) => (
+                <MenuItem key={list._id || `list-${index}`} value={list._id}>
+                  {list.name || "Sem nome"}
                 </MenuItem>
               ))}
             </Select>
@@ -104,11 +116,11 @@ const ListSelectorModal = ({ open, onClose, userId, onSelect }) => {
   );
 };
 
-ListSelectorModal.propTypes = {
+AddToListModal.propTypes = {
   open: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
   userId: PropTypes.string.isRequired,
-  onSelect: PropTypes.func.isRequired, // Função que irá receber a lista selecionada
+  onSelect: PropTypes.func.isRequired,
 };
 
-export default ListSelectorModal;
+export default AddToListModal;

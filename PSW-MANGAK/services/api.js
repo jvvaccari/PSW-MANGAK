@@ -338,6 +338,9 @@ export const deleteFavoriteList = async (listId) => {
 
 export const addMangaToList = async (listId, mangaId) => {
   try {
+    console.log("ListID:",listId);
+    console.log("MangaId:",mangaId);
+
     const list = await fetchFavoriteListById(listId);
     if (!list) throw new Error('Lista não encontrada'); 
 
@@ -345,7 +348,7 @@ export const addMangaToList = async (listId, mangaId) => {
       ? list.mangas
       : [...list.mangas, mangaId]; 
 
-    const response = await axiosInstance.put(`/favorites/list/${listId}`, {
+    const response = await axiosInstance.put(`/favorites/${listId}`, {
       ...list,
       mangas: updatedMangas,
     });
@@ -359,11 +362,13 @@ export const removeMangaFromFavoriteList = async (listId, mangaId) => {
   try {
     const list = await fetchFavoriteListById(listId);
 
-    const updatedMangas = list.mangas.filter((manga) => manga !== mangaId);
+    const updatedMangas = list.mangas.filter((mangaIdInList) => mangaIdInList !== mangaId);
+
+    console.log("Lista filtrada:", updatedMangas);
 
     const response = await axiosInstance.put(`/favorites/list/${listId}`, {
       ...list,
-      mangas: updatedMangas,
+      mangas: updatedMangas,  
     });
 
     return response.data; 
@@ -372,7 +377,6 @@ export const removeMangaFromFavoriteList = async (listId, mangaId) => {
     throw error;
   }
 };
-
 
 export const fetchFavoriteListById = async (listId) => {
   try {
@@ -383,12 +387,12 @@ export const fetchFavoriteListById = async (listId) => {
   }
 };
 
-export const fetchMangasByIds = async (mangaIds) => {
+export const fetchMangasByListId = async (listId) => {
   try {
-    const mangasData = await Promise.all(
-      mangaIds.map((id) => fetchMangaById(id))
-    );
-    return mangasData;
+    const list = await fetchFavoriteListById(listId);
+    const allMangas = await fetchMangas();
+    const favoriteMangas =  list.mangas.map((mangaId) => allMangas.find((manga) => manga._id === mangaId));
+    return favoriteMangas;
   } catch (error) {
     handleError(error, "Erro ao buscar mangas");
   }

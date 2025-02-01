@@ -1,13 +1,17 @@
 import { useState } from "react";
 import { useSelector } from "react-redux";
-import { BookmarkAdd as AddIcon, IosShare as ShareIcon } from "@mui/icons-material";
+import {
+  BookmarkAdd as AddIcon,
+  IosShare as ShareIcon,
+} from "@mui/icons-material";
 import { Button, Box } from "@mui/material";
 import PropTypes from "prop-types";
+import * as api from "../../services/api";
 
 import AddToListModal from "./AddToListModal";
 
 const Actions = ({ mangaId }) => {
-  const { user } = useSelector(state => state.auth)
+  const { user } = useSelector((state) => state.auth);
   const [openModal, setOpenModal] = useState(false);
 
   const handleAddToList = () => setOpenModal(true);
@@ -41,9 +45,32 @@ const Actions = ({ mangaId }) => {
     },
   };
 
+  // Actions.jsx
+  const handleSelectList = (listId) => {
+    console.log("ListID:", listId); // Verifique o valor de listId
+    console.log("MangaId:", mangaId); // Verifique o valor de mangaId
+
+    if (mangaId) {
+      api.addMangaToList(listId, mangaId); // Função que realiza a requisição
+    } else {
+      console.error("mangaId está undefined");
+    }
+  };
+
   return (
-    <Box sx={{ display: "flex", flexDirection: "row", gap: "1em", marginTop: "16px" }}>
-      <Button variant="contained" onClick={handleAddToList} sx={commonButtonStyles}>
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "row",
+        gap: "1em",
+        marginTop: "16px",
+      }}
+    >
+      <Button
+        variant="contained"
+        onClick={handleAddToList}
+        sx={commonButtonStyles}
+      >
         <AddIcon sx={{ fontSize: "1rem", marginRight: "6px" }} />
         Adicionar
       </Button>
@@ -58,6 +85,7 @@ const Actions = ({ mangaId }) => {
         onClose={() => setOpenModal(false)}
         mangaId={mangaId}
         userId={user?.id}
+        onSelect={handleSelectList} // Passando a função onSelect
       />
     </Box>
   );

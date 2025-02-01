@@ -20,13 +20,16 @@ function MangaLandingPage() {
   const { mangas, loading, error } = useSelector((state) => state.manga);
 
   useEffect(() => {
-    // Only load if we haven't yet
+    console.log("Disparando loadMangas...");
     if (mangas.length === 0) {
       dispatch(loadMangas());
+    } else {
+      console.log("Mangas já carregados:", mangas);
     }
-  }, [dispatch, mangas.length]);
+  }, [dispatch, mangas, mangas.length]);
 
   if (loading) {
+    console.log("Carregando mangas...");
     return (
       <Box
         sx={{
@@ -43,6 +46,7 @@ function MangaLandingPage() {
   }
 
   if (error) {
+    console.error("Erro ao carregar mangas:", error);
     return (
       <Box
         sx={{
@@ -58,9 +62,11 @@ function MangaLandingPage() {
     );
   }
 
+  console.log("Listando mangas:", mangas);
   const manga = mangas.find((m) => m._id === id);
 
   if (!manga) {
+    console.log("Manga não encontrado, id:", id);
     return (
       <Box
         sx={{
@@ -75,6 +81,8 @@ function MangaLandingPage() {
       </Box>
     );
   }
+
+  console.log("Manga encontrado:", manga);
 
   const tagsData = [
     { section: "Genres", tags: manga.genres || [] },
@@ -104,12 +112,20 @@ function MangaLandingPage() {
             }}
           />
 
-          <Actions
-            sx={{
-              marginBottom: "var(--spacing-large)",
-            }}
-            mangaId={manga.id}
-          />
+          {/* Verificar se manga._id está disponível antes de renderizar o Actions */}
+          {manga._id ? (
+            <>
+              {console.log("Passando mangaId para Actions:", manga._id)}
+              <Actions
+                sx={{
+                  marginBottom: "var(--spacing-large)",
+                }}
+                mangaId={manga._id} // Passando mangaId para Actions
+              />
+            </>
+          ) : (
+            console.log("manga._id não disponível, não renderizando Actions")
+          )}
 
           {manga.description && (
             <Description
