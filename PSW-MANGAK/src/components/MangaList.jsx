@@ -21,8 +21,10 @@ const MangaList = ({ mangas, searchTerm, onMangaClick }) => {
   const [scrollPositions, setScrollPositions] = useState({});
   const lowerCaseSearchTerm = searchTerm.toLowerCase();
 
+  // Agrupando mangas por gênero
   const groupedMangas = useMemo(() => groupByGenres(mangas), [mangas]);
 
+  // Filtrando mangas com base no termo de pesquisa
   const filteredMangas = useMemo(
     () =>
       mangas.filter(
@@ -39,6 +41,7 @@ const MangaList = ({ mangas, searchTerm, onMangaClick }) => {
     [mangas, lowerCaseSearchTerm]
   );
 
+  // Agrupando mangas filtrados por gênero
   const genresToDisplay = useMemo(() => {
     const exactGenreMatch = Object.keys(groupedMangas).find(
       (genre) => genre.toLowerCase() === lowerCaseSearchTerm
@@ -56,8 +59,7 @@ const MangaList = ({ mangas, searchTerm, onMangaClick }) => {
       if (listRef) {
         const canScrollLeft = listRef.scrollLeft > 0;
         const canScrollRight =
-          Math.ceil(listRef.scrollLeft + listRef.clientWidth) <
-          listRef.scrollWidth;
+          Math.ceil(listRef.scrollLeft + listRef.clientWidth) < listRef.scrollWidth;
 
         updatedScrollPositions[genre] = {
           canScrollLeft,
