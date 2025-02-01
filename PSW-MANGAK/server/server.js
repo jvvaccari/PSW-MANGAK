@@ -227,7 +227,7 @@ app.delete('/accounts/:id', async (req, res) => {
   }
 });
 
-app.get('/favoriteLists', async (req, res) => {
+app.get('/favorites', async (req, res) => {
   try {
     const userId = req.query.userId;
     const favoriteLists = userId
@@ -239,9 +239,9 @@ app.get('/favoriteLists', async (req, res) => {
   }
 });
 
-app.get('/favoriteLists/:id', async (req, res) => {
+app.get('/favorites/:id', async (req, res) => {
   try {
-    const favoriteList = await FavoriteList.findById(req.params.id);
+    const favoriteList = await FavoriteList.findById(req.params._id);
     if (!favoriteList) return res.status(404).send('Favorite list not found');
     res.json(favoriteList);
   } catch (err) {
@@ -249,7 +249,7 @@ app.get('/favoriteLists/:id', async (req, res) => {
   }
 });
 
-app.post('/favoriteLists', async (req, res) => {
+app.post('/favorites', async (req, res) => {
   try {
     const newFavoriteList = new FavoriteList(req.body);
     await newFavoriteList.save();
@@ -259,7 +259,7 @@ app.post('/favoriteLists', async (req, res) => {
   }
 });
 
-app.put('/favoriteLists/:id', async (req, res) => {
+app.put('/favorites/:id', async (req, res) => {
   try {
     const updatedFavoriteList = await FavoriteList.findByIdAndUpdate(
       req.params.id,
@@ -275,7 +275,7 @@ app.put('/favoriteLists/:id', async (req, res) => {
   }
 });
 
-app.delete('/favoriteLists/:id', async (req, res) => {
+app.delete('/favorites/:id', async (req, res) => {
   try {
     const deletedFavoriteList = await FavoriteList.findByIdAndDelete(
       req.params.id

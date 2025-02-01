@@ -96,26 +96,19 @@
       "username": "adm",
       "email": "adm@gmail.com",
       "password": "123",
-      "role": "admin",
-      "favorites": []
+      "role": "admin"
     },
     {
       "username": "Lucas",
       "email": "lucaspsilva1610@gmail.com",
       "password": "123",
-      "role": "user",
-      "favorites": ["679cdefd96b0f97303b7b9dc"]
+      "role": "user"
     },
     {
       "username": "Edgar",
       "email": "edgar@gmail.com",
       "password": "123",
-      "role": "user",
-      "favorites": [
-        "679cdefd96b0f97303b7b9dc",
-        "679cdefd96b0f97303b7b9dd",
-        "679cdefd96b0f97303b7b9de"
-      ]
+      "role": "user"
     }
   ],
 

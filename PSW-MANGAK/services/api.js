@@ -144,7 +144,7 @@ export const deleteAccount = async (id) => {
   }
 };
 
-export const fetchFavorites = async (userId) => {
+export const fetchFavoritesMangas = async (userId) => {
   try {
     validateId(userId, "usuário");
     const account = await fetchAccountById(userId);
@@ -309,7 +309,7 @@ export const deleteAuthor = async (id) => {
 export const fetchFavoriteLists = async (userId) => {
   try {
     console.log("Buscando listas para o usuário com ID:", userId);
-    const response = await axiosInstance.get(`/favoriteLists?userId=${userId}`);
+    const response = await axiosInstance.get(`/favorites?userId=${userId}`);
     console.log("Resposta da API:", response.data);
     return response.data;
   } catch (error) {
@@ -320,7 +320,7 @@ export const fetchFavoriteLists = async (userId) => {
 
 export const createFavoriteList = async (listData) => {
   try {
-    const response = await axiosInstance.post(`/favoriteLists`, listData);
+    const response = await axiosInstance.post(`/favorites`, listData);
     return response.data;
   } catch (error) {
     handleError(error, "Erro ao criar lista");
@@ -329,7 +329,7 @@ export const createFavoriteList = async (listData) => {
 
 export const deleteFavoriteList = async (listId) => {
   try {
-    const response = await axiosInstance.delete(`/favoriteLists/${listId}`);
+    const response = await axiosInstance.delete(`/favorites/${listId}`);
     return response.data; 
   } catch (error) {
     handleError(error, "Erro ao deletar lista");
@@ -345,7 +345,7 @@ export const addMangaToList = async (listId, mangaId) => {
       ? list.mangas
       : [...list.mangas, mangaId]; 
 
-    const response = await axiosInstance.put(`/favoriteLists/${listId}`, {
+    const response = await axiosInstance.put(`/favorites/list/${listId}`, {
       ...list,
       mangas: updatedMangas,
     });
@@ -361,7 +361,7 @@ export const removeMangaFromFavoriteList = async (listId, mangaId) => {
 
     const updatedMangas = list.mangas.filter((manga) => manga !== mangaId);
 
-    const response = await axiosInstance.put(`/favoriteLists/${listId}`, {
+    const response = await axiosInstance.put(`/favorites/list/${listId}`, {
       ...list,
       mangas: updatedMangas,
     });
@@ -376,7 +376,7 @@ export const removeMangaFromFavoriteList = async (listId, mangaId) => {
 
 export const fetchFavoriteListById = async (listId) => {
   try {
-    const response = await axiosInstance.get(`/favoriteLists/${listId}`);
+    const response = await axiosInstance.get(`/favorites/${listId}`);
     return response.data;
   } catch (error) {
     handleError(error, `Erro ao buscar lista de favoritos com ID ${listId}`);

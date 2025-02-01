@@ -6,7 +6,6 @@ const accountSchema = new mongoose.Schema(
     email: String,
     password: String,
     role: { type: String, default: 'user' },
-    favorites: [{ type: String, ref: 'Manga' }]
   }
 );
 

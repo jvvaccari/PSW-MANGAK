@@ -15,7 +15,7 @@ import {
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
-import { fetchFavoriteListById, fetchMangasByIds, removeMangaFromFavoriteList } from "../../services/api";
+import * as api from "../../services/api";
 
 const FavoriteListDetails = () => {
   const { userId } = useSelector((state) => state.auth.user);
@@ -27,9 +27,9 @@ const FavoriteListDetails = () => {
   useEffect(() => {
     const loadList = async () => {
       try {
-        const data = await fetchFavoriteListById(userId);
+        const data = await api.fetchFavoriteListById(userId);
         if (data?.mangas?.length > 0) {
-          const mangas = await fetchMangasByIds(data.mangas);
+          const mangas = await api.fetchMangasByIds(data.mangas);
           setList({ ...data, mangas });
         } else {
           setList(data);
@@ -50,7 +50,7 @@ const FavoriteListDetails = () => {
   const handleRemoveManga = async (mangaId) => {
     try {
       // Tente remover o manga da lista no banco de dados
-      const success = await removeMangaFromFavoriteList(userId, mangaId);
+      const success = await api.removeMangaFromFavoriteList(userId, mangaId);
   
       if (success) {
         // Atualiza a lista de mangas local, após remoção bem-sucedida

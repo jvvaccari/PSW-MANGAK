@@ -73,7 +73,7 @@ function AppWrapper() {
       />
 
       <Route
-        path="/favorites/:id"
+        path="/favorites/list/:id"
         element={
           <ProtectedRoute>
             <FavoriteListDetails />

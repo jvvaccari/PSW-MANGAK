@@ -16,9 +16,10 @@ import {
 import * as api from "../../services/api";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import AddIcon from "@mui/icons-material/Add";
+import DeleteIcon from "@mui/icons-material/Delete"; // Importar ícone de exclusão
 
 const FavoritesPage = () => {
-  const { user } = useSelector(state => state.auth)
+  const { user } = useSelector((state) => state.auth);
   const navigate = useNavigate();
   const [lists, setLists] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -34,7 +35,7 @@ const FavoritesPage = () => {
 
     const loadLists = async () => {
       try {
-        const data = await api.fetchFavoriteListById(user.id);
+        const data = await api.fetchFavoriteLists(user.id);
         setLists(data || []);
       } catch {
         setError("Erro ao carregar listas.");
@@ -58,6 +59,16 @@ const FavoritesPage = () => {
       setOpenModal(false);
     } catch {
       setError("Erro ao criar lista.");
+    }
+  };
+
+  const handleDeleteList = async (listId) => {
+    try {
+      await api.deleteFavoriteList(listId); // Supondo que a API tenha essa função
+      setLists(lists.filter((list) => list._id !== listId));
+      console.log("Lista deletada com sucesso.");
+    } catch {
+      setError("Erro ao excluir a lista.");
     }
   };
 
@@ -106,29 +117,46 @@ const FavoritesPage = () => {
 
         <Grid container spacing={3} justifyContent="center">
           {lists.map((list) => (
-            <Grid item xs={12} sm={6} md={4} key={list.id}>
-              <Box
+            <Grid item xs={12} sm={6} md={4} key={list._id}>
+            <Box
+              sx={{
+                backgroundColor: "#1c1c1c",
+                color: "#fff",
+                padding: "16px",
+                borderRadius: "8px",
+                cursor: "pointer",
+                textAlign: "center",
+                boxShadow: "0 4px 10px rgba(0, 0, 0, 0.3)",
+                transition: "transform 0.3s, box-shadow 0.3s",
+                "&:hover": { backgroundColor: "#333", transform: "scale(1.05)" },
+                position: "relative", // Garante que o ícone será posicionado dentro do card
+              }}
+              onClick={() => navigate(`/favorites/list/${list._id}`)}
+            >
+              <Typography variant="h6" sx={{ fontWeight: "bold", marginBottom: "8px" }}>
+                {list.name}
+              </Typography>
+              <Typography variant="body2" sx={{ color: "#B0B0B0" }}>
+                {list.mangas?.length ? `${list.mangas.length} Mangás` : "Sem Mangás"}
+              </Typography>
+          
+              <IconButton
                 sx={{
-                  backgroundColor: "#1c1c1c",
-                  color: "#fff",
-                  padding: "16px",
-                  borderRadius: "8px",
-                  cursor: "pointer",
-                  textAlign: "center",
-                  boxShadow: "0 4px 10px rgba(0, 0, 0, 0.3)",
-                  transition: "transform 0.3s, box-shadow 0.3s",
-                  "&:hover": { backgroundColor: "#333", transform: "scale(1.05)" },
+                  position: "absolute",  // Posiciona o ícone dentro do card
+                  top: "8px",            // Distância do topo
+                  right: "8px",          // Distância da borda direita
+                  color: "#FF0037",
                 }}
-                onClick={() => navigate(`/favorites/lists/${list.id}`)}
+                onClick={(e) => {
+                  e.stopPropagation(); // Impede que o clique no botão de excluir dispare o onClick do Box
+                  handleDeleteList(list._id);
+                }}
               >
-                <Typography variant="h6" sx={{ fontWeight: "bold", marginBottom: "8px" }}>
-                  {list.name}
-                </Typography>
-                <Typography variant="body2" sx={{ color: "#B0B0B0" }}>
-                  {list.mangas?.length ? `${list.mangas.length} Mangás` : "Sem Mangás"}
-                </Typography>
-              </Box>
-            </Grid>
+                <DeleteIcon />
+              </IconButton>
+            </Box>
+          </Grid>
+          
           ))}
         </Grid>
       </Box>
