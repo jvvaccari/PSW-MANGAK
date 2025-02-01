@@ -2,11 +2,16 @@ import mongoose from 'mongoose';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import dotenv from 'dotenv';
+
 import Manga from './models/Manga.js';
 import Author from './models/Author.js';
 import Account from './models/Account.js';
 import FavoriteList from './models/FavoriteList.js';
 import Evaluation from './models/Evaluation.js';
+
+// Carregar as variáveis de ambiente do arquivo .env
+dotenv.config();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -16,7 +21,8 @@ const data = JSON.parse(fs.readFileSync(filePath, 'utf8'));
 
 console.log(data); // Verifique a estrutura dos dados carregados
 
-const MONGO_URI = 'mongodb://localhost:27017/mongo';
+// Obter a URL de conexão a partir da variável de ambiente
+const MONGO_URI = process.env.DATABASE_URL; // Use a URL do MongoDB Atlas configurada na variável de ambiente
 
 // Função para validar e converter para ObjectId
 const getObjectId = (id) => {
@@ -26,7 +32,7 @@ const getObjectId = (id) => {
 (async function migrateData() {
   try {
     await mongoose.connect(MONGO_URI);
-    console.log('Connected to MongoDB');
+    console.log('Connected to MongoDB Atlas');
 
     // Limpeza do banco de dados antes da migração
     await Promise.all([

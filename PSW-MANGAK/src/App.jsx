@@ -14,7 +14,7 @@ import CatalogPage from "./pages/CatalogPage";
 import MangaLandingPage from "./pages/MangaLandingPage";
 import ProfilePage from "./pages/ProfilePage";
 import LoginPage from "./pages/LoginPage";
-// import FavoritesPage from "./pages/FavoritesPage";
+import FavoritesPage from "./pages/FavoritesPage";
 import MangaAdminPage from "./pages/MangaAdminPage";
 import RegisterPage from "./pages/RegisterPage";
 import EvaluationPage from "./pages/EvaluationPage";
@@ -62,17 +62,18 @@ function AppWrapper() {
           </ProtectedRoute>
         }
       />
-      {/* <Route
+
+      <Route
         path="/favorites/:id"
         element={
           <ProtectedRoute>
             <FavoritesPage />
           </ProtectedRoute>
         }
-      /> */}
+      />
 
       <Route
-        path="/favorites/lists/:id"
+        path="/favorites/:id"
         element={
           <ProtectedRoute>
             <FavoriteListDetails />

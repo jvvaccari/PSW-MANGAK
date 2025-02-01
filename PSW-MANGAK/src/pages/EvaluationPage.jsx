@@ -36,29 +36,21 @@ const EvaluationPage = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Busca os dados do mangá e as avaliações simultaneamente
-        const [mangaData, evaluationsData] = await Promise.all([
-          api.fetchMangaById(mangaId),
-          dispatch(fetchEvaluationsThunk(mangaId)).unwrap(),
-        ]);
-
+        const mangaData = await api.fetchMangaById(mangaId);
         setManga(mangaData);
-
-        // Calcula a média das avaliações
-        const avg =
-          evaluationsData.reduce((acc, cur) => acc + cur.rating, 0) /
-          evaluationsData.length;
-        setAverageRating(Number(avg.toFixed(1)));
-
-        // Busca o nome do autor
+    
         if (mangaData?.authorId) {
           const author = await api.fetchAuthorById(mangaData.authorId._id);
           setAuthorName(author?.name || "Autor desconhecido");
         } else {
           setAuthorName("Autor desconhecido");
         }
-
-        // Busca os usernames dos usuários que fizeram avaliações
+  
+        const evaluationsData = await dispatch(fetchEvaluationsThunk(mangaId)).unwrap();
+    
+        const avg = evaluationsData.reduce((acc, cur) => acc + cur.rating, 0) / evaluationsData.length;
+        setAverageRating(Number(avg.toFixed(1)));
+  
         const fetchedUsernames = {};
         for (const evaluation of evaluationsData) {
           if (!fetchedUsernames[evaluation.userId]) {
@@ -72,15 +64,16 @@ const EvaluationPage = () => {
           }
         }
         setUsernames(fetchedUsernames);
+    
       } catch (error) {
         console.error("Erro ao buscar dados:", error);
       } finally {
         setIsLoading(false);
       }
     };
-
+  
     fetchData();
-  }, [mangaId, dispatch]);
+  }, [mangaId, dispatch]);  
 
   const handleAuthorClick = () => {
     if (manga?.authorId?._id) {
@@ -124,7 +117,6 @@ const EvaluationPage = () => {
       setNewComment("");
       setRating(0);
 
-      // Atualiza as avaliações depois de salvar a edição ou criação
       await dispatch(fetchEvaluationsThunk(mangaId));
     } catch (err) {
       console.error("Erro ao salvar avaliação.", err);

@@ -49,7 +49,7 @@ const Navbar = ({ searchTerm = "", setSearchTerm = () => {}, loading = false }) 
           if (user?.role === "admin") {
             navigate("/admin-dashboard");
           } else if (user?.id) {
-            handleProtectedRoute("/favorites/lists");
+            handleProtectedRoute("/favorites/");
           } else {
             navigate("/login");
           }

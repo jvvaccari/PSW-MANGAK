@@ -74,11 +74,12 @@ const AuthorAdminPage = () => {
       if (isCreating) {
         const newAuthor = { ...formData };
         savedAuthor = await createAuthor(newAuthor);
-        setAuthors((prev) => [...prev, savedAuthor]); // Atualiza a lista de autores
+        setAuthors((prev) => [...prev, savedAuthor]); 
       } else if (editingRow) {
         savedAuthor = await updateAuthor(editingRow.id, formData);
-        setAuthors(
-          (prev) => prev.map((a) => (a.id === editingRow.id ? savedAuthor : a)) // Atualiza o autor editado
+        setAuthors((prev) => 
+          prev.map((a) => 
+            a.id === editingRow.id ? { ...savedAuthor, id: savedAuthor._id } : a) 
         );
       }
       setEditingRow(null);
@@ -88,12 +89,12 @@ const AuthorAdminPage = () => {
     } catch (error) {
       console.error("Erro ao salvar autor:", error);
     }
-  };
+  };  
 
   const handleDeleteClick = async (id) => {
     try {
       await deleteAuthor(id);
-      setAuthors((prev) => prev.filter((author) => author.id !== id)); // Remove o autor deletado
+      setAuthors((prev) => prev.filter((author) => author.id !== id));
     } catch (error) {
       console.error("Erro ao excluir autor:", error);
     }
@@ -224,7 +225,7 @@ const AuthorAdminPage = () => {
         rows={authors}
         columns={columns}
         pageSize={5}
-        getRowId={(row) => row._id || row.id} // Garante que o ID seja obtido corretamente
+        getRowId={(row) => row._id || row.id}
         sx={{
           height: 400,
           backgroundColor: "#2C2C2C",

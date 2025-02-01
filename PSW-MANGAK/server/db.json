@@ -120,40 +120,7 @@
   ],
 
   "favoriteLists": [
-    {
-      "id": "list3",
-      "userId": "2",
-      "name": "Favoritos do Edgar",
-      "mangas": ["679cdefd96b0f97303b7b9fc"]
-    },
-    {
-      "id": "b1f8",
-      "name": "Nova Lista",
-      "userId": "2",
-      "mangas": [
-        "679cdefd96b0f97303b7b9fc",
-        "679cdefd96b0f97303b7b9fd",
-        "679cdefd96b0f97303b7b9fe"
-      ]
-    },
-    {
-      "id": "339c",
-      "name": "outra lista",
-      "userId": "2",
-      "mangas": ["679cdefd96b0f97303b7b9fd"]
-    },
-    {
-      "id": "e77f",
-      "name": "Nova Lista",
-      "userId": "1",
-      "mangas": ["679cdefd96b0f97303b7b9fd"]
-    },
-    {
-      "id": "cda2",
-      "name": "aaa",
-      "userId": "1",
-      "mangas": []
-    }
+    
   ],
   "evaluations": [
     
