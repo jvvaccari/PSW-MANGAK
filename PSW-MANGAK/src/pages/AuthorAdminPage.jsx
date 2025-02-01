@@ -1,11 +1,5 @@
 import { useState, useEffect } from "react";
-import {
-  Box,
-  Button,
-  TextField,
-  Typography,
-  IconButton,
-} from "@mui/material";
+import { Box, Button, TextField, Typography, IconButton } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -23,13 +17,18 @@ const AuthorAdminPage = () => {
   const [editingRow, setEditingRow] = useState(null);
   const [isCreating, setIsCreating] = useState(false);
   const [formData, setFormData] = useState({});
+  const [errors, setErrors] = useState({});
   const navigate = useNavigate();
 
   useEffect(() => {
     const loadAuthors = async () => {
       try {
         const data = await fetchAuthors();
-        setAuthors(data);
+        const authorsWithId = data.map((author) => ({
+          ...author,
+          id: author._id || `${Date.now()}`,
+        }));
+        setAuthors(authorsWithId);
       } catch (error) {
         console.error("Erro ao carregar autores:", error);
       }
@@ -39,6 +38,7 @@ const AuthorAdminPage = () => {
 
   const handleFieldChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
+    setErrors((prev) => ({ ...prev, [field]: "" }));
   };
 
   const handleArrayFieldChange = (field, value) => {
@@ -46,46 +46,50 @@ const AuthorAdminPage = () => {
       ...prev,
       [field]: value.split(",").map((v) => v.trim()),
     }));
+    setErrors((prev) => ({ ...prev, [field]: "" }));
   };
 
   const validateForm = () => {
     const requiredFields = ["name", "pseudonym", "birthDate", "biography"];
-    for (let field of requiredFields) {
+    const newErrors = {};
+    let isValid = true;
+
+    requiredFields.forEach((field) => {
       if (!formData[field] || formData[field].trim() === "") {
-        return false;
+        newErrors[field] = "Este campo é obrigatório";
+        isValid = false;
       }
-    }
-    return true;
+    });
+
+    setErrors(newErrors);
+    return isValid;
   };
 
   const handleSaveClick = async () => {
     if (!validateForm()) {
-      alert("Preencha todos os campos obrigatórios!");
       return;
     }
     try {
+      let savedAuthor;
       if (isCreating) {
-        const newAuthor = { ...formData, id: `${Date.now()}` };
-        const createdAuthor = await createAuthor(newAuthor);
-        setAuthors((prev) => [...prev, createdAuthor]);
+        const newAuthor = { ...formData };
+        savedAuthor = await createAuthor(newAuthor);
+        setAuthors((prev) => [...prev, savedAuthor]); 
       } else if (editingRow) {
-        const updatedAuthor = await updateAuthor(editingRow.id, formData);
-        setAuthors((prev) =>
-          prev.map((a) => (a.id === editingRow.id ? updatedAuthor : a))
+        savedAuthor = await updateAuthor(editingRow.id, formData);
+        setAuthors((prev) => 
+          prev.map((a) => 
+            a.id === editingRow.id ? { ...savedAuthor, id: savedAuthor._id } : a) 
         );
       }
       setEditingRow(null);
       setIsCreating(false);
       setFormData({});
+      setErrors({});
     } catch (error) {
       console.error("Erro ao salvar autor:", error);
     }
-  };
-
-  const handleEditClick = (row) => {
-    setEditingRow(row);
-    setFormData({ ...row });
-  };
+  };  
 
   const handleDeleteClick = async (id) => {
     try {
@@ -96,14 +100,20 @@ const AuthorAdminPage = () => {
     }
   };
 
+  const handleEditClick = (row) => {
+    setEditingRow(row);
+    setFormData({ ...row });
+  };
+
   const handleCancelClick = () => {
     setEditingRow(null);
     setIsCreating(false);
     setFormData({});
+    setErrors({});
   };
 
   const columns = [
-    { field: "id", headerName: "ID", width: 70 },
+    { field: "id", headerName: "ID", width: 220 },
     { field: "name", headerName: "Nome", width: 200 },
     { field: "pseudonym", headerName: "Pseudônimo", width: 200 },
     { field: "birthDate", headerName: "Data de Nascimento", width: 150 },
@@ -160,7 +170,6 @@ const AuthorAdminPage = () => {
       ),
     },
   ];
-  
 
   const formFields = [
     { label: "Nome", field: "name" },
@@ -213,25 +222,25 @@ const AuthorAdminPage = () => {
       </Button>
 
       <DataGrid
-  rows={authors}
-  columns={columns}
-  pageSize={5}
-  sx={{
-    height: 400,
-    backgroundColor: "#2C2C2C",
-    color: "#FFF",
-    "& .MuiDataGrid-columnHeaders": {
-      backgroundColor: "#333", // Cor de fundo do header
-      color: "#000000", // Cor do texto do header
-      fontSize: "16px", // Tamanho do texto
-      fontWeight: "bold", // Texto em negrito
-    },
-    "& .MuiDataGrid-cell": {
-      color: "#FFF",
-    },
-  }}
-/>
-
+        rows={authors}
+        columns={columns}
+        pageSize={5}
+        getRowId={(row) => row._id || row.id}
+        sx={{
+          height: 400,
+          backgroundColor: "#2C2C2C",
+          color: "#FFF",
+          "& .MuiDataGrid-columnHeaders": {
+            backgroundColor: "#333",
+            color: "#000000",
+            fontSize: "16px",
+            fontWeight: "bold",
+          },
+          "& .MuiDataGrid-cell": {
+            color: "#FFF",
+          },
+        }}
+      />
 
       {(editingRow || isCreating) && (
         <Box
@@ -259,6 +268,8 @@ const AuthorAdminPage = () => {
                   : handleFieldChange(field, e.target.value)
               }
               fullWidth
+              error={!!errors[field]}
+              helperText={errors[field]}
               sx={{
                 marginBottom: "10px",
                 "& .MuiInputBase-root": {
@@ -295,10 +306,7 @@ const AuthorAdminPage = () => {
               sx={{
                 color: "#FF0037",
                 borderColor: "#FF0037",
-                "&:hover": {
-                  backgroundColor: "#FF003780",
-                  color: "#FFF",
-                },
+                "&:hover": { borderColor: "#FF0037", color: "#FF0037" },
               }}
             >
               Cancelar

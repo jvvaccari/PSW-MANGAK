@@ -1,36 +1,42 @@
 import PropTypes from "prop-types";
 import { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 import { Box, Typography, Rating } from "@mui/material";
 import CommentIcon from "@mui/icons-material/Comment";
 import { useNavigate } from "react-router-dom";
-import { fetchAuthorById, fetchEvaluations } from "../../services/api";
-import useAuth from "../contexts/useAuth";
+import * as api from "../../services/api";
 import styles from "./Content.module.css";
 import { Link } from "react-router-dom";
 
 const Content = ({ manga }) => {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user } = useSelector(state => state.auth);
   const [authorName, setAuthorName] = useState("Carregando autor...");
   const [averageRating, setAverageRating] = useState(0.0);
 
   useEffect(() => {
-    if (manga.authorId) {
-      fetchAuthorById(manga.authorId)
-        .then((author) => {
-          setAuthorName(author?.name || "Autor desconhecido");
-        })
-        .catch(() => {
-          setAuthorName("Erro ao carregar autor");
-        });
-    } else {
+    if (!manga.authorId) {
+      console.warn("Nenhum authorId encontrado");
       setAuthorName("Autor desconhecido");
+      return;
     }
-  }, [manga.authorId]);
+  
+    console.log("Buscando autor com ID:", manga.authorId);
+    api.fetchAuthorById(manga.authorId)
+      .then((author) => {
+        console.log("Autor encontrado:", author);
+        setAuthorName(author?.name || "Autor desconhecido");
+      })
+      .catch((error) => {
+        console.error("Erro ao buscar autor:", error);
+        setAuthorName("Erro ao carregar autor");
+      });
+  }, [manga.authorId]);  
 
   useEffect(() => {
     if (manga.id) {
-      fetchEvaluations(manga.id)
+      console.log("id do manga:",manga.id);
+      api.fetchEvaluationById(manga.id)
         .then((evaluations) => {
           if (evaluations.length > 0) {
             const totalRatings = evaluations.reduce(
@@ -57,11 +63,12 @@ const Content = ({ manga }) => {
   const handleViewComments = () => {
     if (!user?.id) {
       console.warn("Usuário não autenticado.");
+      navigate("/login");
       return;
     }
-    console.log(user.id);
-    navigate(`/evaluations/${manga.id}/${user.id}`);
+    navigate(`/evaluations/${manga.id}`);
   };
+  
 
   const status = manga.status?.toUpperCase() || "INDEFINIDO";
   const statusColor = statusColors[status] || statusColors.default;
@@ -113,8 +120,8 @@ const Content = ({ manga }) => {
             }}
           >
             <Link
-              to={`/author/${manga.authorId}`}
-              style={{ textDecoration: "none", color: "inherit" }} 
+              to={`/authors/${manga.authorId}`}
+              style={{ textDecoration: "none", color: "inherit" }}
             >
               {authorName}
             </Link>

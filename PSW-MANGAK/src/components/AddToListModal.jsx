@@ -1,60 +1,58 @@
 import { useState, useEffect } from "react";
-import { Button, Modal, Box, Typography, FormControl, Select, MenuItem } from "@mui/material";
+import {
+  Modal,
+  Box,
+  Typography,
+  Button,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  OutlinedInput,
+} from "@mui/material";
 import PropTypes from "prop-types";
-import { fetchFavoriteLists, addMangaToList, createFavoriteList } from "../../services/api";
-import { Warning } from "@mui/icons-material"; 
+import * as api from "../../services/api";
 
-const AddToListModal = ({ open, onClose, mangaId, userId }) => { 
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+      width: 250,
+    },
+  },
+};
+
+const AddToListModal = ({ open, onClose, userId, onSelect }) => {
   const [favoriteLists, setFavoriteLists] = useState([]);
-  const [selectedList, setSelectedList] = useState("");
+  const [selectedList, setSelectedList] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    if (open && userId) {
-      setLoading(true);
-      fetchFavoriteLists(userId)
-        .then((lists) => {
-          setFavoriteLists(lists || []);
-          setLoading(false);
-        })
-        .catch((err) => {
-          console.error("Erro ao carregar listas de favoritos:", err);
-          setError("Erro ao carregar as listas. Tente novamente.");
-          setLoading(false);
-        });
-    }
+    if (!open || !userId) return;
+
+    setLoading(true);
+    setError("");
+
+    api
+      .fetchFavoriteLists(userId)
+      .then((lists) => {
+        setFavoriteLists(lists || []);
+      })
+      .catch(() => {
+        setError("Erro ao carregar as listas. Tente novamente.");
+      })
+      .finally(() => setLoading(false));
   }, [open, userId]);
 
-  const handleAddToList = async () => {
-    if (!selectedList) {
-      setError("Por favor, selecione uma lista.");
-      return;
-    }
-
-    setError(null);
-
-    try {
-      if (selectedList === "nova") {
-
-        const newListData = {
-          name: `Nova Lista - ${new Date().toLocaleDateString()}`,
-          userId,
-          mangas: [mangaId],
-        };
-
-        await createFavoriteList(newListData);
-        console.log("Nova lista criada com sucesso.");
-      } else {
-
-        await addMangaToList(selectedList, mangaId);
-        console.log("Mangá adicionado à lista com sucesso.");
-      }
-
+  const handleSelectList = () => {
+    if (selectedList) {
+      onSelect([selectedList]);
       onClose();
-    } catch (err) {
-      console.error("Erro ao adicionar o mangá à lista:", err);
-      setError("Erro ao adicionar o mangá à lista. Tente novamente.");
+    } else {
+      setError("Por favor, selecione uma lista.");
     }
   };
 
@@ -75,32 +73,30 @@ const AddToListModal = ({ open, onClose, mangaId, userId }) => {
         }}
       >
         <Typography variant="h6" component="h2" sx={{ marginBottom: "16px" }}>
-          Adicionar
+          Selecione uma Lista
         </Typography>
 
         {error && (
-          <Box sx={{ color: "red", display: "flex", alignItems: "center", marginBottom: "16px" }}>
-            <Warning sx={{ marginRight: "8px" }} />
-            <Typography variant="body2">{error}</Typography>
-          </Box>
+          <Typography color="error" sx={{ marginBottom: "16px" }}>
+            {error}
+          </Typography>
         )}
 
         {loading ? (
           <Typography>Carregando...</Typography>
         ) : (
           <FormControl fullWidth>
+            <InputLabel id="single-select-label">Lista</InputLabel>
             <Select
-              value={selectedList}
+              labelId="single-select-label"
+              value={selectedList || ""}
               onChange={(e) => setSelectedList(e.target.value)}
-              displayEmpty
-              inputProps={{ "aria-label": "Selecione uma lista" }}
+              input={<OutlinedInput label="Lista" />}
+              MenuProps={MenuProps}
             >
-              <MenuItem value="" disabled>
-                Selecione uma lista
-              </MenuItem>
-              {favoriteLists.map((list) => (
-                <MenuItem key={list.id} value={list.id}>
-                  {list.name}
+              {favoriteLists.map((list, index) => (
+                <MenuItem key={list._id || `list-${index}`} value={list._id}>
+                  {list.name || "Sem nome"}
                 </MenuItem>
               ))}
             </Select>
@@ -109,18 +105,11 @@ const AddToListModal = ({ open, onClose, mangaId, userId }) => {
 
         <Button
           variant="contained"
-          sx={{
-            marginTop: "16px",
-            backgroundColor: "var(--btn-mangak-color)",
-            color: "#fff",
-            "&:hover": {
-              backgroundColor: "#404040",
-            },
-          }}
-          onClick={handleAddToList}
+          sx={{ marginTop: "16px" }}
+          onClick={handleSelectList}
           disabled={loading || !selectedList}
         >
-          Adicionar
+          Selecionar
         </Button>
       </Box>
     </Modal>
@@ -130,8 +119,8 @@ const AddToListModal = ({ open, onClose, mangaId, userId }) => {
 AddToListModal.propTypes = {
   open: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
-  mangaId: PropTypes.string.isRequired,
-  userId: PropTypes.string,
+  userId: PropTypes.string.isRequired,
+  onSelect: PropTypes.func.isRequired,
 };
 
 export default AddToListModal;

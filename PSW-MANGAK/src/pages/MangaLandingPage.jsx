@@ -1,22 +1,35 @@
-import { useContext } from "react";
+// src/pages/MangaLandingPage.jsx
+import { useEffect } from "react";
 import { useParams } from "react-router-dom";
-import MangaContext from "../contexts/MangaContext";
+import { useDispatch, useSelector } from "react-redux";
+import { Box, CircularProgress, Typography, Container } from "@mui/material";
+
+import { loadMangas } from "../redux/mangaSlice"; // Our new thunk
+// Components
 import Actions from "../components/Actions";
 import ArtGallery from "../components/ArtGallery";
 import Content from "../components/Content";
 import Description from "../components/Description";
 import Navbar from "../components/Navbar";
 import TagsSection from "../components/TagsSection";
-import { Box, CircularProgress, Typography, Container } from "@mui/material";
-import useAuth from "../contexts/useAuth";
 
 function MangaLandingPage() {
   const { id } = useParams();
-  const { mangas, loading, error } = useContext(MangaContext);
-  const { user } = useAuth();
-  const userId = user?.id;
+  const dispatch = useDispatch();
+
+  const { mangas, loading, error } = useSelector((state) => state.manga);
+
+  useEffect(() => {
+    console.log("Disparando loadMangas...");
+    if (mangas.length === 0) {
+      dispatch(loadMangas());
+    } else {
+      console.log("Mangas já carregados:", mangas);
+    }
+  }, [dispatch, mangas, mangas.length]);
 
   if (loading) {
+    console.log("Carregando mangas...");
     return (
       <Box
         sx={{
@@ -33,6 +46,7 @@ function MangaLandingPage() {
   }
 
   if (error) {
+    console.error("Erro ao carregar mangas:", error);
     return (
       <Box
         sx={{
@@ -48,9 +62,11 @@ function MangaLandingPage() {
     );
   }
 
-  const manga = mangas.find((m) => m.id === id);
+  console.log("Listando mangas:", mangas);
+  const manga = mangas.find((m) => m._id === id);
 
   if (!manga) {
+    console.log("Manga não encontrado, id:", id);
     return (
       <Box
         sx={{
@@ -65,6 +81,8 @@ function MangaLandingPage() {
       </Box>
     );
   }
+
+  console.log("Manga encontrado:", manga);
 
   const tagsData = [
     { section: "Genres", tags: manga.genres || [] },
@@ -84,7 +102,7 @@ function MangaLandingPage() {
         >
           <Content
             manga={{
-              id: manga.id || "ID Desconhecido",
+              id: manga._id,
               image: manga.image || "",
               title: manga.title || "Título Desconhecido",
               authorId: manga.authorId || null,
@@ -92,15 +110,22 @@ function MangaLandingPage() {
               status: manga.status || "Status Desconhecido",
               yearPubli: manga.yearPubli || "????",
             }}
-            userId={userId}
           />
 
-          <Actions
-            sx={{
-              marginBottom: "var(--spacing-large)",
-            }}
-            mangaId={manga.id}
-          />
+          {/* Verificar se manga._id está disponível antes de renderizar o Actions */}
+          {manga._id ? (
+            <>
+              {console.log("Passando mangaId para Actions:", manga._id)}
+              <Actions
+                sx={{
+                  marginBottom: "var(--spacing-large)",
+                }}
+                mangaId={manga._id} // Passando mangaId para Actions
+              />
+            </>
+          ) : (
+            console.log("manga._id não disponível, não renderizando Actions")
+          )}
 
           {manga.description && (
             <Description
@@ -122,20 +147,22 @@ function MangaLandingPage() {
             />
           ))}
 
-          <TagsSection
-            data={{
-              section: "Where to Buy",
-              tags: manga.retail.map((item) => ({
-                name: item.name,
-                url: item.url,
-              })),
-            }}
-            sx={{
-              marginBottom: "var(--spacing-medium)",
-            }}
-          />
+          {manga.retail && (
+            <TagsSection
+              data={{
+                section: "Where to Buy",
+                tags: manga.retail.map((item) => ({
+                  name: item.name,
+                  url: item.url,
+                })),
+              }}
+              sx={{
+                marginBottom: "var(--spacing-medium)",
+              }}
+            />
+          )}
 
-          {manga.artsList && <ArtGallery artsList={manga.artsList || []} />}
+          {manga.artsList && <ArtGallery artsList={manga.artsList} />}
         </Box>
       </Container>
     </>

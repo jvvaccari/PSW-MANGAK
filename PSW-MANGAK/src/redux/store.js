@@ -1,21 +1,15 @@
+// store.js
 import { configureStore } from "@reduxjs/toolkit";
 import authReducer from "./authSlice";
-
-const storedUser = localStorage.getItem('user');
-const storedToken = localStorage.getItem('authToken');
-
-const initialState = {
-  user: storedUser ? JSON.parse(storedUser) : null,
-  token: storedToken || null,
-  loading: false,
-  error: null,
-};
+import mangaReducer from "./mangaSlice";
+import evaluationReducer from "./evaluationSlice";
 
 const store = configureStore({
   reducer: {
     auth: authReducer,
+    manga: mangaReducer,
+    evaluations: evaluationReducer
   },
-  preloadedState: { auth: initialState },
 });
 
 export default store;

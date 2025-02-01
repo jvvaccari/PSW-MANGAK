@@ -1,19 +1,15 @@
 {
   "mangas": [
     {
-      "id": "1",
+      "id": "679cdefd96b0f97303b7b9e0",
       "title": "Jujutsu Kaisen",
       "image": "https://upload.wikimedia.org/wikipedia/pt/4/4b/Jujutsu_Kaisen_Cover.png",
-      "authorId": "1",
+      "authorId": "679cdefd96b0f97303b7b9dc",
       "description": "Jujutsu Kaisen is a Japanese manga series written and illustrated by Gege Akutami...",
       "yearPubli": "2021",
       "status": "Em andamento",
       "demographic": "Shonen",
-      "genres": [
-        "Ação",
-        "Sobrenatural",
-        "Terror"
-      ],
+      "genres": ["Ação", "Sobrenatural", "Terror"],
       "artsList": [
         "https://criticalhits.com.br/wp-content/uploads/2021/04/jujutsu-kaisen-wallpaper-smartphone-09.jpg",
         "https://wallpapers.com/images/hd/itadori-hand-jujutsu-kaisen-iphone-483xqcsa46culk5s.jpg",
@@ -45,19 +41,15 @@
       ]
     },
     {
-      "id": "2",
+      "id": "679cdefd96b0f97303b7b9e2",
       "title": "One Piece",
       "image": "https://upload.wikimedia.org/wikipedia/pt/f/ff/One_Piece_vol._01.jpg",
-      "authorId": "2",
+      "authorId": "679cdefd96b0f97303b7b9dd",
       "description": "As aventuras de Monkey D. Luffy para encontrar o tesouro One Piece.",
       "yearPubli": "2021",
       "status": "Em andamento",
       "demographic": "Shonen",
-      "genres": [
-        "Aventura",
-        "Comédia",
-        "Fantasia"
-      ],
+      "genres": ["Aventura", "Comédia", "Fantasia"],
       "artsList": [
         "https://i.pinimg.com/736x/5b/d3/ef/5bd3efd46d99308fbff9c3bf2dd41b12.jpg",
         "https://i.pinimg.com/736x/12/c3/f7/12c3f71abfa5ff6320ebef7260cedee3.jpg"
@@ -74,19 +66,15 @@
       ]
     },
     {
-      "id": "3",
+      "id": "679cdefd96b0f97303b7b9e4",
       "title": "Kaguya-sama: Love is War",
       "image": "https://upload.wikimedia.org/wikipedia/pt/5/5a/Capa_do_d%C3%A9cimo_volume_do_mang%C3%A1_Kaguya-sama.jpg",
-      "authorId": "3",
+      "authorId": "679cdefd96b0f97303b7b9de",
       "description": "Dois gênios apaixonados competem para fazer o outro confessar primeiro.",
       "yearPubli": "2021",
       "status": "FINALIZADO",
       "demographic": "Seinen",
-      "genres": [
-        "Romance",
-        "Comédia",
-        "Psicológico"
-      ],
+      "genres": ["Romance", "Comédia", "Psicológico"],
       "artsList": [
         "https://wallpapers.com/images/hd/kaguya-sama-love-is-war-character-poster-r6ydgixrhrpy9c7z.jpg"
       ],
@@ -102,9 +90,38 @@
       ]
     }
   ],
+
+  "accounts": [
+    {
+      "username": "adm",
+      "email": "adm@gmail.com",
+      "password": "123",
+      "role": "admin"
+    },
+    {
+      "username": "Lucas",
+      "email": "lucaspsilva1610@gmail.com",
+      "password": "123",
+      "role": "user"
+    },
+    {
+      "username": "Edgar",
+      "email": "edgar@gmail.com",
+      "password": "123",
+      "role": "user"
+    }
+  ],
+
+  "favoriteLists": [
+    
+  ],
+  "evaluations": [
+    
+  ],
+
   "authors": [
     {
-      "id": "1",
+      "id": "679cdefd96b0f97303b7b9dc",
       "name": "Gege Akutami",
       "authorPhoto": "https://gyaanstore.com/cdn/shop/files/gege_akutami_500x.png?v=1715426801",
       "pseudonym": "Gege Akutami",
@@ -112,17 +129,12 @@
       "birthPlace": "Iwate, Japão",
       "nationality": "japonês",
       "ethnicity": "amarela",
-      "occupations": [
-        "Mangaká",
-        "Artista"
-      ],
-      "notableWorks": [
-        "Jujutsu Kaisen"
-      ],
+      "occupations": ["Mangaká", "Artista"],
+      "notableWorks": ["Jujutsu Kaisen"],
       "biography": "Gege Akutami nasceu na prefeitura de Iwate, Japão, em 1992. Desde jovem, demonstrou grande interesse pelo universo dos mangás, inspirado por obras como Bleach, de Tite Kubo, e Hunter x Hunter, de Yoshihiro Togashi. Essa paixão o levou a experimentar a criação de suas próprias histórias durante o ensino médio, desenvolvendo personagens que refletiam suas influências e sua criatividade única. Após concluir os estudos, Akutami se mudou para Tóquio para buscar oportunidades na indústria dos mangás. Ele começou como assistente de outros mangakás, onde refinou seu estilo artístico e aprendeu a estruturar narrativas mais complexas. Seu talento chamou a atenção de editores da Weekly Shōnen Jump, levando à estreia de suas primeiras obras curtas.Em 2018, Gege Akutami lançou Jujutsu Kaisen como uma série serializada na Weekly Shōnen Jump. A história rapidamente conquistou leitores por sua combinação de batalhas emocionantes, personagens carismáticos e um enredo sombrio, mas cativante. O sucesso do mangá levou à adaptação para anime em 2020, consolidando Akutami como uma das maiores revelações da nova geração de mangakás.Apesar de sua fama, Gege Akutami mantém uma vida pessoal discreta, preferindo focar em seu trabalho e raramente aparecendo em eventos públicos. Ele é conhecido por sua humildade e pelo humor irreverente que exibe em suas notas aos leitores. Em entrevistas, Akutami expressa gratidão pelo apoio dos fãs e menciona que busca sempre explorar novas formas de contar histórias dentro do universo de Jujutsu Kaisen e além.Quando não está desenhando, Gege Akutami gosta de assistir filmes de terror, explorar novos mangás e se inspirar em elementos do folclore japonês, que desempenham um papel fundamental em suas obras."
     },
     {
-      "id": "2",
+      "id": "679cdefd96b0f97303b7b9dd",
       "name": "Eiichiro Oda",
       "authorPhoto": "https://pm1.aminoapps.com/6975/66f03e973f0f797cfa3a11f8be6a8d32ceeb3f00r1-696-650v2_00.jpg",
       "pseudonym": "Oda",
@@ -130,17 +142,12 @@
       "birthPlace": "Kumamoto, Japão",
       "nationality": "japonês",
       "ethnicity": "amarela",
-      "occupations": [
-        "Mangaká",
-        "Artista"
-      ],
-      "notableWorks": [
-        "One Piece"
-      ],
+      "occupations": ["Mangaká", "Artista"],
+      "notableWorks": ["One Piece"],
       "biography": "Eiichiro Oda nasceu em Kumamoto, Japão, em 1975. Ele começou sua carreira na indústria de mangás muito jovem, inspirado por Akira Toriyama, criador de Dragon Ball. Oda estreou com 'Wanted!', uma coleção de histórias curtas, e logo lançou 'One Piece' em 1997. Este mangá se tornou um dos mais vendidos de todos os tempos, conhecido por sua narrativa épica e construção de mundo impressionante. Ele continua trabalhando na série, enquanto mantém uma vida pessoal privada."
     },
     {
-      "id": "3",
+      "id": "679cdefd96b0f97303b7b9de",
       "name": "Aka Akasaka",
       "authorPhoto": "https://cdn.myanimelist.net/images/voiceactors/2/71040.jpg",
       "pseudonym": "Aka Akasaka",
@@ -148,106 +155,9 @@
       "birthPlace": "Niigata, Japão",
       "nationality": "japonês",
       "ethnicity": "amarela",
-      "occupations": [
-        "Mangaká",
-        "Artista"
-      ],
-      "notableWorks": [
-        "Kaguya-sama: Love is War"
-      ],
+      "occupations": ["Mangaká", "Artista"],
+      "notableWorks": ["Kaguya-sama: Love is War"],
       "biography": "Aka Akasaka nasceu na cidade de Niigata, Japão, em 1988. Ele começou sua carreira como assistente de outros mangakás antes de lançar 'Kaguya-sama: Love is War' em 2015. A série ganhou imenso reconhecimento por sua combinação de romance, comédia e tensão psicológica. Akasaka é conhecido por seu estilo detalhado e seu foco em personagens complexos. Fora do trabalho, ele gosta de assistir filmes clássicos e explorar novas formas de narrativa."
-    }
-  ],
-  "accounts": [
-    {
-      "id": "adm",
-      "username": "adm",
-      "email": "adm@gmail.com",
-      "password": "123",
-      "role": "admin",
-      "favorites": []
-    },
-    {
-      "id": "1",
-      "username": "Lucas",
-      "email": "lucaspsilva1610@gmail.com",
-      "password": "123",
-      "role": "user",
-      "favorites": [
-        "1"
-      ]
-    },
-    {
-      "id": "2",
-      "username": "Edgar",
-      "email": "edgar@gmail.com",
-      "password": "123",
-      "role": "user",
-      "favorites": [
-        "1",
-        "3",
-        "2"
-      ]
-    }
-  ],
-  "favoriteLists": [
-    {
-      "id": "list3",
-      "userId": "2",
-      "name": "Favoritos do Edgar",
-      "mangas": [
-        "1"
-      ]
-    },
-    {
-      "id": "b1f8",
-      "name": "Nova Lista",
-      "userId": "2",
-      "mangas": [
-        "1",
-        "3",
-        "2"
-      ]
-    },
-    {
-      "id": "339c",
-      "name": "outra lista",
-      "userId": "2",
-      "mangas": [
-        "2"
-      ]
-    },
-    {
-      "id": "e77f",
-      "name": "Nova Lista",
-      "userId": "1",
-      "mangas": [
-        "2"
-      ]
-    },
-    {
-      "id": "cda2",
-      "name": "aaa",
-      "userId": "1",
-      "mangas": []
-    }
-  ],
-  "evaluations": [
-    {
-      "mangaId": "1",
-      "userId": "1",
-      "rating": 4.5,
-      "comment": "Amei a obra!",
-      "timestamp": "2024-12-28T18:25:15.554Z",
-      "id": "f42d"
-    },
-    {
-      "id": "c734",
-      "mangaId": "1",
-      "userId": "2",
-      "rating": 5,
-      "comment": "Gostei muito da obra!",
-      "timestamp": "2024-12-28T18:26:25.406Z"
     }
   ]
 }

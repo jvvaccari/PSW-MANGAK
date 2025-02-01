@@ -179,8 +179,8 @@ const MangaList = ({ mangas, searchTerm, onMangaClick }) => {
               >
                 {genresToDisplay[genre].map((manga) => (
                   <Box
-                    key={manga.id}
-                    onClick={() => onMangaClick(manga.id)}
+                    key={manga.id || manga._id}
+                    onClick={() => onMangaClick(manga.id || manga._id)}
                     aria-label={`View details for ${manga.title}`}
                     sx={{
                       display: "flex",

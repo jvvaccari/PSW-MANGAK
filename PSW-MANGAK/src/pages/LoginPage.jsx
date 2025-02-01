@@ -24,7 +24,13 @@ export default function LoginPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { loading, error } = useSelector((state) => state.auth);
+  const { user, loading, error } = useSelector((state) => state.auth);
+
+  useEffect(() => {
+    if (user) {
+      navigate("/"); 
+    }
+  }, [user, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -35,14 +41,16 @@ export default function LoginPage() {
     }
 
     try {
+
       const result = await dispatch(loginUser({ email, password })).unwrap();
       console.log("Login Bem-sucedido", result);
       navigate("/dashboard"); // Substitua por sua rota pós-login.
     } catch (err) {
-      console.log("Erro ao tentar login:", err);
+      console.error("Erro ao tentar login:", err);
       alert("Erro: " + (err.message || "Erro desconhecido"));
     }
   };
+
 
   const commonInputStyles = {
     marginBottom: "16px",

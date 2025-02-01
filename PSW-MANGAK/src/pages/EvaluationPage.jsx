@@ -1,435 +1,257 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import {
   Box,
   Typography,
   TextField,
-  Container,
   Button,
   Rating,
-  Avatar,
-  CircularProgress,
-  Alert,
+  Container,
 } from "@mui/material";
 import Navbar from "../components/Navbar";
-import { useParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import {
-  updateEvaluation,
-  deleteEvaluation,
-  fetchEvaluations,
-} from "../../services/api";
+  fetchEvaluationsThunk,
+  createEvaluationThunk,
+  updateEvaluationThunk,
+  deleteEvaluationThunk,
+} from "../redux/evaluationSlice";
+import * as api from "../../services/api";
 
-export default function EvaluationPage() {
-  const { mangaId, userId } = useParams();
-  console.log("Manga ID:", mangaId);
-  console.log("User ID:", userId);
-
-  const [manga, setManga] = useState(null);
-  const [author, setAuthor] = useState("");
-  const [comments, setComments] = useState([]);
+const EvaluationPage = () => {
+  const navigate = useNavigate();
+  const { mangaId } = useParams();
+  const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.auth);
+  const { evaluations } = useSelector((state) => state.evaluations);
+  const [authorName, setAuthorName] = useState("Carregando autor...");
+  const [rating, setRating] = useState(0);
   const [newComment, setNewComment] = useState("");
-  const [newRating, setNewRating] = useState(0);
-  const [averageRating, setAverageRating] = useState(0.0);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
   const [editingId, setEditingId] = useState(null);
-  const [submitting, setSubmitting] = useState(false);
+  const [averageRating, setAverageRating] = useState(0);
+  const [manga, setManga] = useState(null);
+  const [usernames, setUsernames] = useState({});
+  const [isLoading, setIsLoading] = useState(true);
 
-  const fetchAccountById = async (id) => {
-    try {
-      const response = await fetch(`http://localhost:5501/accounts/${id}`);
-      if (!response.ok) throw new Error("Erro ao buscar usuário.");
-      return await response.json();
-    } catch (error) {
-      console.error(`Erro ao buscar o usuário com ID ${id}:`, error.message);
-      return { username: "Usuário desconhecido" };
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const mangaData = await api.fetchMangaById(mangaId);
+        setManga(mangaData);
+    
+        if (mangaData?.authorId) {
+          const author = await api.fetchAuthorById(mangaData.authorId._id);
+          setAuthorName(author?.name || "Autor desconhecido");
+        } else {
+          setAuthorName("Autor desconhecido");
+        }
+  
+        const evaluationsData = await dispatch(fetchEvaluationsThunk(mangaId)).unwrap();
+    
+        const avg = evaluationsData.reduce((acc, cur) => acc + cur.rating, 0) / evaluationsData.length;
+        setAverageRating(Number(avg.toFixed(1)));
+  
+        const fetchedUsernames = {};
+        for (const evaluation of evaluationsData) {
+          if (!fetchedUsernames[evaluation.userId]) {
+            try {
+              const user = await api.fetchAccountById(evaluation.userId);
+              fetchedUsernames[evaluation.userId] = user?.username || "Nome de usuário desconhecido";
+            } catch (error) {
+              console.error("Erro ao buscar usuário:", error);
+              fetchedUsernames[evaluation.userId] = "Erro ao carregar nome";
+            }
+          }
+        }
+        setUsernames(fetchedUsernames);
+    
+      } catch (error) {
+        console.error("Erro ao buscar dados:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+  
+    fetchData();
+  }, [mangaId, dispatch]);  
+
+  const handleAuthorClick = () => {
+    if (manga?.authorId?._id) {
+      navigate(`/authors/${manga.authorId._id}`);
     }
   };
 
-  useEffect(() => {
-    const fetchMangaAndEvaluations = async () => {
-      setLoading(true);
-      setError("");
+  const handleSubmit = async () => {
+    if (!user || !user._id) {
+      console.error("Usuário não autenticado.");
+      return;
+    }
 
-      try {
-        const mangaResponse = await fetch(
-          `http://localhost:5501/mangas/${mangaId}`
-        );
-        if (!mangaResponse.ok) throw new Error("Erro ao buscar o mangá.");
-        const mangaData = await mangaResponse.json();
-        setManga(mangaData);
+    try {
+      const evaluationData = {
+        rating,
+        comment: newComment,
+        userId: user._id,
+      };
 
-        const authorResponse = await fetch(
-          `http://localhost:5501/authors/${mangaData.authorId}`
-        );
-        const authorData = authorResponse.ok
-          ? await authorResponse.json()
-          : { name: "Autor desconhecido" };
-        setAuthor(authorData.name);
-
-        const evaluations = await fetchEvaluations(mangaId);
-
-        const evaluationsWithUsernames = await Promise.all(
-          evaluations.map(async (evaluation) => {
-            const user = await fetchAccountById(evaluation.userId);
-            return { ...evaluation, username: user.username };
+      if (editingId) {
+        await dispatch(
+          updateEvaluationThunk({
+            evaluationId: editingId,
+            userId: user._id,
+            evaluationData,
+            mangaId,
           })
         );
-
-        setComments(evaluationsWithUsernames);
-
-        const average =
-          evaluations.length > 0
-            ? (
-                evaluations.reduce(
-                  (acc, evaluation) => acc + evaluation.rating,
-                  0
-                ) / evaluations.length
-              ).toFixed(1)
-            : 0.0;
-        setAverageRating(average);
-      } catch (err) {
-        console.error("Erro ao buscar mangá ou avaliações:", err.message);
-        setError("Erro ao carregar os dados. Tente novamente mais tarde.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchMangaAndEvaluations();
-  }, [mangaId]);
-
-  useEffect(() => {
-    const fetchMangaAndEvaluations = async () => {
-      setLoading(true);
-      setError("");
-      try {
-        const mangaResponse = await fetch(
-          `http://localhost:5501/mangas/${mangaId}`
-        );
-        if (!mangaResponse.ok) throw new Error("Erro ao buscar o mangá.");
-        const mangaData = await mangaResponse.json();
-        setManga(mangaData);
-
-        const authorResponse = await fetch(
-          `http://localhost:5501/authors/${mangaData.authorId}`
-        );
-        const authorData = authorResponse.ok
-          ? await authorResponse.json()
-          : { name: "Autor desconhecido" };
-        setAuthor(authorData.name);
-
-        const evaluations = await fetchEvaluations(mangaId);
-        setComments(evaluations);
-
-        const average =
-          evaluations.length > 0
-            ? (
-                evaluations.reduce(
-                  (acc, evaluation) => acc + evaluation.rating,
-                  0
-                ) / evaluations.length
-              ).toFixed(1)
-            : 0.0;
-        setAverageRating(average);
-      } catch (err) {
-        console.error("Erro ao buscar mangá ou avaliações:", err.message);
-        setError("Erro ao carregar os dados. Tente novamente mais tarde.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchMangaAndEvaluations();
-  }, [mangaId]);
-
-  const handleSaveComment = async () => {
-    if (!newComment.trim() || newRating === 0) {
-      setError("Preencha todos os campos antes de salvar.");
-      return;
-    }
-
-    setSubmitting(true);
-    setError("");
-
-    try {
-      if (editingId) {
-        const updatedEvaluation = {
-          mangaId,
-          userId,
-          rating: newRating,
-          comment: newComment,
-          timestamp: new Date().toISOString(),
-        };
-        const updatedData = await updateEvaluation(
-          editingId,
-          updatedEvaluation
-        );
-        setComments((prevComments) =>
-          prevComments.map((comment) =>
-            comment.id === editingId ? { ...comment, ...updatedData } : comment
-          )
-        );
-        setEditingId(null);
       } else {
-        const newEntry = {
-          mangaId,
-          userId,
-          rating: newRating,
-          comment: newComment,
-          timestamp: new Date().toISOString(),
-        };
-        const response = await fetch("http://localhost:5501/evaluations", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(newEntry),
-        });
-
-        if (!response.ok) throw new Error("Erro ao adicionar avaliação.");
-        const createdEvaluation = await response.json();
-        setComments([createdEvaluation, ...comments]);
+        await dispatch(
+          createEvaluationThunk({
+            mangaId,
+            evaluationData,
+            userId: user._id,
+          })
+        );
       }
-    } catch (err) {
-      console.error("Erro ao salvar avaliação:", err.message);
-      setError("Erro ao salvar avaliação. Tente novamente.");
-    } finally {
+
+      setEditingId(null);
       setNewComment("");
-      setNewRating(0);
-      setSubmitting(false);
-    }
-  };
+      setRating(0);
 
-  const handleEdit = (evaluation) => {
-    setEditingId(evaluation.id);
-    setNewComment(evaluation.comment);
-    setNewRating(evaluation.rating);
-  };
-
-  const handleDeleteEvaluation = async (evaluationId) => {
-    const evaluation = comments.find((comment) => comment.id === evaluationId);
-
-    if (evaluation.userId !== userId) {
-      setError("Você não pode excluir avaliações de outros usuários.");
-      return;
-    }
-
-    try {
-      await deleteEvaluation(evaluationId);
-      setComments(comments.filter((comment) => comment.id !== evaluationId));
+      await dispatch(fetchEvaluationsThunk(mangaId));
     } catch (err) {
-      console.error("Erro ao excluir avaliação:", err.message);
-      setError("Erro ao excluir avaliação. Tente novamente.");
+      console.error("Erro ao salvar avaliação.", err);
     }
   };
 
-  if (loading) {
-    return (
-      <Box sx={{ color: "white", textAlign: "center", padding: "20px" }}>
-        <CircularProgress />
-      </Box>
-    );
-  }
+  const handleDelete = async (evaluationId) => {
+    try {
+      await dispatch(deleteEvaluationThunk({ evaluationId }));
+      dispatch(fetchEvaluationsThunk(mangaId));
+    } catch (err) {
+      console.error("Erro ao excluir avaliação.", err);
+    }
+  };
 
-  if (!manga) {
-    return (
-      <Box sx={{ color: "white", textAlign: "center", padding: "20px" }}>
-        Mangá não encontrado.
-      </Box>
-    );
+  const handleEdit = (comment) => {
+    setEditingId(comment._id);
+    setNewComment(comment.comment);
+    setRating(comment.rating);
+  };
+
+  if (isLoading) {
+    return <Typography color="white">Carregando...</Typography>;
   }
 
   return (
-    <>
+    <Box sx={{ backgroundColor: "black" }}>
       <Navbar />
-      <Container
-        sx={{ mt: 4, color: "#fff", backgroundColor: "#000", padding: "1em" }}
-      >
-        <Box sx={{ mb: 12 }}>
-          <Typography variant="h4" sx={{ color: "#fff", fontWeight: "bold" }}>
-            {manga.title}
-          </Typography>
-          <Typography variant="h6" sx={{ color: "#ccc" }}>
-            {author}
-          </Typography>
-        </Box>
-
-        {error && (
-          <Alert severity="error" sx={{ mb: 2 }}>
-            {error}
-          </Alert>
-        )}
-
-        <Box
+      <Container>
+        <Typography variant="h2" color="white" sx={{ marginBottom: 2 }}>
+          {manga?.title || "Carregando título..."}
+        </Typography>
+        <Typography
+          variant="h4"
+          color="red"
+          onClick={handleAuthorClick}
           sx={{
-            display: "flex",
-            alignItems: "center",
-            mb: 2,
-            gap: 2,
+            cursor: "pointer",
+            color: "white",
+            ":hover": {
+              color: "red",
+            },
           }}
         >
-          <Typography variant="h5" sx={{ color: "#EC7C01" }}>
-            {averageRating}
-          </Typography>
-          <Rating
-            name="read-only"
-            value={parseFloat(averageRating)}
-            precision={0.1}
-            readOnly
-            sx={{
-              color: "#EC7C01",
-              "& .MuiRating-iconEmpty": { color: "#EC7C01" },
-              "& .MuiRating-iconFilled": { color: "#EC7C01" },
-            }}
-          />
-          <Typography variant="body2" sx={{ color: "#ccc" }}>
-            ({comments.length} avaliações)
-          </Typography>
-        </Box>
+          {authorName}
+        </Typography>
 
-        <Box
-          sx={{
-            mb: 4,
-            p: 3,
-            backgroundColor: "var(--bg-color)",
-            borderRadius: "8px",
-            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
-          }}
-        >
-          <Typography
-            variant="h6"
+        <Typography variant="h6" color="white">
+          Média de Avaliações: {averageRating} ⭐
+        </Typography>
+        {evaluations.map((comment) => (
+          <Box
+            key={comment._id}
             sx={{
-              color: "#fff",
-              mb: 2,
-              fontWeight: "bold",
-              textAlign: "center",
+              margin: 2,
+              padding: 2,
+              border: "1px solid #ccc",
+              borderRadius: 2,
+              backgroundColor: "gray",
             }}
           >
-            {editingId ? "Editar Avaliação" : "Avalie e comente"}
+            <Typography variant="h6" color="white">
+              {usernames[comment.userId] || "Nome de usuário desconhecido"}
+            </Typography>
+            <Rating
+              value={comment.rating}
+              readOnly
+              sx={{
+                color: "yellow",
+                "& .MuiRating-iconFilled": { color: "yellow" },
+                "& .MuiRating-iconEmpty": { color: "yellow" },
+                "& .MuiRating-icon:hover": { borderColor: "yellow" },
+              }}
+            />
+            <Typography color="white">{comment.comment}</Typography>
+            {comment.userId === user?.id && (
+              <Box sx={{ display: "flex", gap: 1 }}>
+                <Button
+                  color="error"
+                  variant="contained"
+                  onClick={() => handleEdit(comment)}
+                  sx={{ marginTop: 2 }}
+                >
+                  Editar
+                </Button>
+                <Button
+                  color="error"
+                  variant="contained"
+                  onClick={() => handleDelete(comment._id)}
+                  sx={{ marginTop: 2 }}
+                >
+                  Excluir
+                </Button>
+              </Box>
+            )}
+          </Box>
+        ))}
+
+        <Box sx={{ marginTop: 4 }}>
+          <Typography variant="h5" color="white">
+            Adicionar Avaliação
           </Typography>
           <Rating
-            name="rating-controlled"
-            value={newRating}
-            precision={0.5}
-            size="large"
-            onChange={(event, newValue) => setNewRating(newValue)}
             sx={{
-              "& .MuiRating-iconEmpty": { color: "#EC7C01" },
-              "& .MuiRating-iconFilled": { color: "#EC7C01" },
-              fontSize: "2rem",
+              marginY: 1,
+              color: "yellow",
+              "& .MuiRating-iconFilled": { color: "yellow" },
+              "& .MuiRating-iconEmpty": { color: "yellow" },
+              "& .MuiRating-icon:hover": { borderColor: "yellow" },
             }}
+            value={rating}
+            onChange={(e, newValue) => setRating(newValue)}
           />
           <TextField
-            label="Escreva um comentário"
-            variant="outlined"
             fullWidth
             multiline
-            minRows={3}
             value={newComment}
             onChange={(e) => setNewComment(e.target.value)}
-            sx={{
-              mt: 2,
-              backgroundColor: "#1e1e1e",
-              "& .MuiInputBase-root": { color: "#fff" },
-              "& .MuiOutlinedInput-root": {
-                "& fieldset": { borderColor: "#444" },
-                "&:hover fieldset": { borderColor: "#FF0037" },
-                "&.Mui-focused fieldset": { borderColor: "#FF0037" },
-              },
-              "& .MuiInputLabel-root": { color: "#ccc" },
-            }}
+            placeholder="Escreva sua avaliação..."
+            sx={{ marginTop: 1, border: "1px solid #fff" }}
+            InputProps={{ style: { color: "white", fontSize: "18px" } }}
+            InputLabelProps={{ style: { color: "white", fontSize: "18px" } }}
           />
           <Button
             variant="contained"
-            onClick={handleSaveComment}
-            sx={{
-              mt: 2,
-              backgroundColor: "#FF0037",
-              color: "#fff",
-              fontWeight: "bold",
-              "&:hover": { backgroundColor: "#CC002A" },
-            }}
-            disabled={!newComment || !newRating || submitting}
+            onClick={handleSubmit}
+            sx={{ marginTop: 3, backgroundColor: "red" }}
+            disabled={!rating || !newComment || !user}
           >
-            {submitting ? (
-              <CircularProgress size={24} sx={{ color: "#fff" }} />
-            ) : editingId ? (
-              "Salvar"
-            ) : (
-              "Enviar"
-            )}
+            ENVIAR
           </Button>
         </Box>
-
-        <Box>
-          {comments.map((comment) => (
-            <Box
-              key={comment.id}
-              sx={{
-                mb: 3,
-                borderBottom: "1px solid #444",
-                pb: 2,
-                color: "#fff",
-              }}
-            >
-              <Box
-                sx={{ display: "flex", alignItems: "center", mb: 1, gap: 2 }}
-              >
-                <Avatar
-                  alt={`Avatar de ${comment.username || "Desconhecido"}`}
-                  src={comment.avatar || ""}
-                />
-                <Box>
-                  <Typography variant="subtitle1" sx={{ color: "#fff" }}>
-                    {comment.username && typeof comment.userId === "string"
-                      ? `${comment.username} #${comment.userId}`
-                      : "Usuário desconhecido"}
-                  </Typography>
-
-                  <Typography variant="caption" sx={{ color: "#fff" }}>
-                    {new Date(comment.timestamp).toLocaleString()}
-                  </Typography>
-                </Box>
-              </Box>
-              <Rating
-                name={`rating-${comment.id}`}
-                value={comment.rating}
-                precision={0.5}
-                readOnly
-                sx={{ color: "#EC7C01" }}
-              />
-              <Typography variant="body2" sx={{ mt: 1, color: "#ccc" }}>
-                {comment.comment}
-              </Typography>
-
-              {comment.userId === userId && (
-                <Box sx={{ display: "flex", gap: 2, mt: 1 }}>
-                  <Button
-                    variant="outlined"
-                    sx={{
-                      color: "#FF0037",
-                      borderColor: "#FF0037",
-                      "&:hover": { backgroundColor: "#FF0037", color: "#fff" },
-                    }}
-                    onClick={() => handleEdit(comment)}
-                  >
-                    Editar
-                  </Button>
-                  <Button
-                    variant="outlined"
-                    sx={{
-                      color: "#FF0037",
-                      borderColor: "#FF0037",
-                      "&:hover": { backgroundColor: "#FF0037", color: "#fff" },
-                    }}
-                    onClick={() => handleDeleteEvaluation(comment.id)}
-                  >
-                    Excluir
-                  </Button>
-                </Box>
-              )}
-            </Box>
-          ))}
-        </Box>
       </Container>
-    </>
+    </Box>
   );
-}
+};
+
+export default EvaluationPage;

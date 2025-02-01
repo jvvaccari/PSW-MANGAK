@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { logout } from "../redux/authSlice";
 import {
   Box,
   Typography,
@@ -18,8 +20,7 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
-import { fetchAccountById, updateAccount, deleteAccount } from "../../services/api";
-import useAuth from "../contexts/useAuth";
+import * as api from "../../services/api";
 
 const inputStyles = {
   bgcolor: "var(--bg-data-color)",
@@ -40,7 +41,7 @@ const inputStyles = {
 };
 
 function ProfilePage() {
-  const { user, logout } = useAuth();
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -48,6 +49,15 @@ function ProfilePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
+
+  const { user } = useSelector((state) => state.auth);
+
+  // Dispatch the logout action
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate("/login");
+  };
+
 
   useEffect(() => {
     const loadUser = async () => {
@@ -58,8 +68,8 @@ function ProfilePage() {
           return;
         }
   
-        setLoading(true); // Garante que o carregamento seja iniciado
-        const data = await fetchAccountById(user.id);
+        setLoading(true);
+        const data = await api.fetchAccountById(user.id);
         if (data) {
           setFormData(data);
         } else {
@@ -68,15 +78,18 @@ function ProfilePage() {
       } catch (err) {
         console.error("Erro ao carregar os dados do usuário:", err.message);
         setError("Erro ao carregar os dados. Faça login novamente.");
-        logout();
+        
+        // Use dispatch to actually log the user out in Redux
+        dispatch(logout());
         navigate("/login");
       } finally {
-        setLoading(false); // Garante que o carregamento seja encerrado
+        setLoading(false);
       }
     };
   
     loadUser();
-  }, [user, navigate, logout]);
+  }, [user, navigate, dispatch]);
+  
   
 
   const handleInputChange = (e) => {
@@ -86,7 +99,7 @@ function ProfilePage() {
 
   const handleSave = async () => {
     try {
-      await updateAccount(user.id, formData);
+      await api.updateAccount(user.id, formData);
       setIsEditing(false);
     } catch (err) {
       console.error("Erro ao atualizar conta:", err.message);
@@ -96,7 +109,7 @@ function ProfilePage() {
 
   const handleDelete = async () => {
     try {
-      await deleteAccount(user.id);
+      await api.deleteAccount(user.id);
       logout();
       navigate("/");
     } catch (err) {
@@ -111,11 +124,6 @@ function ProfilePage() {
 
   const handleCloseDialog = () => {
     setOpenDialog(false);
-  };
-
-  const handleLogout = () => {
-    logout();
-    navigate("/login");
   };
 
   if (loading) {

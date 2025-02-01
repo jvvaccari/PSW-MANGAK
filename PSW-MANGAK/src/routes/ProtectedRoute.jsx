@@ -1,13 +1,25 @@
-import useAuth from "../contexts/useAuth";
+// routes/ProtectedRoute.jsx (Refactored)
+import { useSelector } from "react-redux";
 import { Navigate } from "react-router-dom";
 import PropTypes from "prop-types";
+import { CircularProgress, Box } from "@mui/material";
 
 const ProtectedRoute = ({ children, roleRequired }) => {
-  const { user, isLoading } = useAuth(); 
+  const { user, loading } = useSelector((state) => state.auth);
 
-
-  if (isLoading) {
-    return <div>Carregando...</div>; 
+  if (loading) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          minHeight: "100vh",
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    );
   }
 
   if (!user) {

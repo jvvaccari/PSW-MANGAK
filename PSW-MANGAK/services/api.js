@@ -1,19 +1,28 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:5501";
+const API_URL = "http://localhost:5502";
 const axiosInstance = axios.create({
   baseURL: API_URL,
   timeout: 10000,
   headers: { "Content-Type": "application/json" },
 });
 
-export const fetchEvaluationById = async (evaluationId) => {
+export const fetchEvaluations = async () => {
   try {
-    validateId(evaluationId, "avaliação");
-    const response = await axiosInstance.get(`/evaluations/${evaluationId}`);
+    const response = await axiosInstance.get(`/evaluations`);
     return response.data;
   } catch (error) {
-    handleError(error, `Erro ao buscar avaliação com ID ${evaluationId}`);
+    handleError(error, `Erro ao buscar avaliações.`);
+  }
+};
+
+export const fetchEvaluationById = async (mangaId) => {
+  try {
+    validateId(mangaId, "avaliação");
+    const response = await axiosInstance.get(`/evaluations/${mangaId}`);
+    return response.data;
+  } catch (error) {
+    handleError(error, `Erro ao buscar avaliação com ID ${mangaId}`);
   }
 };
 
@@ -62,7 +71,40 @@ export const fetchMangas = async () => {
   }
 };
 
-export const fetchMangaById = async (id) => fetchById("mangas", id, "mangá");
+export const fetchMangaById = async (id) => {
+  try {
+    const response = await fetch(`http://localhost:5502/mangas/${id}`);
+
+    if (!response.ok) {
+      throw new Error('Manga not found');
+    }
+
+    const manga = await response.json();
+    console.log("Manga fetched:", manga);
+
+    if (manga && manga._id) {
+      const filledManga = {
+        _id: manga._id, 
+        title: manga.title || "Título não disponível", 
+        image: manga.image || "URL da imagem não disponível", 
+        authorId: manga.authorId || "Autor não disponível", 
+        description: manga.description || "Descrição não disponível", 
+        yearPubli: manga.yearPubli || "Ano de publicação não disponível", 
+        status: manga.status || "Status não disponível", 
+        demographic: manga.demographic || "Demografia não disponível", 
+        genres: manga.genres || [], 
+        artsList: manga.artsList || [], 
+        retail: manga.retail || []
+      };
+
+      return filledManga;
+    } else {
+      console.error("Manga ID not found in the response.");
+    }
+  } catch (error) {
+    console.error("Error fetching manga:", error.message);
+  }
+};
 
 export const createManga = async (newManga) => {
   try {
@@ -102,7 +144,7 @@ export const deleteAccount = async (id) => {
   }
 };
 
-export const fetchFavorites = async (userId) => {
+export const fetchFavoritesMangas = async (userId) => {
   try {
     validateId(userId, "usuário");
     const account = await fetchAccountById(userId);
@@ -143,11 +185,9 @@ export const updateFavorites = async (userId, mangaId, action) => {
   }
 };
 
-export const fetchEvaluations = async (mangaId) => {
+export const fetchEvaluationsById = async (mangaId) => {
   try {
-    const response = await axios.get(
-      `http://localhost:5501/evaluations?mangaId=${mangaId}`
-    );
+    const response = await axiosInstance.get(`/evaluations?mangaId=${mangaId}`);
     if (response.status !== 200 || !response.data) {
       throw new Error("Erro ao buscar avaliações");
     }
@@ -158,12 +198,52 @@ export const fetchEvaluations = async (mangaId) => {
   }
 };
 
-export const postEvaluation = async (mangaId, evaluationData) => {
+export const fetchMangaAndEvaluations = async (mangaId) => {
   try {
+    // Valida o ID do mangá
     validateId(mangaId, "mangá");
+
+    // Busca o mangá com o ID fornecido
+    const manga = await fetchMangaById(mangaId);
+
+    if (!manga) {
+      throw new Error("Mangá não encontrado");
+    }
+
+    // Busca as avaliações do mangá
+    const evaluations = await fetchEvaluationsById(mangaId);
+
+    // Associa os dados do usuário (se existirem) às avaliações
+    const detailedEvaluations = await Promise.all(
+      evaluations.map(async (evaluation) => {
+        const user = evaluation.userId
+          ? await fetchAccountById(evaluation.userId) 
+          : { username: "Usuário desconhecido" };
+
+        // Retorna a avaliação detalhada, incluindo o nome de usuário
+        return { ...evaluation, username: user.username };
+      })
+    );
+
+    // Retorna o mangá com suas avaliações detalhadas
+    return { manga, evaluations: detailedEvaluations };
+
+  } catch (error) {
+    handleError(error, "Erro ao buscar mangá e avaliações");
+    throw error;
+  }
+};
+
+export const postEvaluation = async (mangaId, evaluationData, userId) => {
+  try {
+ 
+    console.log(mangaId);
+    console.log(userId);
+
     const response = await axiosInstance.post(`/evaluations`, {
       ...evaluationData,
       mangaId,
+      userId
     });
     return response.data;
   } catch (error) {
@@ -229,7 +309,7 @@ export const deleteAuthor = async (id) => {
 export const fetchFavoriteLists = async (userId) => {
   try {
     console.log("Buscando listas para o usuário com ID:", userId);
-    const response = await axiosInstance.get(`/favoriteLists?userId=${userId}`);
+    const response = await axiosInstance.get(`/favorites?userId=${userId}`);
     console.log("Resposta da API:", response.data);
     return response.data;
   } catch (error) {
@@ -240,7 +320,7 @@ export const fetchFavoriteLists = async (userId) => {
 
 export const createFavoriteList = async (listData) => {
   try {
-    const response = await axiosInstance.post(`/favoriteLists`, listData);
+    const response = await axiosInstance.post(`/favorites`, listData);
     return response.data;
   } catch (error) {
     handleError(error, "Erro ao criar lista");
@@ -249,7 +329,7 @@ export const createFavoriteList = async (listData) => {
 
 export const deleteFavoriteList = async (listId) => {
   try {
-    const response = await axiosInstance.delete(`/favoriteLists/${listId}`);
+    const response = await axiosInstance.delete(`/favorites/${listId}`);
     return response.data; 
   } catch (error) {
     handleError(error, "Erro ao deletar lista");
@@ -258,6 +338,9 @@ export const deleteFavoriteList = async (listId) => {
 
 export const addMangaToList = async (listId, mangaId) => {
   try {
+    console.log("ListID:",listId);
+    console.log("MangaId:",mangaId);
+
     const list = await fetchFavoriteListById(listId);
     if (!list) throw new Error('Lista não encontrada'); 
 
@@ -265,7 +348,7 @@ export const addMangaToList = async (listId, mangaId) => {
       ? list.mangas
       : [...list.mangas, mangaId]; 
 
-    const response = await axiosInstance.put(`/favoriteLists/${listId}`, {
+    const response = await axiosInstance.put(`/favorites/${listId}`, {
       ...list,
       mangas: updatedMangas,
     });
@@ -279,11 +362,13 @@ export const removeMangaFromFavoriteList = async (listId, mangaId) => {
   try {
     const list = await fetchFavoriteListById(listId);
 
-    const updatedMangas = list.mangas.filter((manga) => manga !== mangaId);
+    const updatedMangas = list.mangas.filter((mangaIdInList) => mangaIdInList !== mangaId);
 
-    const response = await axiosInstance.put(`/favoriteLists/${listId}`, {
+    console.log("Lista filtrada:", updatedMangas);
+
+    const response = await axiosInstance.put(`/favorites/list/${listId}`, {
       ...list,
-      mangas: updatedMangas,
+      mangas: updatedMangas,  
     });
 
     return response.data; 
@@ -293,22 +378,21 @@ export const removeMangaFromFavoriteList = async (listId, mangaId) => {
   }
 };
 
-
 export const fetchFavoriteListById = async (listId) => {
   try {
-    const response = await axiosInstance.get(`/favoriteLists/${listId}`);
+    const response = await axiosInstance.get(`/favorites/${listId}`);
     return response.data;
   } catch (error) {
     handleError(error, `Erro ao buscar lista de favoritos com ID ${listId}`);
   }
 };
 
-export const fetchMangasByIds = async (mangaIds) => {
+export const fetchMangasByListId = async (listId) => {
   try {
-    const mangasData = await Promise.all(
-      mangaIds.map((id) => fetchMangaById(id))
-    );
-    return mangasData;
+    const list = await fetchFavoriteListById(listId);
+    const allMangas = await fetchMangas();
+    const favoriteMangas =  list.mangas.map((mangaId) => allMangas.find((manga) => manga._id === mangaId));
+    return favoriteMangas;
   } catch (error) {
     handleError(error, "Erro ao buscar mangas");
   }
