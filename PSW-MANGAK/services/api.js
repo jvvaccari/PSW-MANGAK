@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:5502";
+const API_URL = "https://localhost:5502";
 const axiosInstance = axios.create({
   baseURL: API_URL,
   timeout: 10000,
@@ -73,7 +73,7 @@ export const fetchMangas = async () => {
 
 export const fetchMangaById = async (id) => {
   try {
-    const response = await fetch(`http://localhost:5502/mangas/${id}`);
+    const response = await fetch(`https://localhost:5502/mangas/${id}`);
 
     if (!response.ok) {
       throw new Error('Manga not found');

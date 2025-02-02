@@ -2,6 +2,9 @@ import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import cors from 'cors';
+import https from 'https';
+import fs from 'fs';
+
 
 import Manga from './models/Manga.js';
 import Author from './models/Author.js';
@@ -9,12 +12,27 @@ import Account from './models/Account.js';
 import FavoriteList from './models/FavoriteList.js';
 import Evaluation from './models/Evaluation.js';
 
+
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5501;
 
-app.use(cors());
+const options = {
+  key: fs.readFileSync('C:/Users/jvvac/OneDrive/Área de Trabalho/estudo/PSW/PSW-MANGAK/PSW-MANGAK/server/certification/localhost_decrypted.key'),
+  cert: fs.readFileSync('C:/Users/jvvac/OneDrive/Área de Trabalho/estudo/PSW/PSW-MANGAK/PSW-MANGAK/server/certification/localhost.crt')
+};
+
+https.createServer(options, app).listen(443, () => {
+  console.log('Servidor HTTPS rodando em https://localhost');
+});
+
+app.use(cors({
+  origin: 'https://localhost:5173', 
+  methods: 'GET,POST,PUT,DELETE',
+  credentials: true,
+}));
+
 app.use(express.json());
 
 mongoose
@@ -391,6 +409,6 @@ app.delete('/evaluations/:id', async (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+https.createServer(options, app).listen(PORT, () => {
+  console.log(`Server running on https://localhost:${PORT}`);
 });

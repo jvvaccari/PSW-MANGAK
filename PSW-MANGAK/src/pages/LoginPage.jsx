@@ -28,28 +28,35 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (user) {
-      navigate("/"); 
+      navigate("/");
     }
   }, [user, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     if (!email || !password) {
       alert("Por favor, preencha todos os campos.");
       return;
     }
-  
-    try {
 
+    try {
       const result = await dispatch(loginUser({ email, password })).unwrap();
       console.log("Login Bem-sucedido", result);
     } catch (err) {
       console.error("Erro ao tentar login:", err);
-      alert("Erro: " + (err.message || "Erro desconhecido"));
+      let errorMessage = "Erro desconhecido";
+      if (err.response?.data) {
+        errorMessage = err.response.data;
+      } else if (err.message) {
+        errorMessage = err.message;
+      } else if (err.request) {
+        errorMessage = "Erro na requisição: sem resposta do servidor";
+      }
+
+      alert("Erro: " + errorMessage);
     }
   };
-
 
   const commonInputStyles = {
     marginBottom: "16px",
@@ -57,9 +64,10 @@ export default function LoginPage() {
       bgcolor: "#1E1E1E",
       color: "#FFFFFF",
     },
-    "& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline, & .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
-      borderColor: "#FF0037",
-    },
+    "& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline, & .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline":
+      {
+        borderColor: "#FF0037",
+      },
     "& .MuiInputLabel-root": {
       color: "#fff",
     },
@@ -128,7 +136,11 @@ export default function LoginPage() {
               }}
             />
             {error && (
-              <Typography variant="body2" color="error" sx={{ marginBottom: "16px" }}>
+              <Typography
+                variant="body2"
+                color="error"
+                sx={{ marginBottom: "16px" }}
+              >
                 {error}
               </Typography>
             )}
@@ -151,7 +163,11 @@ export default function LoginPage() {
                 },
               }}
             >
-              {loading ? <CircularProgress size={24} sx={{ color: "#fff" }} /> : "Entrar"}
+              {loading ? (
+                <CircularProgress size={24} sx={{ color: "#fff" }} />
+              ) : (
+                "Entrar"
+              )}
             </Button>
           </form>
         </Paper>
