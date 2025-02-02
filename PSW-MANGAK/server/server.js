@@ -5,7 +5,6 @@ import cors from 'cors';
 import https from 'https';
 import fs from 'fs';
 
-
 import Manga from './models/Manga.js';
 import Author from './models/Author.js';
 import Account from './models/Account.js';
@@ -23,12 +22,8 @@ const options = {
   cert: fs.readFileSync('C:/Users/jvvac/OneDrive/Área de Trabalho/estudo/PSW/PSW-MANGAK/PSW-MANGAK/server/certification/localhost.crt')
 };
 
-https.createServer(options, app).listen(443, () => {
-  console.log('Servidor HTTPS rodando em https://localhost');
-});
-
 app.use(cors({
-  origin: 'https://localhost:5173', 
+  origin: /https:\/\/localhost:\d{4}/,
   methods: 'GET,POST,PUT,DELETE',
   credentials: true,
 }));
@@ -36,7 +31,7 @@ app.use(cors({
 app.use(express.json());
 
 mongoose
-  .connect('mongodb+srv://mr17motta:vaccari386@cluster0.ywd2a.mongodb.net/Cluster0?retryWrites=true&w=majority')
+  .connect(process.env.DATABASE_URL)
   .then(() => console.log('Connected to MongoDB'))
   .catch((err) => console.error('MongoDB connection error:', err));
 
