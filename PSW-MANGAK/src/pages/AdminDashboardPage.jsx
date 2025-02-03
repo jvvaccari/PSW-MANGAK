@@ -1,23 +1,27 @@
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
 import { useState } from "react";
 import { Button, Box, Typography, IconButton, CircularProgress } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import PropTypes from "prop-types";
 
-const AdminDashboardPage = () => {
+const AdminDashboardPage = ({ user }) => {
   const navigate = useNavigate();
-  const { user } = useSelector(state => state.auth);
-
   const [isLoading, setIsLoading] = useState(false);
 
   const handleNavigation = (path) => {
-    if (!user?.id) {
+    if (!user?._id) {
       console.error("Usuário não autenticado. Redirecionando para o login.");
       navigate("/login");
       return;
     }
+
     setIsLoading(true);
-    navigate(path);
+
+    // Esperar um tempo antes de navegar (usando setTimeout apenas para simulação, pode ser substituído por outra lógica, se necessário)
+    setTimeout(() => {
+      navigate(path);
+      setIsLoading(false);
+    }, 1000); // Ajuste o tempo conforme necessário
   };
 
   return (
@@ -31,7 +35,7 @@ const AdminDashboardPage = () => {
         alignItems: "center",
         gap: "2rem",
         minHeight: "100vh",
-        backgroundColor: "#1E1E1E", // Fundo escuro para consistência com o tema
+        backgroundColor: "#1E1E1E",
       }}
     >
       {/* Botão para voltar */}
@@ -99,6 +103,15 @@ const AdminDashboardPage = () => {
       </Box>
     </Box>
   );
+};
+
+AdminDashboardPage.propTypes = {
+  user: PropTypes.shape({
+    _id: PropTypes.string.isRequired,
+    username: PropTypes.string,
+    email: PropTypes.string,
+    role: PropTypes.string,
+  }),
 };
 
 export default AdminDashboardPage;

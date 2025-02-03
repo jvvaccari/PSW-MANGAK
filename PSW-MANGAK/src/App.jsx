@@ -1,5 +1,4 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-// import { useEffect } from "react";
 import { Box, CircularProgress } from "@mui/material";
 import PropTypes from "prop-types";
 

@@ -5,7 +5,7 @@ import cors from "cors";
 import https from "https";
 import fs from "fs";
 import jwt from "jsonwebtoken";
-import bcrypt from 'bcrypt';
+import bcryptjs from 'bcryptjs';
 
 import Manga from "./models/Manga.js";
 import Author from "./models/Author.js";
@@ -69,7 +69,7 @@ mongoose
   
       const user = { email: email, id: account._id };
   
-      const passwordMatch = await bcrypt.compare(password, account.password);
+      const passwordMatch = bcryptjs.compare(password, account.password);
       if (!passwordMatch) return res.status(401).send("Credenciais inválidas");
   
       const accessToken = generateAcessToken(user);
@@ -80,7 +80,7 @@ mongoose
       const token = new Token({
         userId: account._id,
         token: refreshToken,
-        expiresAt: new Date(Date.now() + 86400 * 1000)
+        expiresAt: new Date(Date.now() + 8000 * 1000)
       });
   
       await token.save();
@@ -109,7 +109,7 @@ mongoose
       const token = new Token({
         userId: updatedAccount._id,
         token: refreshToken,
-        expiresAt: new Date(Date.now() + 86400 * 1000)
+        expiresAt: new Date(Date.now() + 8000 * 1000)
       });
   
       await token.save();
@@ -122,7 +122,7 @@ mongoose
   
   app.post("/accounts/register", async (req, res) => {
     const { username, email, password } = req.body;
-    const crtPassword = await bcrypt.hash(password, 10);
+    const crtPassword = await bcryptjs.hash(password, 10);
   
     try {
       const existingUser = await Account.findOne({ email });
@@ -147,7 +147,7 @@ mongoose
       const token = new Token({
         userId: newUser._id,
         token: refreshToken,
-        expiresAt: new Date(Date.now() + 86400 * 1000)
+        expiresAt: new Date(Date.now() + 8000 * 1000)
       });
   
       await token.save();
@@ -478,7 +478,7 @@ app.delete("/evaluations/:id", async (req, res) => {
 
 function generateAcessToken(user) {
   console.log("Gerando token para o usuário:", user);
-  const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "3600s" });
+  const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "1800s" });
   console.log("Token gerado:", token);
   return token;
 }

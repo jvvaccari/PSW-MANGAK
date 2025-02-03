@@ -54,7 +54,7 @@ export default function LoginPage() {
         errorMessage = "Erro na requisição: sem resposta do servidor";
       }
 
-      alert("Erro: " + errorMessage);
+      console.log("Erro: " + errorMessage);
     }
   };
 

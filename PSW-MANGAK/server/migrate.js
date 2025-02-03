@@ -3,12 +3,14 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
+import bcrypt from 'bcryptjs';  // Importando bcryptjs
 
 import Manga from './models/Manga.js';
 import Author from './models/Author.js';
 import Account from './models/Account.js';
 import FavoriteList from './models/FavoriteList.js';
 import Evaluation from './models/Evaluation.js';
+import Token from './models/Token.js';  // Importando o modelo Token
 
 // Carregar as variáveis de ambiente do arquivo .env
 dotenv.config();
@@ -29,6 +31,12 @@ const getObjectId = (id) => {
   return mongoose.Types.ObjectId.isValid(id) ? new mongoose.Types.ObjectId(id) : new mongoose.Types.ObjectId();
 };
 
+// Função para criptografar a senha
+const hashPassword = async (password) => {
+  const salt = await bcrypt.genSalt(10); // Gerar o salt
+  return await bcrypt.hash(password, salt); // Retorna a senha criptografada
+};
+
 (async function migrateData() {
   try {
     await mongoose.connect(MONGO_URI);
@@ -41,8 +49,22 @@ const getObjectId = (id) => {
       Account.deleteMany({}),
       FavoriteList.deleteMany({}),
       Evaluation.deleteMany({}),
+      Token.deleteMany({}), // Limpar tokens existentes
     ]);
     console.log('Database cleared.');
+
+    // Inserção de Tokens
+    if (data.tokens) {
+      const tokensData = data.tokens.map((tokenData) => ({
+        token: tokenData.token, 
+        userId: getObjectId(tokenData.userId), // Certifique-se de que o userId seja convertido corretamente
+        expiresAt: tokenData.expiresAt || new Date(), // Garantir que expiresAt esteja disponível
+      }));
+      await Token.insertMany(tokensData);
+      console.log("Tokens inserted:", tokensData.length);
+    } else {
+      console.log("No token data found");
+    }
 
     // Inserção de Autores
     if (data.authors) {
@@ -86,16 +108,16 @@ const getObjectId = (id) => {
       console.log('No mangas data found');
     }
 
-    // Inserção de Contas
+    // Inserção de Contas com senha criptografada
     if (data.accounts) {
-      const accountsData = data.accounts.map((account) => ({
+      const accountsData = await Promise.all(data.accounts.map(async (account) => ({
         _id: account.id, // Mantém String
         username: account.username,
         email: account.email,
-        password: account.password,
+        password: await hashPassword(account.password), // Criptografando a senha
         role: account.role,
         favorites: account.favorites,
-      }));
+      })));
       await Account.insertMany(accountsData);
       console.log('Accounts inserted:', accountsData.length);
     } else {
