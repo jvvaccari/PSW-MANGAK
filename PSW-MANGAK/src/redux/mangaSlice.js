@@ -3,13 +3,13 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import * as api from "../../services/api";
 
 // Async thunks
-export const loadMangas = createAsyncThunk("manga/loadMangas", async () => {
+export const loadMangas = createAsyncThunk("mangas/loadMangas", async () => {
   const data = await api.fetchMangas();
   return data || [];
 });
 
 export const fetchMangaByIdThunk = createAsyncThunk(
-  "manga/fetchMangaById",
+  "mangas/fetchMangaById",
   async (id) => {
     const manga = await api.fetchMangaById(id);
     console.log(manga);
@@ -18,7 +18,7 @@ export const fetchMangaByIdThunk = createAsyncThunk(
 );
 
 export const createMangaThunk = createAsyncThunk(
-  "manga/createManga",
+  "mangas/createManga",
   async (newManga) => {
     const data = await api.createManga(newManga);
     return data;
@@ -26,7 +26,7 @@ export const createMangaThunk = createAsyncThunk(
 );
 
 export const updateMangaThunk = createAsyncThunk(
-  "manga/updateManga",
+  "mangas/updateManga",
   async ({ id, mangaData }) => {
     const data = await api.updateManga(id, mangaData);
     return { id, ...data };
@@ -34,7 +34,7 @@ export const updateMangaThunk = createAsyncThunk(
 );
 
 export const deleteMangaThunk = createAsyncThunk(
-  "manga/deleteManga",
+  "mangas/deleteManga",
   async (id) => {
     await api.deleteManga(id);
     return id;

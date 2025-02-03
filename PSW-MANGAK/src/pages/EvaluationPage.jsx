@@ -1,13 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import {
-  Box,
-  Typography,
-  TextField,
-  Button,
-  Rating,
-  Container,
-} from "@mui/material";
+import { Box, Typography, TextField, Button, Rating, Container } from "@mui/material";
 import Navbar from "../components/Navbar";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -17,40 +10,55 @@ import {
   deleteEvaluationThunk,
 } from "../redux/evaluationSlice";
 import * as api from "../../services/api";
+import { loadMangas } from "../redux/mangaSlice";
 
 const EvaluationPage = () => {
   const navigate = useNavigate();
   const { mangaId } = useParams();
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
+  const { mangas } = useSelector((state) => state.manga);
   const { evaluations } = useSelector((state) => state.evaluations);
   const [authorName, setAuthorName] = useState("Carregando autor...");
   const [rating, setRating] = useState(0);
   const [newComment, setNewComment] = useState("");
   const [editingId, setEditingId] = useState(null);
   const [averageRating, setAverageRating] = useState(0);
-  const [manga, setManga] = useState(null);
   const [usernames, setUsernames] = useState({});
   const [isLoading, setIsLoading] = useState(true);
+  const [mangasLoaded, setMangasLoaded] = useState(false);
 
+  // Carrega os mangás
+  useEffect(() => {
+    const loadMangasData = async () => {
+      if (mangas.length === 0) {
+        await dispatch(loadMangas());
+      }
+      setMangasLoaded(true);
+    };
+
+    loadMangasData();
+  }, [dispatch, mangas]);
+
+  // Define o mangá atual e o nome do autor
+  const manga = mangas.find((m) => m._id === mangaId);
+
+  useEffect(() => {
+    if (mangasLoaded && manga) {
+      setAuthorName(manga.authorId || "Autor desconhecido");
+    }
+  }, [mangasLoaded, manga]);
+
+  // Carrega as avaliações e os nomes dos usuários
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const mangaData = await api.fetchMangaById(mangaId);
-        setManga(mangaData);
-    
-        if (mangaData?.authorId) {
-          const author = await api.fetchAuthorById(mangaData.authorId._id);
-          setAuthorName(author?.name || "Autor desconhecido");
-        } else {
-          setAuthorName("Autor desconhecido");
-        }
-  
-        const evaluationsData = await dispatch(fetchEvaluationsThunk(mangaId)).unwrap();
-    
+        if (!manga) return;
+
+        const evaluationsData = await dispatch(fetchEvaluationsThunk(manga._id)).unwrap();
         const avg = evaluationsData.reduce((acc, cur) => acc + cur.rating, 0) / evaluationsData.length;
         setAverageRating(Number(avg.toFixed(1)));
-  
+
         const fetchedUsernames = {};
         for (const evaluation of evaluationsData) {
           if (!fetchedUsernames[evaluation.userId]) {
@@ -64,16 +72,16 @@ const EvaluationPage = () => {
           }
         }
         setUsernames(fetchedUsernames);
-    
+
       } catch (error) {
         console.error("Erro ao buscar dados:", error);
       } finally {
         setIsLoading(false);
       }
     };
-  
+
     fetchData();
-  }, [mangaId, dispatch]);  
+  }, [dispatch, manga]);
 
   const handleAuthorClick = () => {
     if (manga?.authorId?._id) {
@@ -100,13 +108,13 @@ const EvaluationPage = () => {
             evaluationId: editingId,
             userId: user._id,
             evaluationData,
-            mangaId,
+            mangaId: manga._id,
           })
         );
       } else {
         await dispatch(
           createEvaluationThunk({
-            mangaId,
+            mangaId: manga._id,
             evaluationData,
             userId: user._id,
           })
@@ -117,7 +125,7 @@ const EvaluationPage = () => {
       setNewComment("");
       setRating(0);
 
-      await dispatch(fetchEvaluationsThunk(mangaId));
+      await dispatch(fetchEvaluationsThunk(manga._id));
     } catch (err) {
       console.error("Erro ao salvar avaliação.", err);
     }
@@ -126,7 +134,7 @@ const EvaluationPage = () => {
   const handleDelete = async (evaluationId) => {
     try {
       await dispatch(deleteEvaluationThunk({ evaluationId }));
-      dispatch(fetchEvaluationsThunk(mangaId));
+      dispatch(fetchEvaluationsThunk(manga._id));
     } catch (err) {
       console.error("Erro ao excluir avaliação.", err);
     }
@@ -139,7 +147,19 @@ const EvaluationPage = () => {
   };
 
   if (isLoading) {
-    return <Typography color="white">Carregando...</Typography>;
+    return (
+      <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
+        <Typography color="white">Carregando...</Typography>
+      </Box>
+    );
+  }
+
+  if (!manga) {
+    return (
+      <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
+        <Typography color="white">Mangá não encontrado.</Typography>
+      </Box>
+    );
   }
 
   return (
@@ -167,7 +187,7 @@ const EvaluationPage = () => {
         <Typography variant="h6" color="white">
           Média de Avaliações: {averageRating} ⭐
         </Typography>
-        {evaluations.map((comment) => (
+        {evaluations && evaluations.map((comment) => (
           <Box
             key={comment._id}
             sx={{

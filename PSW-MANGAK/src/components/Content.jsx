@@ -11,6 +11,7 @@ import { Link } from "react-router-dom";
 const Content = ({ manga }) => {
   const navigate = useNavigate();
   const { user } = useSelector(state => state.auth);
+  console.log("User:", user);
   const [authorName, setAuthorName] = useState("Carregando autor...");
   const [averageRating, setAverageRating] = useState(0.0);
 
@@ -60,7 +61,7 @@ const Content = ({ manga }) => {
   };
 
   const handleViewComments = () => {
-    if (!user?.id) {
+    if (!user) {
       console.warn("Usuário não autenticado.");
       navigate("/login");
       return;

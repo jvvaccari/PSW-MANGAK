@@ -55,7 +55,7 @@ function AppWrapper() {
   return (
     <Routes>
       <Route path="/" element={<CatalogPage />} />
-      <Route path="/manga/:id" element={<MangaLandingPage />} />
+      <Route path="/mangas/:id" element={<MangaLandingPage />} />
       <Route path="/login" element={ <LoginPage />} />
       <Route path="/register" element={ <RegisterPage />} />
 

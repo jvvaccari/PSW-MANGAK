@@ -123,9 +123,11 @@ export const fetchMangas = async () => {
   }
 };
 
-export const fetchMangaById = async (id) => {
+export const fetchMangaById = async (mangaId) => {
+  console.log("Manga Id",mangaId);
+
   try {
-    const response = await axiosInstance.get(`/mangas/${id}`);
+    const response = await axiosInstance.get(`/mangas/${mangaId}`);
 
     if (!response.ok) {
       throw new Error('Manga not found');
