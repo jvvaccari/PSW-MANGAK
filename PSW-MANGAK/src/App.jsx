@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "./redux/authSlice";
-import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { Box, CircularProgress } from "@mui/material";
 import PropTypes from "prop-types";
 
@@ -25,7 +25,7 @@ import AuthorAdminPage from "./pages/AuthorAdminPage";
 import FavoriteListDetails from "./pages/FavoriteListDetails";
 
 function AppWrapper() {
-  const { loading, isAuthenticated } = useSelector((state) => state.auth);
+  const { loading } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -56,8 +56,8 @@ function AppWrapper() {
     <Routes>
       <Route path="/" element={<CatalogPage />} />
       <Route path="/manga/:id" element={<MangaLandingPage />} />
-      <Route path="/login" element={isAuthenticated ? <Navigate to="/" /> : <LoginPage />} />
-      <Route path="/register" element={isAuthenticated ? <Navigate to="/" /> : <RegisterPage />} />
+      <Route path="/login" element={ <LoginPage />} />
+      <Route path="/register" element={ <RegisterPage />} />
 
       <Route
         path="/profile/:id"
