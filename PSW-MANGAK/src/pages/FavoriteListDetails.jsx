@@ -72,7 +72,7 @@ const FavoriteListDetails = () => {
 
   const handleMangaClick = (mangaId) => {
     console.log("Clicou no manga com ID:", mangaId);  
-    navigate(`/manga/${mangaId}`);
+    navigate(`/mangas/${mangaId}`);
   };
 
   const handleRemoveManga = async (mangaId) => {

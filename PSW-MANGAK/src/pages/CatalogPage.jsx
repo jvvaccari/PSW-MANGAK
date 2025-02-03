@@ -56,7 +56,7 @@ function CatalogPage() {
   }, [mangas]);
 
   const handleMangaClick = (id) => {
-    navigate(`/manga/${id}`);
+    navigate(`/mangas/${id}`);
   };
 
   if (loading) {
