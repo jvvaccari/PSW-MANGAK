@@ -1,6 +1,5 @@
 import PropTypes from "prop-types";
 import { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
 import { Box, Typography, Rating } from "@mui/material";
 import CommentIcon from "@mui/icons-material/Comment";
 import { useNavigate } from "react-router-dom";
@@ -10,7 +9,6 @@ import { Link } from "react-router-dom";
 
 const Content = ({ manga }) => {
   const navigate = useNavigate();
-  const { user } = useSelector(state => state.auth);
   const [authorName, setAuthorName] = useState("Carregando autor...");
   const [averageRating, setAverageRating] = useState(0.0);
 
@@ -58,17 +56,7 @@ const Content = ({ manga }) => {
     FINALIZADO: "#FF0000",
     default: "#777",
   };
-
-  const handleViewComments = () => {
-    if (!user?.id) {
-      console.warn("Usuário não autenticado.");
-      navigate("/login");
-      return;
-    }
-    navigate(`/evaluations/${manga.id}`);
-  };
   
-
   const status = manga.status?.toUpperCase() || "INDEFINIDO";
   const statusColor = statusColors[status] || statusColors.default;
 
@@ -149,7 +137,7 @@ const Content = ({ manga }) => {
                 alignItems: "center",
                 ...clickableStyles,
               }}
-              onClick={handleViewComments}
+              onClick={() => {navigate(`/evaluations/${manga.id}`)}}
             >
               <CommentIcon sx={{ marginLeft: 1.4 }} />
             </Box>
