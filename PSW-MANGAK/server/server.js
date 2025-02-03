@@ -478,7 +478,7 @@ app.delete("/evaluations/:id", async (req, res) => {
 
 function generateAcessToken(user) {
   console.log("Gerando token para o usuário:", user);
-  const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "45s" });
+  const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "3600s" });
   console.log("Token gerado:", token);
   return token;
 }

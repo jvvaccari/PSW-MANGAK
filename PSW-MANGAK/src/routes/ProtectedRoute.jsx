@@ -1,11 +1,11 @@
-// routes/ProtectedRoute.jsx (Refactored)
 import { useSelector } from "react-redux";
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import PropTypes from "prop-types";
 import { CircularProgress, Box } from "@mui/material";
 
 const ProtectedRoute = ({ children, roleRequired }) => {
   const { user, loading } = useSelector((state) => state.auth);
+  const location = useLocation();
 
   if (loading) {
     return (
@@ -24,7 +24,7 @@ const ProtectedRoute = ({ children, roleRequired }) => {
 
   if (!user) {
     console.warn("Usuário não autenticado. Redirecionando para /login.");
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
   if (roleRequired && user.role !== roleRequired) {
