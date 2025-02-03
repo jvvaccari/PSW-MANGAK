@@ -73,19 +73,6 @@ export const registerUser = createAsyncThunk(
 
       console.log("Usuário registrado:", response.data);
 
-      const userWithToken = {
-        ...response.data,
-        id: response.data._id,
-        token: response.data.accessToken,
-      };
-
-      localStorage.setItem("userId", userWithToken.id);
-      localStorage.setItem("authToken", userWithToken.token);
-
-      axiosInstance.defaults.headers["Authorization"] = `Bearer ${userWithToken.token}`;
-
-      return userWithToken;
-
     } catch (error) {
       console.error("Erro no processo de registro:", error);
       return thunkAPI.rejectWithValue(error.response?.data || error.message || "Erro ao registrar usuário");

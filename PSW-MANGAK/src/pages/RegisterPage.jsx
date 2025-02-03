@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Typography, Box, Button, Paper, CircularProgress } from "@mui/material";
 import { Link } from "react-router-dom";  // Alterado para Link
 import { useDispatch, useSelector } from "react-redux";
-import { registerUser } from "../redux/authSlice"; 
+import { loginUser, registerUser } from "../redux/authSlice"; 
 import backgroundImage from "../assets/img/login-background.jpg";
 import StyledTextField from "../components/StyledTextField";
 import { useNavigate } from "react-router-dom";  // Importando o useNavigate
@@ -18,6 +18,7 @@ export default function RegisterPage() {
   const navigate = useNavigate();  // Usando o hook useNavigate
   const { loading, error: reduxError } = useSelector((state) => state.auth);
 
+ 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!email || !password || !username || !confirmPassword) {
@@ -39,14 +40,18 @@ export default function RegisterPage() {
 
     setError(null);
 
-    dispatch(registerUser({ username, email, password }))
-      .unwrap()
-      .then(() => {
-        navigate("/");  // Redirecionamento após sucesso
-      })
-      .catch((err) => {
-        setError(err.message || "Erro ao registrar. Tente novamente.");
-      });
+    try {
+      // Primeiro, tenta registrar o usuário
+      await dispatch(registerUser({ username, email, password })).unwrap();
+      
+      // Após o registro, tenta fazer login
+      await dispatch(loginUser({ email, password })).unwrap();
+      
+      // Redireciona para a página principal após sucesso
+      navigate("/");
+    } catch (err) {
+      setError(err.message || "Erro ao registrar. Tente novamente.");
+    }
   };
 
   return (
