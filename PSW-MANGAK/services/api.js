@@ -75,11 +75,13 @@ export const fetchMangaById = async (id) => {
   try {
     const response = await fetch(`https://localhost:5502/mangas/${id}`);
 
-    if (!response.ok) {
+    console.log("RESPOSTAAAAA:",response);
+
+    if (!response) {
       throw new Error('Manga not found');
     }
 
-    const manga = await response.json();
+    const manga = await response.data;
     console.log("Manga fetched:", manga);
 
     if (manga && manga._id) {
