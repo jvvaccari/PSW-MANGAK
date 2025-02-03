@@ -7,58 +7,6 @@ const axiosInstance = axios.create({
   headers: { "Content-Type": "application/json" },
 });
 
-export const fetchAccountById = async (id) =>
-  fetchAccountWithId("accounts", id, "conta");
-
-export const updateAccount = async (id, data) => {
-  const authToken = localStorage.getItem("authToken"); // Pega o token do localStorage
-  if (!authToken) {
-    throw new Error("Token de autenticação não encontrado");
-  }
-
-  try {
-    const response = await axios.put(
-      `${API_URL}/accounts/${id}`, // A URL para atualização
-      data, // Os dados a serem atualizados
-      {
-        headers: {
-          Authorization: `Bearer ${authToken}`, // Inclui o token no cabeçalho
-        },
-      }
-    );
-    return response.data; // Retorna a resposta, que pode conter a conta atualizada
-  } catch (error) {
-    throw new Error(error.response?.data || error.message || "Erro ao atualizar conta");
-  }
-};
-
-const fetchAccountWithId = async (endpoint, id, type) => {
-  try {
-    validateId(id, type);
-    const token = localStorage.getItem('authToken'); // ou de onde você estiver armazenando
-    const response = await axiosInstance.get(`/${endpoint}/${id}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    return response.data;
-  } catch (error) {
-    handleError(error, `Erro ao buscar ${type} com ID ${id}`);
-  }
-};
-
-
-
-export const deleteAccount = async (id) => {
-  try {
-    validateId(id, "conta");
-    const response = await axiosInstance.delete(`/accounts/${id}`);
-    return response.data;
-  } catch (error) {
-    handleError(error, `Erro ao excluir conta com ID ${id}`);
-  }
-};
-
 export const fetchEvaluations = async () => {
   try {
     const response = await axiosInstance.get(`/evaluations`);
@@ -123,11 +71,9 @@ export const fetchMangas = async () => {
   }
 };
 
-export const fetchMangaById = async (mangaId) => {
-  console.log("Manga Id",mangaId);
-
+export const fetchMangaById = async (id) => {
   try {
-    const response = await axiosInstance.get(`/mangas/${mangaId}`);
+    const response = await fetch(`https://localhost:5502/mangas/${id}`);
 
     if (!response.ok) {
       throw new Error('Manga not found');
@@ -182,7 +128,21 @@ export const deleteManga = async (id) => {
   }
 };
 
+export const fetchAccountById = async (id) =>
+  fetchById("accounts", id, "conta");
 
+export const updateAccount = async (id, data) =>
+  updateById("accounts", id, data, "conta");
+
+export const deleteAccount = async (id) => {
+  try {
+    validateId(id, "conta");
+    const response = await axiosInstance.delete(`/accounts/${id}`);
+    return response.data;
+  } catch (error) {
+    handleError(error, `Erro ao excluir conta com ID ${id}`);
+  }
+};
 
 export const fetchFavoritesMangas = async (userId) => {
   try {
