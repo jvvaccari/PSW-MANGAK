@@ -67,10 +67,10 @@ mongoose
       const account = await Account.findOne({ email });
       if (!account) return res.status(401).send("Credenciais inválidas");
   
-      const user = { email: email, id: account._id };
-  
-      const passwordMatch = bcryptjs.compare(password, account.password);
+      const passwordMatch = await bcryptjs.compare(password, account.password);
       if (!passwordMatch) return res.status(401).send("Credenciais inválidas");
+  
+      const user = { email: email, id: account._id };
   
       const accessToken = generateAcessToken(user);
       const refreshToken = jwt.sign(user, process.env.REFRESH_TOKEN_SECRET);
@@ -80,16 +80,23 @@ mongoose
       const token = new Token({
         userId: account._id,
         token: refreshToken,
-        expiresAt: new Date(Date.now() + 8000 * 1000)
+        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 dias
       });
   
       await token.save();
   
-      res.json({ _id: account._id, accessToken, refreshToken });
+      res
+        .cookie("refreshToken", refreshToken, {
+          httpOnly: true,
+          secure: true,
+          sameSite: "Strict",
+          maxAge: 7 * 24 * 60 * 60 * 1000, // 7 dias
+        })
+        .json({ _id: account._id, accessToken });
     } catch (error) {
       res.status(500).send("Erro no servidor: " + error.message);
     }
-  });
+  });  
   
   app.put("/accounts/:id", authenticateToken, async (req, res) => {
     try {
@@ -163,6 +170,26 @@ mongoose
       res.status(500).send(error.message);
     }
   });
+
+  app.post("/accounts/refresh", async (req, res) => {
+    const { refreshToken } = req.body;
+    if (!refreshToken) return res.status(401).json({ message: "Refresh Token ausente" });
+  
+    try {
+      const storedToken = await Token.findOne({ token: refreshToken });
+      if (!storedToken) return res.status(403).json({ message: "Refresh Token inválido" });
+  
+      jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, async (err, user) => {
+        if (err) return res.status(403).json({ message: "Token expirado ou inválido" });
+  
+        const newAccessToken = generateAcessToken({ email: user.email, id: user.id });
+  
+        res.json({ accessToken: newAccessToken });
+      });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  });  
   
   app.delete("/accounts/:id", authenticateToken, async (req, res) => {
     try {

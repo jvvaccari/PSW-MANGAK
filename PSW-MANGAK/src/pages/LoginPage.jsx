@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   Typography,
   Box,
@@ -24,13 +24,7 @@ export default function LoginPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { user, loading, error } = useSelector((state) => state.auth);
-
-  useEffect(() => {
-    if (user) {
-      navigate("/");
-    }
-  }, [user, navigate]);
+  const { loading, error } = useSelector((state) => state.auth);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -43,6 +37,7 @@ export default function LoginPage() {
     try {
       const result = await dispatch(loginUser({ email, password })).unwrap();
       console.log("Login Bem-sucedido", result);
+      navigate("/");
     } catch (err) {
       console.error("Erro ao tentar login:", err);
       let errorMessage = "Erro desconhecido";

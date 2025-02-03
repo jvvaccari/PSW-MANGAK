@@ -20,9 +20,11 @@ export const loginUser = createAsyncThunk(
 
       console.log("userWithToken:", userWithToken);
 
+      // Armazenando dados no localStorage
       localStorage.setItem("userId", userWithToken.id);
       localStorage.setItem("authToken", userWithToken.accessToken);
 
+      // Configurando o cabeçalho de autenticação
       axiosInstance.defaults.headers["Authorization"] = `Bearer ${userWithToken.accessToken}`;
 
       return userWithToken;
@@ -34,7 +36,7 @@ export const loginUser = createAsyncThunk(
 
 export const registerUser = createAsyncThunk(
   "auth/registerUser",
-  async ({ username, email, password },  thunkAPI ) => {
+  async ({ username, email, password }, thunkAPI) => {
     try {
       console.log("Iniciando o registro do usuário...");
 
@@ -61,14 +63,12 @@ export const registerUser = createAsyncThunk(
 
       // Retorna os dados do usuário com o token
       return userWithToken;
-
     } catch (error) {
       console.error("Erro no processo de registro:", error);
       return thunkAPI.rejectWithValue(error.response?.data || error.message || "Erro ao registrar usuário");
     }
   }
 );
-
 
 export const getUserById = createAsyncThunk(
   "auth/getUserById",

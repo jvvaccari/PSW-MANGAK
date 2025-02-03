@@ -28,7 +28,6 @@ const FavoriteListDetails = () => {
 
   useEffect(() => {
     const loadList = async () => {
-      console.log("userId:", user.id);  // Verifique se o userId está correto
 
       if (!user.id) {
         setError("Usuário não autenticado.");
@@ -37,9 +36,8 @@ const FavoriteListDetails = () => {
       }
 
       try {
-        console.log("listId:",listId);
         const list = await api.fetchFavoriteListById(listId);
-        console.log("Resposta da API:", list);  // Verifique a resposta da API
+        console.log("Resposta da API:", list);
 
         if (list) {
           console.log(list.mangas);
