@@ -62,14 +62,15 @@ function ProfilePage() {
   useEffect(() => {
     const loadUser = async () => {
       try {
-        if (!user || !user.id) {
+        console.log("User de profile page:",user);
+        if (!user || !user._id) {
           console.warn("Usuário não autenticado ou ID ausente.");
           navigate("/login");
           return;
         }
   
         setLoading(true);
-        const data = await api.fetchAccountById(user.id);
+        const data = await api.fetchAccountById(user._id);
         if (data) {
           setFormData(data);
         } else {
@@ -99,7 +100,7 @@ function ProfilePage() {
 
   const handleSave = async () => {
     try {
-      await api.updateAccount(user.id, formData);
+      await api.updateAccount(user._id, formData);
       setIsEditing(false);
     } catch (err) {
       console.error("Erro ao atualizar conta:", err.message);
@@ -109,7 +110,7 @@ function ProfilePage() {
 
   const handleDelete = async () => {
     try {
-      await api.deleteAccount(user.id);
+      await api.deleteAccount(user._id);
       logout();
       navigate("/");
     } catch (err) {

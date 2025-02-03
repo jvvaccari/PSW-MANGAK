@@ -21,7 +21,6 @@ const Content = ({ manga }) => {
       return;
     }
   
-    console.log("Buscando autor com ID:", manga.authorId);
     api.fetchAuthorById(manga.authorId)
       .then((author) => {
         console.log("Autor encontrado:", author);

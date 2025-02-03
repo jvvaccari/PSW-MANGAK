@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { Typography, Box, Button, Paper, CircularProgress } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";  // Alterado para Link
 import { useDispatch, useSelector } from "react-redux";
 import { registerUser } from "../redux/authSlice"; 
 import backgroundImage from "../assets/img/login-background.jpg";
 import StyledTextField from "../components/StyledTextField";
-import Navbar from "../components/Navbar";
+import { useNavigate } from "react-router-dom";  // Importando o useNavigate
 
 export default function RegisterPage() {
   const [email, setEmail] = useState("");
@@ -15,7 +15,7 @@ export default function RegisterPage() {
   const [error, setError] = useState(null);
 
   const dispatch = useDispatch();
-  const navigate = useNavigate();
+  const navigate = useNavigate();  // Usando o hook useNavigate
   const { loading, error: reduxError } = useSelector((state) => state.auth);
 
   const handleSubmit = async (e) => {
@@ -42,7 +42,7 @@ export default function RegisterPage() {
     dispatch(registerUser({ username, email, password }))
       .unwrap()
       .then(() => {
-        navigate("/");
+        navigate("/");  // Redirecionamento após sucesso
       })
       .catch((err) => {
         setError(err.message || "Erro ao registrar. Tente novamente.");
@@ -62,8 +62,6 @@ export default function RegisterPage() {
         backgroundRepeat: "no-repeat",
       }}
     >
-      <Navbar />
-
       <Box
         sx={{
           flex: 1,
@@ -170,6 +168,16 @@ export default function RegisterPage() {
               )}
             </Button>
           </form>
+
+          {/* Link para alternar para a página de login */}
+          <Box sx={{ marginTop: "16px" }}>
+            <Typography variant="body2" color="white">
+              Já tem uma conta?{" "}
+              <Link to="/login" style={{ textDecoration: "none", color: "#FF0037" }}>
+                Faça login
+              </Link>
+            </Typography>
+          </Box>
         </Paper>
       </Box>
     </Box>

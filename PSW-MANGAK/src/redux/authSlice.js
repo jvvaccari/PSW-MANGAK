@@ -1,130 +1,153 @@
-// src/redux/authSlice.js
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
+import axiosInstance from "../../services/axiosInstance";
 
-// You can keep this base for /accounts, or use a more general API_URL 
-// if you prefer. The key is that we have /accounts/login & /accounts/register.
-const BASE_URL = "http://localhost:5502/accounts";
+// Função para recuperar dados do localStorage e inicializar o estado
+export const loadUserFromStorage = () => {
+  const userId = localStorage.getItem("userId");
+  const authToken = localStorage.getItem("authToken");
 
-/**
- * Thunk: loginUser
- * 
- * Calls POST /accounts/login with { email, password }.
- * If successful, saves userId to localStorage. Otherwise, rejects with an error.
- */
+  // Se os dados existirem no localStorage, retorna um objeto de usuário
+  if (userId && authToken) {
+    return {
+      user: { _id: userId },
+      isAuthenticated: true,
+      authToken,
+      loading: false,
+      error: null,
+    };
+  }
+
+  // Caso contrário, retorna o estado padrão
+  return {
+    user: null,
+    isAuthenticated: false,
+    loading: false,
+    error: null,
+  };
+};
+
+const initialState = loadUserFromStorage();
+
 export const loginUser = createAsyncThunk(
   "auth/loginUser",
   async ({ email, password }, thunkAPI) => {
     try {
-      const response = await axios.post(`${BASE_URL}/login`, {
-        email,
-        password,
-      });
-      const foundUser = response.data; // The server returns the user object
+      const response = await axiosInstance.post("/login", { email, password });
+      const foundUser = response.data;
 
       if (!foundUser) {
         throw new Error("Credenciais inválidas.");
       }
 
-      // Use either foundUser._id or foundUser.id, depending on how your server returns it
-      const userWithId = { ...foundUser, id: foundUser._id };
-      localStorage.setItem("userId", userWithId.id);
+      const userWithToken = {
+        ...foundUser,
+        id: foundUser._id,
+        token: foundUser.accessToken,
+      };
 
-      return userWithId;
+      console.log("userWithToken:", userWithToken);
 
+      localStorage.setItem("userId", userWithToken.id);
+      localStorage.setItem("authToken", userWithToken.accessToken);
+
+      axiosInstance.defaults.headers["Authorization"] = `Bearer ${userWithToken.accessToken}`;
+
+      return userWithToken;
     } catch (error) {
-      // If the server throws a 401 or other error, you can capture it here
-      const errorMessage =
-        error.response?.data || error.message || "Erro desconhecido";
-      return thunkAPI.rejectWithValue(errorMessage);
+      return thunkAPI.rejectWithValue(error.response?.data || error.message || "Erro desconhecido");
     }
   }
 );
 
-/**
- * Thunk: registerUser
- * 
- * Calls POST /accounts/register with { username, email, password }.
- * If successful, saves userId to localStorage. Otherwise, rejects with an error.
- */
 export const registerUser = createAsyncThunk(
   "auth/registerUser",
   async ({ username, email, password }, thunkAPI) => {
     try {
-      const response = await axios.post(`${BASE_URL}/register`, {
-        username,
-        email,
-        password,
-      });
-      const newUser = response.data;
+      console.log("Iniciando o registro do usuário...");
 
-      if (!newUser) {
+      const response = await axiosInstance.post("/register", { username, email, password });
+
+      if (!response) {
         throw new Error("Erro ao criar usuário.");
       }
 
-      const userWithId = { ...newUser, id: newUser._id };
-      localStorage.setItem("userId", userWithId.id);
+      console.log("Usuário registrado:", response.data);
 
-      return userWithId;
+      const userWithToken = {
+        ...response.data,
+        id: response.data._id,
+        token: response.data.accessToken,
+      };
+
+      localStorage.setItem("userId", userWithToken.id);
+      localStorage.setItem("authToken", userWithToken.token);
+
+      axiosInstance.defaults.headers["Authorization"] = `Bearer ${userWithToken.token}`;
+
+      return userWithToken;
+
     } catch (error) {
-      const errorMessage =
-        error.response?.data || error.message || "Erro ao registrar usuário";
-      return thunkAPI.rejectWithValue(errorMessage);
+      console.error("Erro no processo de registro:", error);
+      return thunkAPI.rejectWithValue(error.response?.data || error.message || "Erro ao registrar usuário");
     }
   }
 );
 
-/**
- * Thunk: loadUserFromStorage
- * 
- * Checks if "userId" exists in localStorage.
- * If yes, fetches that user from GET /accounts/:id.
- * If not found, removes "userId" and rejects.
- */
-export const loadUserFromStorage = createAsyncThunk(
-  "auth/loadUser",
-  async (_, thunkAPI) => {
-    const userId = localStorage.getItem("userId");
-    if (!userId) return null; // No userId in localStorage
-
+export const getUserById = createAsyncThunk(
+  "auth/getUserById",
+  async (userId, thunkAPI) => {
     try {
-      const response = await axios.get(`${BASE_URL}/${userId}`);
-      if (!response.data) {
-        throw new Error("Usuário não encontrado");
-      }
-      const userWithId = { ...response.data, id: response.data._id };
-      return userWithId; // Return user to Redux
+      const authToken = localStorage.getItem("authToken");
+      if (!authToken) throw new Error("Token de autenticação não encontrado.");
+
+      const response = await axiosInstance.get(`/${userId}`, {
+        headers: { Authorization: `Bearer ${authToken}` },
+      });
+
+      return response.data;
     } catch (error) {
-      localStorage.removeItem("userId"); // Remove invalid userId
-      return thunkAPI.rejectWithValue(
-        `Erro ao carregar usuário: ${error.response?.data || error.message || "Erro desconhecido"}`
-      );
+      return thunkAPI.rejectWithValue(error.response?.data || error.message || "Erro ao buscar usuário.");
     }
   }
 );
 
-// Create the auth slice
+export const updateUser = createAsyncThunk(
+  "auth/updateUser",
+  async ({ userId, userData }, thunkAPI) => {
+    try {
+      const authToken = localStorage.getItem("authToken");
+      if (!authToken) throw new Error("Token de autenticação não encontrado.");
+
+      const response = await axiosInstance.put(`/${userId}`, userData, {
+        headers: { Authorization: `Bearer ${authToken}` },
+      });
+
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response?.data || error.message || "Erro ao atualizar usuário.");
+    }
+  }
+);
+
 const authSlice = createSlice({
   name: "auth",
-  initialState: {
-    user: null,       // Holds the user object once logged in
-    loading: false,   // For showing spinners during async ops
-    error: null,      // Stores error messages from login/register
-  },
+  initialState,
   reducers: {
-    /**
-     * logout reducer
-     * 1. Sets state.user to null
-     * 2. Removes "userId" from localStorage
-     */
+    setUser: (state, action) => {
+      state.user = action.payload.user;
+      state.isAuthenticated = true;
+      localStorage.setItem("user", JSON.stringify(action.payload.user));
+      localStorage.setItem("authToken", action.payload.token);
+    },
     logout: (state) => {
       state.user = null;
-      localStorage.removeItem("userId");
+      state.isAuthenticated = false;
+      localStorage.removeItem("user");
+      localStorage.removeItem("authToken");
     },
   },
   extraReducers: (builder) => {
     builder
-      // loginUser
       .addCase(loginUser.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -132,13 +155,13 @@ const authSlice = createSlice({
       .addCase(loginUser.fulfilled, (state, action) => {
         state.loading = false;
         state.user = action.payload;
+        state.isAuthenticated = true;
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+        state.isAuthenticated = false;
       })
-
-      // registerUser
       .addCase(registerUser.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -146,27 +169,42 @@ const authSlice = createSlice({
       .addCase(registerUser.fulfilled, (state, action) => {
         state.loading = false;
         state.user = action.payload;
+        state.isAuthenticated = true;
       })
       .addCase(registerUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+        state.isAuthenticated = false;
       })
-
-      // loadUserFromStorage
-      .addCase(loadUserFromStorage.pending, (state) => {
+      .addCase(getUserById.pending, (state) => {
         state.loading = true;
+        state.error = null;
       })
-      .addCase(loadUserFromStorage.fulfilled, (state, action) => {
+      .addCase(getUserById.fulfilled, (state, action) => {
         state.loading = false;
-        state.user = action.payload; // null if not found
+        state.user = action.payload;
+        state.isAuthenticated = true;
       })
-      .addCase(loadUserFromStorage.rejected, (state, action) => {
+      .addCase(getUserById.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
-        state.user = null; // Remove user on error
+        state.isAuthenticated = false;
+      })
+      .addCase(updateUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateUser.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload;
+        state.isAuthenticated = true;
+      })
+      .addCase(updateUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
       });
   },
 });
 
-export const { logout } = authSlice.actions;
+export const { setUser, logout } = authSlice.actions;
 export default authSlice.reducer;

@@ -16,7 +16,6 @@ import * as api from "../../services/api";
 import { ErrorBoundary } from "react-error-boundary";
 import PropTypes from "prop-types";
 
-// Componente para exibir erros
 function ErrorFallback({ error }) {
   return (
     <Box sx={{ color: "red", padding: "20px" }}>
@@ -36,7 +35,6 @@ function MangaAdminPage() {
   const [formData, setFormData] = useState({});
   const [authors, setAuthors] = useState([]);
 
-  // Carrega mangás e autores
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -44,7 +42,7 @@ function MangaAdminPage() {
         const mangaData = await api.fetchMangas();
         const mangasWithId = mangaData.map((manga) => ({
           ...manga,
-          id: manga._id || `${Date.now()}`, // Garante um ID válido
+          id: manga._id || `${Date.now()}`,
         }));
         setMangas(mangasWithId);
 

@@ -112,12 +112,8 @@
     }
   ],
 
-  "favoriteLists": [
-    
-  ],
-  "evaluations": [
-    
-  ],
+  "favoriteLists": [],
+  "evaluations": [],
 
   "authors": [
     {
@@ -159,5 +155,6 @@
       "notableWorks": ["Kaguya-sama: Love is War"],
       "biography": "Aka Akasaka nasceu na cidade de Niigata, Japão, em 1988. Ele começou sua carreira como assistente de outros mangakás antes de lançar 'Kaguya-sama: Love is War' em 2015. A série ganhou imenso reconhecimento por sua combinação de romance, comédia e tensão psicológica. Akasaka é conhecido por seu estilo detalhado e seu foco em personagens complexos. Fora do trabalho, ele gosta de assistir filmes clássicos e explorar novas formas de narrativa."
     }
-  ]
+  ],
+  "tokens": []
 }

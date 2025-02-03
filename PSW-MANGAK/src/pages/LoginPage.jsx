@@ -1,4 +1,4 @@
-import { useState,useEffect } from "react";
+import { useState } from "react";
 import {
   Typography,
   Box,
@@ -24,13 +24,7 @@ export default function LoginPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { user, loading, error } = useSelector((state) => state.auth);
-
-  useEffect(() => {
-    if (user) {
-      navigate("/"); 
-    }
-  }, [user, navigate]);
+  const { loading, error } = useSelector((state) => state.auth);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -41,16 +35,23 @@ export default function LoginPage() {
     }
 
     try {
-
       const result = await dispatch(loginUser({ email, password })).unwrap();
       console.log("Login Bem-sucedido", result);
-      navigate("/dashboard"); // Substitua por sua rota pós-login.
+      navigate("/");
     } catch (err) {
       console.error("Erro ao tentar login:", err);
-      alert("Erro: " + (err.message || "Erro desconhecido"));
+      let errorMessage = "Erro desconhecido";
+      if (err.response?.data) {
+        errorMessage = err.response.data;
+      } else if (err.message) {
+        errorMessage = err.message;
+      } else if (err.request) {
+        errorMessage = "Erro na requisição: sem resposta do servidor";
+      }
+
+      console.log("Erro: " + errorMessage);
     }
   };
-
 
   const commonInputStyles = {
     marginBottom: "16px",
@@ -58,9 +59,10 @@ export default function LoginPage() {
       bgcolor: "#1E1E1E",
       color: "#FFFFFF",
     },
-    "& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline, & .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
-      borderColor: "#FF0037",
-    },
+    "& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline, & .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline":
+      {
+        borderColor: "#FF0037",
+      },
     "& .MuiInputLabel-root": {
       color: "#fff",
     },
@@ -156,7 +158,11 @@ export default function LoginPage() {
                 },
               }}
             >
-              {loading ? <CircularProgress size={24} sx={{ color: "#fff" }} /> : "Entrar"}
+              {loading ? (
+                <CircularProgress size={24} sx={{ color: "#fff" }} />
+              ) : (
+                "Entrar"
+              )}
             </Button>
           </form>
         </Paper>

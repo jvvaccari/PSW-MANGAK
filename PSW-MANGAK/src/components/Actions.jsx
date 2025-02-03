@@ -47,11 +47,9 @@ const Actions = ({ mangaId }) => {
 
   // Actions.jsx
   const handleSelectList = (listId) => {
-    console.log("ListID:", listId); // Verifique o valor de listId
-    console.log("MangaId:", mangaId); // Verifique o valor de mangaId
 
     if (mangaId) {
-      api.addMangaToList(listId, mangaId); // Função que realiza a requisição
+      api.addMangaToList(listId, mangaId);
     } else {
       console.error("mangaId está undefined");
     }
