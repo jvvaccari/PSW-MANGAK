@@ -1,6 +1,33 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axiosInstance from "../../services/axiosInstance";
 
+// Função para recuperar dados do localStorage e inicializar o estado
+export const loadUserFromStorage = () => {
+  const userId = localStorage.getItem("userId");
+  const authToken = localStorage.getItem("authToken");
+
+  // Se os dados existirem no localStorage, retorna um objeto de usuário
+  if (userId && authToken) {
+    return {
+      user: { _id: userId },
+      isAuthenticated: true,
+      authToken,
+      loading: false,
+      error: null,
+    };
+  }
+
+  // Caso contrário, retorna o estado padrão
+  return {
+    user: null,
+    isAuthenticated: false,
+    loading: false,
+    error: null,
+  };
+};
+
+const initialState = loadUserFromStorage();
+
 export const loginUser = createAsyncThunk(
   "auth/loginUser",
   async ({ email, password }, thunkAPI) => {
@@ -20,11 +47,9 @@ export const loginUser = createAsyncThunk(
 
       console.log("userWithToken:", userWithToken);
 
-      // Armazenando dados no localStorage
       localStorage.setItem("userId", userWithToken.id);
       localStorage.setItem("authToken", userWithToken.accessToken);
 
-      // Configurando o cabeçalho de autenticação
       axiosInstance.defaults.headers["Authorization"] = `Bearer ${userWithToken.accessToken}`;
 
       return userWithToken;
@@ -48,7 +73,6 @@ export const registerUser = createAsyncThunk(
 
       console.log("Usuário registrado:", response.data);
 
-      // Armazenando os dados no localStorage
       const userWithToken = {
         ...response.data,
         id: response.data._id,
@@ -58,11 +82,10 @@ export const registerUser = createAsyncThunk(
       localStorage.setItem("userId", userWithToken.id);
       localStorage.setItem("authToken", userWithToken.token);
 
-      // Atualiza o cabeçalho de autenticação com o token
       axiosInstance.defaults.headers["Authorization"] = `Bearer ${userWithToken.token}`;
 
-      // Retorna os dados do usuário com o token
       return userWithToken;
+
     } catch (error) {
       console.error("Erro no processo de registro:", error);
       return thunkAPI.rejectWithValue(error.response?.data || error.message || "Erro ao registrar usuário");
@@ -108,24 +131,18 @@ export const updateUser = createAsyncThunk(
 
 const authSlice = createSlice({
   name: "auth",
-  initialState: {
-    user: null,
-    isAuthenticated: false,
-    loading: false,
-    error: null,
-  },
+  initialState,
   reducers: {
     setUser: (state, action) => {
       state.user = action.payload.user;
       state.isAuthenticated = true;
-      localStorage.setItem("userId", action.payload.user._id);
-      localStorage.setItem("authToken", action.payload.accessToken);
-      localStorage.setItem("refreshToken", action.payload.refreshToken);
+      localStorage.setItem("user", JSON.stringify(action.payload.user));
+      localStorage.setItem("authToken", action.payload.token);
     },
     logout: (state) => {
       state.user = null;
       state.isAuthenticated = false;
-      localStorage.removeItem("userId");
+      localStorage.removeItem("user");
       localStorage.removeItem("authToken");
     },
   },
