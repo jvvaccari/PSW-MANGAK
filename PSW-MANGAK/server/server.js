@@ -21,10 +21,10 @@ const PORT = process.env.PORT || 5501;
 
 const options = {
   key: fs.readFileSync(
-    "C:/Users/jvvac/OneDrive/Área de Trabalho/estudo/PSW/PSW-MANGAK/PSW-MANGAK/server/certification/localhost_decrypted.key"
+    "./certification/localhost_decrypted.key"
   ),
   cert: fs.readFileSync(
-    "C:/Users/jvvac/OneDrive/Área de Trabalho/estudo/PSW/PSW-MANGAK/PSW-MANGAK/server/certification/localhost.crt"
+    "./certification/localhost.crt"
   ),
 };
 
@@ -486,6 +486,7 @@ function generateAcessToken(user) {
 function authenticateToken(req, res, next) {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
+  console.log(authHeader);
 
   if (!token) return res.status(401).json({ message: "Access Denied" });
 

@@ -8,7 +8,7 @@ const axiosInstance = axios.create({
 });
 
 export const fetchAccountById = async (id) =>
-  fetchById("accounts", id, "conta");
+  fetchAccountWithId("accounts", id, "conta");
 
 export const updateAccount = async (id, data) => {
   const authToken = localStorage.getItem("authToken"); // Pega o token do localStorage
@@ -31,6 +31,22 @@ export const updateAccount = async (id, data) => {
     throw new Error(error.response?.data || error.message || "Erro ao atualizar conta");
   }
 };
+
+const fetchAccountWithId = async (endpoint, id, type) => {
+  try {
+    validateId(id, type);
+    const token = localStorage.getItem('authToken'); // ou de onde você estiver armazenando
+    const response = await axiosInstance.get(`/${endpoint}/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    handleError(error, `Erro ao buscar ${type} com ID ${id}`);
+  }
+};
+
 
 
 export const deleteAccount = async (id) => {

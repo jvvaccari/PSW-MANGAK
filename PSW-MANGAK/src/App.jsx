@@ -1,12 +1,12 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import { useEffect } from "react";
+// import { useEffect } from "react";
 import { Box, CircularProgress } from "@mui/material";
 import PropTypes from "prop-types";
 
 // Redux
-import { Provider, useDispatch, useSelector } from "react-redux";
+import { Provider, useSelector } from "react-redux";
 import store from "./redux/store";
-import { loadUserFromStorage } from "./redux/authSlice";
+// import { loadUserFromStorage } from "./redux/authSlice";
 
 // Components / Pages
 import ProtectedRoute from "./routes/ProtectedRoute";
@@ -24,12 +24,12 @@ import AuthorAdminPage from "./pages/AuthorAdminPage";
 import FavoriteListDetails from "./pages/FavoriteListDetails";
 
 function AppWrapper() {
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
   const { loading } = useSelector((state) => state.auth);
 
-  useEffect(() => {
-    dispatch(loadUserFromStorage());
-  }, [dispatch]);
+  // useEffect(() => {
+  //   dispatch(loadUserFromStorage());
+  // }, [dispatch]);
 
   if (loading) {
     return (
