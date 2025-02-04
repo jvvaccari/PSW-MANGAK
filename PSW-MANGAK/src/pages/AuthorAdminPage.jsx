@@ -69,17 +69,30 @@ const AuthorAdminPage = () => {
     if (!validateForm()) {
       return;
     }
+
+    // Converter a data para o formato correto (yyyy-mm-dd)
+    const formattedBirthDate = formData.birthDate
+      ? new Date(formData.birthDate.split("/").reverse().join("-"))
+          .toISOString()
+          .split("T")[0]
+      : null;
+
+    // Atualizando formData com a data formatada
+    const updatedFormData = { ...formData, birthDate: formattedBirthDate };
+
     try {
       let savedAuthor;
       if (isCreating) {
-        const newAuthor = { ...formData };
+        const newAuthor = { ...updatedFormData };
         savedAuthor = await createAuthor(newAuthor);
-        setAuthors((prev) => [...prev, savedAuthor]); 
+        setAuthors((prev) => [...prev, savedAuthor]);
+        location.reload(true);
       } else if (editingRow) {
-        savedAuthor = await updateAuthor(editingRow.id, formData);
-        setAuthors((prev) => 
-          prev.map((a) => 
-            a.id === editingRow.id ? { ...savedAuthor, id: savedAuthor._id } : a) 
+        savedAuthor = await updateAuthor(editingRow.id, updatedFormData);
+        setAuthors((prev) =>
+          prev.map((a) =>
+            a.id === editingRow.id ? { ...savedAuthor, id: savedAuthor._id } : a
+          )
         );
       }
       setEditingRow(null);
@@ -89,7 +102,7 @@ const AuthorAdminPage = () => {
     } catch (error) {
       console.error("Erro ao salvar autor:", error);
     }
-  };  
+  };
 
   const handleDeleteClick = async (id) => {
     try {
@@ -174,7 +187,7 @@ const AuthorAdminPage = () => {
   const formFields = [
     { label: "Nome", field: "name" },
     { label: "Pseudônimo", field: "pseudonym" },
-    { label: "Data de Nascimento", field: "birthDate" },
+    { label: "Data de Nascimento (DD/MM/AAAA)", field: "birthDate" },
     { label: "Lugar de Nascimento", field: "birthPlace" },
     { label: "Nacionalidade", field: "nationality" },
     { label: "Etnia", field: "ethnicity" },

@@ -162,6 +162,7 @@ export const fetchMangaById = async (id) => {
 
 export const createManga = async (newManga) => {
   try {
+    console.log(newManga);
     const response = await axiosInstance.post("/mangas", newManga);
     return response.data;
   } catch (error) {

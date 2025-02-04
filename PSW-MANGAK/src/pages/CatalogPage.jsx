@@ -81,10 +81,10 @@ function CatalogPage() {
       (manga.id && manga.id.toString().includes(search)) ||
       manga.title.toLowerCase().includes(search) ||
       manga.author.toLowerCase().includes(search) ||
-      (manga.genres && manga.genres[0] && manga.genres[0].toLowerCase().includes(search)) ||  
+      (manga.genres && manga.genres[0] && manga.genres[0].toLowerCase().includes(search)) ||
       (manga.demographic || "").toLowerCase().includes(search)
     );
-  });  
+  });
 
   return (
     <>
@@ -93,14 +93,13 @@ function CatalogPage() {
         <Box sx={{ display: "flex", justifyContent: "center", alignItems: "flex-start", minHeight: "100vh", bgcolor: "#000" }}>
           <Box sx={{ width: "100%", maxWidth: "100vw", bgcolor: "#000", color: "#fff" }}>
             {filteredMangasWithSearch.length > 0 ? (
-             <MangaList
-             mangas={filteredMangasWithSearch}
-             searchTerm={searchTerm}
-             onMangaClick={handleMangaClick}
-             horizontalScroll
-             displaySingleGenre
-           />
-           
+              <MangaList
+                mangas={filteredMangasWithSearch}
+                searchTerm={searchTerm}
+                onMangaClick={handleMangaClick}
+                horizontalScroll
+                displaySingleGenre
+              />
             ) : (
               <Typography variant="subtitle1" sx={{ marginTop: { xs: "0.5em", sm: "0.8em", lg: "2em" }, fontWeight: 700, fontSize: { xs: "1.2em", md: "1.4em", lg: "1.6em" } }}>
                 Nenhum mangá encontrado

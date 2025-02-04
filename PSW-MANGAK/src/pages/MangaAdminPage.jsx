@@ -81,24 +81,49 @@ function MangaAdminPage() {
 
   // Manipula campos de array (ex: gêneros, lista de artes)
   const handleArrayFieldChange = (field, value) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: value.split(",").map((v) => v.trim()),
-    }));
-  };
+    if (field === "retail") {
+      setFormData((prev) => ({
+        ...prev,
+        [field]: value
+          .split(",")
+          .map((v) => {
+            const [name, url] = v.split("|").map((s) => s.trim());
+            return { name, url }; // Fazendo um split no valor para separar nome e URL
+          }),
+      }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        [field]: value.split(",").map((v) => v.trim()),
+      }));
+    }
+  };  
 
   // Salva um mangá (criação ou edição)
   const handleSaveClick = async () => {
     try {
-      if (isCreating) {
-        await api.createManga(formData);
-      } else if (editingRow) {
-        await api.updateManga(editingRow.id, formData);
+      // Verifique se o 'authorId' está presente em 'formData'
+      if (!formData.authorId) {
+        setError("Erro: O campo 'Autor' é obrigatório.");
+        return;
       }
+  
+      const mangaData = {
+        ...formData,
+        authorId: formData.authorId,
+      };
+  
+      if (isCreating) {
+        await api.createManga(mangaData);
+      } else if (editingRow) {
+        await api.updateManga(editingRow.id, mangaData);
+      }
+  
       await refreshMangas();
       setEditingRow(null);
       setIsCreating(false);
       setFormData({});
+      location.reload(true);
     } catch (err) {
       setError("Erro ao salvar o mangá.");
       console.error(err);
@@ -176,6 +201,26 @@ function MangaAdminPage() {
       ),
     },
     {
+      field: "retail",
+      headerName: "Links de Compra",
+      width: 200,
+      renderCell: (params) => (
+        <Box>
+          {params.value?.map((link, index) => (
+            <a
+              key={index}
+              href={link.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ display: "block", color: "#FF0037" }}
+            >
+              {link.name}
+            </a>
+          ))}
+        </Box>
+      ),
+    },
+    {
       field: "actions",
       headerName: "Ações",
       width: 150,
@@ -191,7 +236,7 @@ function MangaAdminPage() {
       ),
     },
   ];
-  // Campos do formulário
+
   const formFields = [
     { label: "Título", field: "title", required: true },
     {
@@ -218,6 +263,12 @@ function MangaAdminPage() {
       required: true,
     },
     { label: "Imagem (URL)", field: "image", required: true },
+    {
+      label: "Links de Compra (nome e URL separados por vírgulas)",
+      field: "retail",
+      isArray: true,
+      required: false,
+    },
   ];
 
   return (
@@ -320,7 +371,11 @@ function MangaAdminPage() {
                 >
                   {isDropdown &&
                     options.map((opt) => (
-                      <option key={opt.value} value={opt.value}>
+                      <option
+                        style={{ color: "#000" }}
+                        key={opt.value}
+                        value={opt.value}
+                      >
                         {opt.label}
                       </option>
                     ))}
@@ -338,11 +393,7 @@ function MangaAdminPage() {
               <Button
                 onClick={handleCancelClick}
                 variant="outlined"
-                sx={{
-                  color: "#FF0037",
-                  borderColor: "#FF0037",
-                  "&:hover": { backgroundColor: "#FF003780", color: "#FFF" },
-                }}
+                sx={{ color: "#FF0037", borderColor: "#FF0037" }}
               >
                 Cancelar
               </Button>
@@ -353,10 +404,9 @@ function MangaAdminPage() {
     </ErrorBoundary>
   );
 }
+
 ErrorFallback.propTypes = {
-  error: PropTypes.shape({
-    message: PropTypes.string.isRequired, // Valida que `error.message` é uma string obrigatória
-  }).isRequired, // Valida que `error` é um objeto obrigatório
+  error: PropTypes.object.isRequired,
 };
 
 export default MangaAdminPage;
